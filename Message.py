@@ -8,7 +8,7 @@ class Message:
 
     @property
     def sender(self):
-        return self.sender
+        return self._sender
 
     @sender.setter
     def sender(self, sender):
@@ -16,7 +16,7 @@ class Message:
 
     @property
     def reciever(self):
-        return self.reciever
+        return self._reciever
 
     @reciever.setter
     def reciever(self, reciever):
@@ -24,7 +24,7 @@ class Message:
 
     @property
     def message(self):
-        return self.message
+        return self._message
 
     @message.setter
     def sender(self, message):

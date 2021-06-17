@@ -1,7 +1,7 @@
 class User:
     """A class to store data about each user"""
 
-    def __init__(self, name, groups):
+    def __init__(self, name, groups = "None"):
         self._name = name
         self._groups = groups
 

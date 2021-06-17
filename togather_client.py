@@ -28,7 +28,8 @@ class Send(threading.Thread):
             else:
                 activity = input("Activity: ")
                 time = input("Time: ")
-                my_event = event.Event(activity, time)
+                place = input("Place: ")
+                my_event = event.Event(activity, time, place)
                 self._sock.sendall(pickle.dumps(my_event))
                 print("Event sent.")
 
