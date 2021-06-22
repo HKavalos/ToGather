@@ -1,9 +1,9 @@
 class Message:
     """A class to store message data about each event"""
 
-    def __init__(self, sender, reciever, message):
+    def __init__(self, sender, receiver, message):
         self._sender = sender
-        self._reciever = reciever
+        self._receiver = receiver
         self._message = message
 
     @property
@@ -15,12 +15,12 @@ class Message:
         self._sender = sender
 
     @property
-    def reciever(self):
-        return self._reciever
+    def receiver(self):
+        return self._receiver
 
-    @reciever.setter
-    def reciever(self, reciever):
-        self._reciever = reciever
+    @receiver.setter
+    def receiver(self, receiver):
+        self._receiver = receiver
 
     @property
     def message(self):
