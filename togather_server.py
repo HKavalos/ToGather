@@ -1,7 +1,6 @@
 from socketserver import *
 import pickle
 
-
 # Overrides socketserver.BaseRequestHandler class.
 # Class methods setup, handle, and finish are called automatically by superclass constructor.
 class PythonHandler(BaseRequestHandler):
@@ -39,7 +38,7 @@ class PythonHandler(BaseRequestHandler):
         # Iterate through connections and send data if remote address is not same as source's
         print("Broadcasting from ", source)
         for connection in PythonHandler._connections:
-            if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
+            #if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
                 connection.sendall(message)
 
 
@@ -47,7 +46,7 @@ if __name__ == '__main__':
     # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
     # Creates an instance of PythonHandler class whenever connection is received from server.
     # ThreadingTCPServer uses threads to connect to each client.
-    with ThreadingTCPServer(("", 5555), PythonHandler) as _server:
+    with ThreadingTCPServer(("99.167.109.219", 5555), PythonHandler) as _server:
         print("Python server started.")
         _server.serve_forever()
         _server.shutdown()

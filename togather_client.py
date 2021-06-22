@@ -89,7 +89,7 @@ class Client(threading.Thread):
 
 if __name__ == '__main__':
     # TODO: Make host IP configurable by user.
-    address = ("localhost", 5555)
+    address = ("99.167.109.219", 5555)
     client = Client(address)
     client.start()
     print("Client started.")
