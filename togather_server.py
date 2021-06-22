@@ -1,100 +1,53 @@
-import threading
-import socket
-import os
+from socketserver import *
+import pickle
 
 
-# TODO: Keep track of User object that is created at each connection.
-# TODO: Maybe keep track of Event objects?
-# TODO: Broadcast which User disconnects.
-"""Server script, currently will only broadcast serialized objects, does not interpret them."""
+# Overrides socketserver.BaseRequestHandler class.
+# Class methods setup, handle, and finish are called automatically by superclass constructor.
+class PythonHandler(BaseRequestHandler):
+    _connections = []  # Static variable to keep track of  active connections
 
+    def setup(self):
+        print("setting up new connection")
+        PythonHandler._connections.append(self.request)  # self.request is the socket object being handled.
 
-class Server(threading.Thread):
-    def __init__(self, host, port):
-        super().__init__()
-        self.connections = []
-        self.host = host
-        self.port = port
+    def handle(self):
+        data = ""
+        print("Connected to client: %s:%d" % self.client_address)
 
-    # Taken from example at https://python.plainenglish.io/build-a-chatroom-app-with-python-458fc435025a
-    def run(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.bind((self.host, self.port))
+        while data != "exit()":
+            data = self.request.recv(4096)
+            # Call broadcast method if data is pickled, otherwise test for "exit()" string
+            try:
+                pickle.loads(data)  # Try to unpickle received data
+                # This is where we could test for type of unpickled object and process on server if needed.
+                PythonHandler.broadcast(data, self.request)  # Call broadcast method
+            except (pickle.UnpicklingError, EOFError):
+                try:
+                    data = data.decode()
+                    # This is where we could receive and then execute remote commands to server.
+                except TypeError:
+                    print("Invalid data.")
 
-        sock.listen(1)
-        print('Listening at', sock.getsockname())
+    def finish(self):
+        print("Connection to %s:%d closed" % self.client_address)
+        PythonHandler._connections.remove(self.request)
 
-        while True:
-            # Accept new connection
-            sc, sockname = sock.accept()
-            print('Accepted a new connection from {} to {}'.format(sc.getpeername(), sc.getsockname()))
-
-            # Create new thread
-            server_socket = ServerSocket(sc, sockname, self)
-
-            # Start new thread
-            server_socket.start()
-
-            # Add thread to active connections
-            self.connections.append(server_socket)
-            print('Ready to receive messages from', sc.getpeername())
-
-    # Send to all connected clients except the source client
-    def broadcast(self, message, source):
-        for connection in self.connections:
-            if connection.sockname != source:
-                connection.send(message)
-
-    # Removes a ServerSocket thread from the connections attribute.
-    def remove_connection(self, connection):
-        self.connections.remove(connection)
-
-
-# This is where we communicate with a connected client.
-class ServerSocket(threading.Thread):
-    def __init__(self, sc, sockname, server):
-        super().__init__()
-        self.sc = sc
-        self.sockname = sockname
-        self.server = server
-
-    def run(self):
-        while True:
-            message = self.sc.recv(4096)
-            if message:
-                self.server.broadcast(message, self.sockname)
-            else:
-                print('{} has closed the connection'.format(self.sockname))
-                self.sc.close()
-                server.remove_connection(self)
-                return
-
-    def send(self, message):
-        self.sc.sendall(message)
-
-
-# Taken from example at https://python.plainenglish.io/build-a-chatroom-app-with-python-458fc435025a
-def exit(server):
-    """
-    Allows the server administrator to shut down the server.
-    Typing 'q' in the command line will close all active connections and exit the application.
-    """
-
-    while True:
-        ipt = input('')
-        if ipt == 'q':
-            print('Closing all connections...')
-            for connection in server.connections:
-                connection.sc.close()
-            print('Shutting down the server...')
-            os._exit(0)
+    # Sends a message to all connected clients.
+    @staticmethod  # Static method has access to static variable connections[]
+    def broadcast(message, source):
+        # Iterate through connections and send data if remote address is not same as source's
+        print("Broadcasting from ", source)
+        for connection in PythonHandler._connections:
+            if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
+                connection.sendall(message)
 
 
 if __name__ == '__main__':
-    server = Server('0.0.0.0', 1060)
-    server.start()
-
-    # Start thread to listen for exit command.
-    exit = threading.Thread(target=exit, args=(server,))
-    exit.start()
+    # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
+    # Creates an instance of PythonHandler class whenever connection is received from server.
+    # ThreadingTCPServer uses threads to connect to each client.
+    with ThreadingTCPServer(("", 5555), PythonHandler) as _server:
+        print("Python server started.")
+        _server.serve_forever()
+        _server.shutdown()

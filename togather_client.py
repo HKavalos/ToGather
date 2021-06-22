@@ -1,92 +1,95 @@
-import threading
 import socket
-import os
-import user
-import event
+import threading
 import pickle
-import sys
+from user import User
+from event import Event
+from Message import Message
 
 
-# TODO: Implement setters/getters
-# TODO: Periodically retransmit data to update other users that signed on later.
-class Send(threading.Thread):
-    def __init__(self, sock, my_user):  # Inherits from Thread superclass
-        super().__init__()
-        self._sock = sock
-        self._user = my_user
-
-    def run(self):
-        pickled_user = pickle.dumps(self._user)  # Serialize user object before we send to server.
-        # Test if size of object is too large for sendall(4096) call
-        # print("size of user: ", sys.getsizeof(pickled_user))
-        self._sock.sendall(pickled_user)
-
-        while True:  # TODO: Implement menu.
-            menu_selection = input("0 to quit, 1 to add event")
-            if menu_selection == '0':
-                break
-            else:
-                activity = input("Activity: ")
-                time = input("Time: ")
-                place = input("Place: ")
-                my_event = event.Event(activity, time, place)
-                self._sock.sendall(pickle.dumps(my_event))
-                print("Event sent.")
-
-        print('\nExiting')
-        self._sock.close()
-        os._exit(0)  # TODO: Exit more gracefully
-
-
-# TODO: Implement list/set to keep track of users/events received from server.
 class Receive(threading.Thread):
-    def __init__(self, sock, my_user):  # Inherits from Thread superclass
+    def __init__(self, sock):
         super().__init__()
         self._sock = sock
-        self._user = my_user
 
-    # If a message is received from server, unpickle it.  Otherwise, keep listening until connection closed.
+    # If a message is received from server, unpickle it.  Otherwise, keep listening until the connection is closed.
+    # Only prints data for now.
+    # TODO: Implement list/set to keep track of each type of data received from server.
     def run(self):
         while True:
-            message = self._sock.recv(4096)
-            if message:
-                unpickled_message = pickle.loads(message)
-                if type(unpickled_message) is user.User:
-                    print("\nNew user added, say hello to", unpickled_message.name)
-                elif type(unpickled_message) is event.Event:
-                    print("\nNew event added:")
-                    print(unpickled_message.activity)
-                    print(unpickled_message.time)
-                else:
-                    print("Error: Invalid pickle received.")
-            else:
-                print("Connection closed by server.")
-                self._sock.close()
-                os._exit(0)  # TODO: Exit more gracefully
+            try:
+                message = self._sock.recv(4096)
+                if message:
+                    unpickled_message = pickle.loads(message)
+                    if type(unpickled_message) is User:
+                        print("User data received from server.")
+                        print("Name:", unpickled_message.name)
+                        print("Groups:", unpickled_message.groups)
+                    elif type(unpickled_message) is Event:
+                        print("Event data received from server.")
+                        print("Activity:", unpickled_message.activity)
+                        print("Time:", unpickled_message.time)
+                        print("Place:", unpickled_message.place)
+                    elif type(unpickled_message) is Message:
+                        print("Event data received from server.")
+                        print("Sender:", unpickled_message.sender)
+                        print("Recipient:", unpickled_message.reciever)
+                        print("Message:", unpickled_message.message)
+            except OSError:  # Catch exception when loop trys to connect after program closes socket.
+                break
 
 
-class Client:
-    def __init__(self, host, port):
-        self._host = host
-        self._port = port
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Client class calls listener thread to run perpetually and sender method as needed to send data.
+class Client(threading.Thread):
+    def __init__(self, addr):
+        super().__init__()
+        self._address = addr
 
-    # TODO: Implement menu options to create events
-    def start(self):
-        print('Trying to connect to {}:{}...'.format(self._host, self._port))
-        self._sock.connect((self._host, self._port))
-        print('Successfully connected to {}:{}\n'.format(self._host, self._port))
+    def run(self):
+        with socket.create_connection(address) as srv:
+            # Start Receive thread to listen for data from server.
+            rcv = Receive(srv)
+            rcv.start()
 
-        my_user = user.User(input('Your name: '))  # Create a new User object to be sent to server.
-        print('Welcome, {}!'.format(my_user.name))
-        print('Creating send/receive threads')
+            print("Connected to server: %s:%d\n" % address)
+            print("Menu:")
+            print("1. Send user")
+            print("2. Send event")
+            print("3. Send message")
+            print("0. Exit")
 
-        send = Send(self._sock, my_user)
-        receive = Receive(self._sock, my_user)
-        send.start()
-        receive.start()
+            # TODO: Implement menu w/ UI
+            # Create and send dummy class objects for testing.
+            # If there are other clients connected, they should receive what is sent with their receive thread
+            selection = input("\nEnter selection:")
+            while selection != "0":
+                if selection == "1":
+                    first_user = User("Ryan")
+                    first_user.groups = ["Group1", "Group2"]
+                    print("first_user created, sending.")
+                    Client.send(srv, first_user)
+                    second_user = User("RyRy")
+                    second_user.groups = ["Group2"]
+                    print("second_user created, sending.")
+                    Client.send(srv, second_user)
+                elif selection == "2":
+                    Client.send(srv, Event("activity1", "time to shine", "florida"))
+                    Client.send(srv, Event("activity2", "afternoon", "texas"))
+                elif selection == "3":
+                    Client.send(srv, Message("test_sender","test_recipient", "test_message"))
+                    Client.send(srv, Message("test_sender2", "test_recipient2", "test_message2"))
+                selection = input("\nEnter selection:")
+            srv.sendall("exit()".encode())  # Send exit command to server.
+
+    # TODO: Send data in separate thread?
+    # Accepts an object and then pickles before sending to server.
+    @staticmethod
+    def send(sock, obj):
+        sock.sendall(pickle.dumps(obj))  # TODO: Implement compression, catch socket errors
 
 
 if __name__ == '__main__':
-    client = Client("18.222.171.207", 1060)  # IP/Port of the server.  May change.
+    # TODO: Make host IP configurable by user.
+    address = ("localhost", 5555)
+    client = Client(address)
     client.start()
+    print("Client started.")
