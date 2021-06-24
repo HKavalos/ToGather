@@ -1,4 +1,5 @@
 from socketserver import *
+import socket
 import pickle
 
 # Overrides socketserver.BaseRequestHandler class.
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
     # Creates an instance of PythonHandler class whenever connection is received from server.
     # ThreadingTCPServer uses threads to connect to each client.
-    with ThreadingTCPServer(("99.167.109.219", 5555), PythonHandler) as _server:
+    with ThreadingTCPServer((socket.gethostname(), 55557), PythonHandler) as _server:
         print("Python server started.")
         _server.serve_forever()
         _server.shutdown()
