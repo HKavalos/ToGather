@@ -27,5 +27,5 @@ class message:
         return self._message
 
     @message.setter
-    def sender(self, message):
+    def message(self, message):
         self._message = message
