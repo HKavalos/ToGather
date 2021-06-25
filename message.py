@@ -1,4 +1,4 @@
-class message:
+class Message:
     """A class to store message data about each event"""
 
     def __init__(self, sender, receiver, message):
