@@ -1,5 +1,5 @@
 class message:
-    """A class to store message data about each event"""
+    """A class to store a delivery, sender and reciever"""
 
     def __init__(self, delivery, sender="", receiver=""):
         self._delivery = delivery
@@ -11,7 +11,7 @@ class message:
         return self._delivery
 
     @delivery.setter
-    def sender(self, delivery):
+    def delivery(self, delivery):
         self._delivery = delivery
 
     @property

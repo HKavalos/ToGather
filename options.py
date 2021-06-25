@@ -1,16 +1,13 @@
 from time import time
 class options:
-    """A class that contains a list of completed events and availabilities, this belongs to a group"""
-    "complete or incomplete"
+    "A class that is the choices that a voted on, contains an activity, time object, a boolean of chosen, an an list of votes that are a"
+    " pair of users and the vote choice: 1,2,3,4 . . ."
 
-    "availabilities is a list of a user availability pair"
-
-    def __init__(self, activity, time=time(), chosen=False, votes=[]):
+    def __init__(self, activity, tim=time(), chosen=False, votes=[]):
         self._activity = activity
-        self._time = time
+        self._time = tim
         self._chosen = chosen
         self._votes = votes
-
 
     @property
     def activity(self):
@@ -25,8 +22,8 @@ class options:
         return self._time
 
     @time.setter
-    def time(self, time):
-        self._time = time
+    def time(self, tim):
+        self._time = tim
 
     @property
     def chosen(self):
@@ -40,6 +37,6 @@ class options:
     def votes(self):
         return self._votes
 
-    @chosen.setter
+    @votes.setter
     def votes(self, votes):
         self._votes = votes
