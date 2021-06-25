@@ -1,9 +1,9 @@
 import socket
 import threading
 import pickle
-from user import User
-from event import Event
-from Message import Message
+from user import user
+from event import event
+from message import message
 
 
 class Receive(threading.Thread):
@@ -20,16 +20,16 @@ class Receive(threading.Thread):
                 message = self._sock.recv(4096)
                 if message:
                     unpickled_message = pickle.loads(message)
-                    if type(unpickled_message) is User:
+                    if type(unpickled_message) is user:
                         print("User data received from server.")
                         print("Name:", unpickled_message.name)
                         print("Groups:", unpickled_message.groups)
-                    elif type(unpickled_message) is Event:
+                    elif type(unpickled_message) is event:
                         print("Event data received from server.")
                         print("Activity:", unpickled_message.activity)
                         print("Time:", unpickled_message.time)
                         print("Place:", unpickled_message.place)
-                    elif type(unpickled_message) is Message:
+                    elif type(unpickled_message) is message:
                         print("Event data received from server.")
                         print("Sender:", unpickled_message.sender)
                         print("Recipient:", unpickled_message.reciever)
@@ -63,20 +63,20 @@ class Client(threading.Thread):
             selection = input("\nEnter selection:")
             while selection != "0":
                 if selection == "1":
-                    first_user = User("Ryan")
+                    first_user = user("Ryan")
                     first_user.groups = ["Group1", "Group2"]
                     print("first_user created, sending.")
                     Client.send(srv, first_user)
-                    second_user = User("RyRy")
+                    second_user = user("RyRy")
                     second_user.groups = ["Group2"]
                     print("second_user created, sending.")
                     Client.send(srv, second_user)
                 elif selection == "2":
-                    Client.send(srv, Event("activity1", "time to shine", "florida"))
-                    Client.send(srv, Event("activity2", "afternoon", "texas"))
+                    Client.send(srv, event("activity1", "time to shine", "florida"))
+                    Client.send(srv, event("activity2", "afternoon", "texas"))
                 elif selection == "3":
-                    Client.send(srv, Message("test_sender","test_recipient", "test_message"))
-                    Client.send(srv, Message("test_sender2", "test_recipient2", "test_message2"))
+                    Client.send(srv, message("test_sender","test_recipient", "test_message"))
+                    Client.send(srv, message("test_sender2", "test_recipient2", "test_message2"))
                 selection = input("\nEnter selection:")
             srv.sendall("exit()".encode())  # Send exit command to server.
 

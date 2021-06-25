@@ -1,8 +1,8 @@
-class Event:
-    """A class that containts a list of options, a description and is either """
-    "compelte or incomplete"
+class event:
+    """A class that contains a list of options, a description and is either"""
+    "complete or incomplete, completes are in the calendar, both are in the group"
 
-    def __init__(self, description, options, status):
+    def __init__(self, description="", options=[], status=False):
         self._description = description
         self._options = options
         self._status = status
@@ -12,7 +12,7 @@ class Event:
         return self._description
 
     @description.setter
-    def activity(self, description):
+    def description(self, description):
         self._description = description
 
     @property
@@ -21,13 +21,13 @@ class Event:
 
     @options.setter
     def options(self, options):
-        self._options = self._options.append(options)
+        self._options = options
 
     @property
     def status(self):
-        return self._options
+        return self._status
 
     @status.setter
-    def options(self, status):
+    def status(self, status):
         self._status = status
 

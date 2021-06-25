@@ -1,10 +1,18 @@
 class message:
     """A class to store message data about each event"""
 
-    def __init__(self, sender, receiver, message):
+    def __init__(self, delivery, sender="", receiver=""):
+        self._delivery = delivery
         self._sender = sender
         self._receiver = receiver
-        self._message = message
+
+    @property
+    def delivery(self):
+        return self._delivery
+
+    @delivery.setter
+    def sender(self, delivery):
+        self._delivery = delivery
 
     @property
     def sender(self):
@@ -21,11 +29,3 @@ class message:
     @receiver.setter
     def receiver(self, receiver):
         self._receiver = receiver
-
-    @property
-    def message(self):
-        return self._message
-
-    @message.setter
-    def sender(self, message):
-        self._message = message
