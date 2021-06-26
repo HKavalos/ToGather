@@ -10,16 +10,15 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from event import Event
+from VoteButton import VoteButton
 
 class Ui_MainWindow(object):
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
     e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
     e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Destroying Hazel's Router", "12:00 p.m.", "T.E.X.A.S.")
-    event_ranks = {e1: 0, e2: 0, e3: 0}
-    event_frames = {}
-    frame_buttons = {}
+    e3 = Event("Laser Tag", "12:00 p.m.", "Party Pizazz Plaza")
+    event_ranks = {1: e1, 2: e2, 3: e3}
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -247,7 +246,7 @@ class Ui_MainWindow(object):
         # Each event gets a unique frame with its own label and ranked choice voting options
         # - Rebecca Ling
         count = 0
-        for x in self.event_ranks:
+        for x in self.event_ranks.values():
 
             self.f = QtWidgets.QFrame(self.tab_5)
             self.f.setGeometry(QtCore.QRect(220, 80 + (60*count), 721, 61))
@@ -255,26 +254,23 @@ class Ui_MainWindow(object):
             self.f.setFrameShadow(QtWidgets.QFrame.Raised)
             self.f.setObjectName("f"+str(count))
 
-            self.event_frames[x] = self.f
-            options = []
-
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l"+str(count))
             self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
 
             temp = 0
-            c = 1
+            i = 1
             for y in self.event_ranks:
-                self.r = QtWidgets.QRadioButton(self.f)
+                self.r = VoteButton(self.f)
+                self.r.ev = x
+                self.r.value = i
                 self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
-                self.r.setObjectName("r" + str(temp))
-                self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice "+str(c)))
-                self.r.clicked.connect(lambda *args: ui.vote(x, c))
+                self.r.setObjectName("r{0}".format(i))
+                self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
+                self.r.clicked.connect(lambda *args: ui.vote(self.r.ev, self.r.value))
                 temp += 1
-                c += 1
-                options.append(self.r)
-            self.frame_buttons[self.f] = options
+                i += 1
             count += 1
 
         self.submitVote = QtWidgets.QPushButton(self.tab_5)
@@ -398,17 +394,24 @@ class Ui_MainWindow(object):
         self.mainTab.setTabText(self.mainTab.indexOf(self.tab_9), _translate("MainWindow", "Messages"))
 
     def voteResults(self, MainWindow):
-        top = 0
+        top = float('inf')
         winner = ""
         for x, y in self.event_ranks.items():
-            if(y > top):
-                top = y
-                winner = x.activity
-            print(str(y)+". "+x.activity)
+            if(x < top):
+                top = x
+                winner = y.activity
+            print(str(x)+". "+y.activity)
         print("\n"+winner+" has won the masses")
 
+    def key(self, k):
+        for x, y in self.event_ranks.items():
+            if (k == y):
+                return x
+        return "Error: event doesn't exist."
+
     def vote(self, x, y):
-        self.event_ranks[x] = y
+        swap = self.key(x)
+        self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
         print(x.activity)
 
 if __name__ == "__main__":
