@@ -1,11 +1,12 @@
 from socketserver import *
-import socket
 import pickle
+import socket
+
 
 # Overrides socketserver.BaseRequestHandler class.
 # Class methods setup, handle, and finish are called automatically by superclass constructor.
 class PythonHandler(BaseRequestHandler):
-    _connections = []  # Static variable to keep track of  active connections
+    _connections = []  # Static variable to keep track of active connections
 
     def setup(self):
         print("setting up new connection")
@@ -24,8 +25,11 @@ class PythonHandler(BaseRequestHandler):
                 PythonHandler.broadcast(data, self.request)  # Call broadcast method
             except (pickle.UnpicklingError, EOFError):
                 try:
+                    # This is where we can receive and then execute remote commands to server.
+                    # At this point, we already know it's not a pickled object, so we'll assume it's an encoded string.
                     data = data.decode()
-                    # This is where we could receive and then execute remote commands to server.
+                    # TODO: Commands for server. Ping?
+
                 except TypeError:
                     print("Invalid data.")
 
@@ -39,7 +43,7 @@ class PythonHandler(BaseRequestHandler):
         # Iterate through connections and send data if remote address is not same as source's
         print("Broadcasting from ", source)
         for connection in PythonHandler._connections:
-            #if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
+            if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
                 connection.sendall(message)
 
 

@@ -1,31 +1,33 @@
-class Event:
-    """A class to store data about each event"""
+class event:
+    """A class that contains a list of options, a description and is either"""
+    "complete or incomplete, completes are in the calendar, both are in the group"
 
-    def __init__(self, activity, time, place):
-        self._activity = activity
-        self._time = time
-        self._place = place
-
-    @property
-    def activity(self):
-        return self._activity
-
-    @activity.setter
-    def activity(self, activity):
-        self._activity = activity
+    def __init__(self, description="", options=[], status=False):
+        self._description = description
+        self._options = options
+        self._status = status
 
     @property
-    def time(self):
-        return self._time
+    def description(self):
+        return self._description
 
-    @time.setter
-    def time(self, time):
-        self._time = time
+    @description.setter
+    def description(self, description):
+        self._description = description
 
     @property
-    def place(self):
-        return self._place
+    def options(self):
+        return self._options
 
-    @place.setter
-    def time(self, place):
-        self._place = place
+    @options.setter
+    def options(self, options):
+        self._options = options
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        self._status = status
+
