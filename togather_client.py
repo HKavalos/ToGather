@@ -1,9 +1,75 @@
 import socket
 import threading
 import pickle
-from user import user
+import sqlite3
+import os
+from user import User
 from event import event
 from message import message
+from group import group
+# TODO: Use CamelCase for class names
+
+
+# TODO: Implementing compression on blobs may be needed if object sizes become large.
+# TODO: Apparently this would be more Pythonic as a module instead of a class?
+# Using name as primary key, storing serialized class objects as blobs (Binary Large Objects) in a sqlite3 database.
+# Each method uses a new database connection because sqlite throws an error if a single connection is accessed by more
+# than one thread.
+class Data:
+    def __init__(self):
+        # Create database connection and create tables and as static variables if they don't already exist.
+        try:
+            db_connection = sqlite3.connect("db.db")
+            cursor = db_connection.cursor()
+            # Wrapping identifiers in `` prevents conflicts with SQLite keywords i.e. GROUP
+            cursor.execute('''CREATE TABLE `groups` (`name` TEXT, `group` BLOB)''')
+            cursor.execute('''CREATE TABLE `users` (`name` TEXT, `user` BLOB)''')
+            cursor.execute('''CREATE TABLE `events` (`name` TEXT, `event` BLOB)''')
+            db_connection.commit()
+            db_connection.close()
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def reset():
+        try:
+            os.remove("db.db")  # Dangerous :)
+        except Exception as e:
+            print(e)
+
+    # TODO: Create a method to add an object that has already been serialized
+    @staticmethod
+    def add_user(user):
+        try:
+            db_connection = sqlite3.connect("db.db")
+            cursor = db_connection.cursor()
+            cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+            db_connection.commit()
+            db_connection.close()
+        except Exception as e:
+            print(e)  # Can't have duplicate name.
+
+    @staticmethod
+    def get_users(name=None):  # Returns selected user if parameter is given, otherwise returns list of all users
+        try:
+            if name is None:
+                db_connection = sqlite3.connect("db.db")
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `user` FROM `users`")
+                users = cursor.fetchall()
+                db_connection.commit()
+                db_connection.close()
+                return users
+            else:
+                db_connection = sqlite3.connect("db.db")
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `user` FROM `users` WHERE `name`=?", (name,))  # Parameter must be tuple
+                user = cursor.fetchone()
+                db_connection.commit()
+                db_connection.close()
+                return user
+        except Exception as e:
+            print(e)  # User not found
 
 
 class Receive(threading.Thread):
@@ -17,10 +83,10 @@ class Receive(threading.Thread):
     def run(self):
         while True:
             try:
-                message = self._sock.recv(4096)
-                if message:
-                    unpickled_message = pickle.loads(message)
-                    if type(unpickled_message) is user:
+                msg = self._sock.recv(4096)
+                if msg:
+                    unpickled_message = pickle.loads(msg)
+                    if type(unpickled_message) is User:
                         print("User data received from server.")
                         print("Name:", unpickled_message.name)
                         print("Groups:", unpickled_message.groups)
@@ -55,6 +121,7 @@ class Client(threading.Thread):
             print("1. Send user")
             print("2. Send event")
             print("3. Send message")
+            print("4. Test database.")
             print("0. Exit")
 
             # TODO: Implement menu w/ UI
@@ -63,11 +130,11 @@ class Client(threading.Thread):
             selection = input("\nEnter selection:")
             while selection != "0":
                 if selection == "1":
-                    first_user = user("Ryan")
+                    first_user = User("Ryan")
                     first_user.groups = ["Group1", "Group2"]
                     print("first_user created, sending.")
                     Client.send(srv, first_user)
-                    second_user = user("RyRy")
+                    second_user = User("RyRy")
                     second_user.groups = ["Group2"]
                     print("second_user created, sending.")
                     Client.send(srv, second_user)
@@ -77,7 +144,29 @@ class Client(threading.Thread):
                 elif selection == "3":
                     Client.send(srv, message("test_sender","test_recipient", "test_message"))
                     Client.send(srv, message("test_sender2", "test_recipient2", "test_message2"))
+                elif selection == "4":  # Test database
+                    # First, get some sample data
+                    first_user = User("Ryan")
+                    first_user.groups = ["Group1", "Group2"]
+                    second_user = User("RyRy")
+                    second_user.groups = ["Group2"]
+                    Data.reset()  # Delete the database file if it exists.  Prints error if it doesn't
+                    Data()  # Initialize Data class to create tables.
+                    Data.add_user(first_user)  # Add first user to table.
+                    # Print all users.  get_users() returns a list of singular tuples that must be unpickled.
+                    # TODO: Unpickle in get_users() instead of here? Or at least get rid of singular tuples.
+                    for user in Data.get_users():
+                        print(pickle.loads(user[0]))
+                    # Repeat for second user.
+                    Data.add_user(second_user)
+                    for user in Data.get_users():
+                        print(pickle.loads(user[0]))
+                    # Search for each user by name
+                    print(pickle.loads(Data.get_users(first_user.name)[0]))
+                    print(pickle.loads(Data.get_users(second_user.name)[0]))
+
                 selection = input("\nEnter selection:")
+
             srv.sendall("exit()".encode())  # Send exit command to server.
 
     # TODO: Send data in separate thread?

@@ -1,4 +1,4 @@
-class user:
+class User:
     """A class to store data about each user, a user name, a list of groups they are a part of"""
     "and list of constraint times. constraints are a pair of time variables to signify ranges"
 
