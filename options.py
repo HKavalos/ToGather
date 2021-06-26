@@ -1,9 +1,13 @@
-from time import time
-class options:
-    "A class that is the choices that a voted on, contains an activity, time object, a boolean of chosen, an an list of votes that are a"
-    " pair of users and the vote choice: 1,2,3,4 . . ."
+from _time import Time
 
-    def __init__(self, activity, tim=time(), chosen=False, votes=[]):
+
+class Options:
+    """
+    A class that is the choices that a voted on, contains an activity, time object, a boolean of chosen, and a list of
+    votes that are a pair of users and the vote choice: 1,2,3,4 . . .
+    """
+
+    def __init__(self, activity, tim=Time(), chosen=False, votes=[]):
         self._activity = activity
         self._time = tim
         self._chosen = chosen

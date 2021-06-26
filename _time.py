@@ -1,7 +1,9 @@
-class time:
-    "A simple time classs that may be replaced"
+# Changed filename so that default time class can be used in server.
+class Time:
+    """A simple time class that may be replaced"""
 
     def __init__(self, date="mm/dd/yy", hour=""):
+
         self._date = date
         self._hour = hour
 
