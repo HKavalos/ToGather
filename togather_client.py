@@ -256,7 +256,7 @@ class Client(threading.Thread):
 
 if __name__ == '__main__':
     # TODO: Make host IP configurable by user.
-    address = (("99.167.109.219", 55557), 55557)
+    address = ("99.167.109.219", 55557)
     client = Client(address)
     client.start()
     print("Client started.")
