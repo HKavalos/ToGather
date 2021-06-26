@@ -268,7 +268,8 @@ class Ui_MainWindow(object):
                 self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda *args: ui.vote(self.r.ev, self.r.value))
+                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
+
                 temp += 1
                 i += 1
             count += 1
@@ -412,7 +413,6 @@ class Ui_MainWindow(object):
     def vote(self, x, y):
         swap = self.key(x)
         self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
-        print(x.activity)
 
 if __name__ == "__main__":
     import sys
