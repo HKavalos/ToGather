@@ -1,3 +1,6 @@
+# Inheriting from the QRadioButton class, an event and rank is also associated
+# with this child button for usage in the ranked choice voting algorithm.
+# - Rebecca Ling
 from PyQt5 import QtCore, QtGui, QtWidgets
 from event import Event
 
