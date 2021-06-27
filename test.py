@@ -561,7 +561,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.label_16.setText(new_name)
 
     def update_event(self, event):
-        self.event_title.setText(event.activity)
+        self.event_title.setText(event.description)
         self.event_date.setText(event.time)  # time equals place??
         self.event_place.setText(event.place)
 
@@ -612,7 +612,7 @@ class GroupCreate(QMainWindow):
     def submit(self):
         print("Submitted")
         mwindow = MainWindow
-        new_group = group("not available", str(self.group_name_entry.text()))
+        new_group = Group("not available", str(self.group_name_entry.text()))
         # mwindow.groups.append(new_group)
         ui.update_group(new_group)
         widget.addWidget(mwindow)
