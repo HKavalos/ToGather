@@ -16,7 +16,7 @@ class Ui_MainWindow(object):
     # - Rebecca Ling
     e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
     e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Laser Tag", "12:00 p.m.", "Party Pizazz Plaza")
+    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House")
     event_ranks = {1: e1, 2: e2, 3: e3}
     def setupUi(self, MainWindow):
 
@@ -267,7 +267,8 @@ class Ui_MainWindow(object):
                 self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda *args: ui.vote(self.r.ev, self.r.value))
+                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
+
                 temp += 1
                 i += 1
             count += 1
@@ -392,26 +393,46 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.tab_9), _translate("MainWindow", "Messages"))
 
+    # Determines which event won among the submitted results.
+    # A notification popup informs the user that they successfully submitted their vote.
+    # After the winner is chosen, another popup appears stating which event won.
+    # - Rebecca Ling
     def voteResults(self, MainWindow):
+
+        submit_msg = QtWidgets.QMessageBox()
+        submit_msg.setWindowTitle("Submit Successful")
+        submit_msg.setText("Your vote has been submitted.")
+        submit_msg.setIcon(QtWidgets.QMessageBox.Information)
+
         top = float('inf')
+        standings = ""
         winner = ""
         for x, y in self.event_ranks.items():
             if(x < top):
                 top = x
                 winner = y.activity
-            print(str(x)+". "+y.activity)
-        print("\n"+winner+" has won the masses")
+            standings += "\n"+str(x)+". "+y.activity
+        submit_msg.setInformativeText(standings)
+        submit_msg.exec_()
+        winner_msg = QtWidgets.QMessageBox()
+        winner_msg.setWindowTitle("Voting Results")
+        winner_msg.setText(winner+" has won the masses.")
+        winner_msg.setIcon(QtWidgets.QMessageBox.Information)
+        winner_msg.exec_()
 
+    # Finds the rank of a passed in event.
+    # - Rebecca Ling
     def key(self, k):
         for x, y in self.event_ranks.items():
             if (k == y):
                 return x
         return "Error: event doesn't exist."
 
+    # Switches the rankings between different events based on the option the user picks.
+    # - Rebecca Ling
     def vote(self, x, y):
         swap = self.key(x)
         self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
-        print(x.activity)
 
 if __name__ == "__main__":
     import sys
