@@ -1,5 +1,4 @@
 class Message:
-    """A class to store messages.  Not yet implemented."""
     def __init__(self, delivery, sender="", receiver=""):
         self._delivery = delivery
         self._sender = sender

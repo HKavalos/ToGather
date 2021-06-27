@@ -1,4 +1,4 @@
-class Calendar:
+class GroupCalendar:
     """A class that contains a list of completed events, this belongs to a group"""
 
     def __init__(self, name, events=[]):
