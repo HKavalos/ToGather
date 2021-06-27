@@ -65,6 +65,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_upcoming_events = QtWidgets.QTextBrowser(self.home_tab)
         self.home_upcoming_events.setGeometry(QtCore.QRect(730, 350, 351, 251))
         self.home_upcoming_events.setObjectName("home_upcoming_events")
+        self.home_login = QtWidgets.QPushButton(self.home_tab)
+        self.home_login.setGeometry(QtCore.QRect(920, 20, 75, 23))
+        self.home_login.setObjectName("home_login")
         self.home_logout = QtWidgets.QPushButton(self.home_tab)
         self.home_logout.setGeometry(QtCore.QRect(1010, 20, 75, 23))
         self.home_logout.setObjectName("home_logout")
@@ -365,20 +368,23 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
         self.commandLinkButton_4.setText(_translate("MainWindow", "Vote 2"))
-        self.home_votes_widget.setTabText(self.home_votes_widget.indexOf(self.finished_vote_tab), _translate("MainWindow", "Finished Votes"))
+        self.home_votes_widget.setTabText(self.home_votes_widget.indexOf(self.finished_vote_tab),
+                                          _translate("MainWindow", "Finished Votes"))
         self.commandLinkButton.setText(_translate("MainWindow", "Vote 1"))
         self.commandLinkButton_2.setText(_translate("MainWindow", "Vote 2"))
-        self.home_votes_widget.setTabText(self.home_votes_widget.indexOf(self.progress_votes_tab), _translate("MainWindow", "In-Progress Votes"))
+        self.home_votes_widget.setTabText(self.home_votes_widget.indexOf(self.progress_votes_tab),
+                                          _translate("MainWindow", "In-Progress Votes"))
         self.home_upcoming_events.setHtml(_translate("MainWindow",
-                                            "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                            "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                            "p, li { white-space: pre-wrap; }\n"
-                                            "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                            "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">Upcoming Events</span></p></body></html>"))
+                                                     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                                     "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                                     "p, li { white-space: pre-wrap; }\n"
+                                                     "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+                                                     "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">Upcoming Events</span></p></body></html>"))
+        self.home_login.setText(_translate("MainWindow", "Log In"))
         self.home_logout.setText(_translate("MainWindow", "Log Out "))
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
-                                      "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
+                                           "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.home_tab), _translate("MainWindow", "Home"))
 
         # User Settings
@@ -477,6 +483,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.event_ranks[x] = y
         print(x.activity)
 
+    def gotologin(self):
+        login_page = LogIn()
+        widget.addWidget(login_page)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
     def gotocreate(self):
         groupcreate = GroupCreate()
         widget.addWidget(groupcreate)  # should be changed to insertWidget and removeWidget
@@ -503,8 +514,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # print(len(self.groups))
 
     def add_member_group(self, new_user, the_group):
-        new_name = new_user.name  # need to find a way to get
-        print(new_user.name)
+        new_name = new_user  # need to find a way to get
+        print(new_user)
         print(the_group)
         # print(len(self.groups))
 
@@ -527,8 +538,46 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def update_event(self, event):
         self.event_title.setText(event.activity)
-        self.event_date.setText(event.time)
+        self.event_date.setText(event.time)  # time equals place??
         self.event_place.setText(event.place)
+
+
+class LogIn(QMainWindow):
+    def __init__(self):
+        super(LogIn, self).__init__()
+        loadUi("login.ui", self)
+        self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.login_acc_button.clicked.connect(self.login_acc)
+        self.signup_button.clicked.connect(self.nav)
+
+    def login_acc(self):
+        print("Logged In")
+        mwindow = MainWindow
+        widget.addWidget(mwindow)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+    def nav(self):
+        print("To Signup!")
+        signup_window = SignUp()
+        widget.addWidget(signup_window)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+class SignUp(QMainWindow):
+    def __init__(self):
+        super(SignUp, self).__init__()
+        loadUi("signup.ui", self)
+        self.signup_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.signup_c_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.signup_submit_button.clicked.connect(self.submit)
+
+    def submit(self):
+        print("Submitted")
+        login_window = LogIn()
+        widget.addWidget(login_window)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
 
 class GroupCreate(QMainWindow):
     def __init__(self):
@@ -555,7 +604,7 @@ class AddMember(QMainWindow):
     def submit(self):
         print("Added New Member")
         mwindow = MainWindow
-        new_user = user(self.name_entry.text())
+        new_user = self.name_entry.text()
         ui.add_member_group(new_user, str(self.group_name_entry.text()))
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -572,6 +621,7 @@ class RemoveMember(QMainWindow):
         mwindow = MainWindow
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
 
 class NewEvent(QMainWindow):
     def __init__(self):
@@ -596,6 +646,7 @@ if __name__ == "__main__":
 
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
+    ui.home_login.clicked.connect(ui.gotologin)
     ui.submitVote.clicked.connect(ui.voteResults)
     ui.add_group.clicked.connect(ui.gotocreate)
     ui.pushButton_6.clicked.connect(ui.gotoadd)
