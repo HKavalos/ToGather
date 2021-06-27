@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Pfefpo-PC\Desktop\frame widget.ui'
+# Form implementation generated from reading ui file 'C:\Users\Pfefpo-PC\PycharmProjects\pythonProject2\framewidget.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -15,13 +15,14 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(726, 300)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
+        self.gridLayout_2 = QtWidgets.QGridLayout(Form)
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.optionFrame_2 = QtWidgets.QFrame(Form)
-        self.optionFrame_2.setGeometry(QtCore.QRect(0, 2, 725, 221))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -30,8 +31,17 @@ class Ui_Form(object):
         self.optionFrame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.optionFrame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.optionFrame_2.setObjectName("optionFrame_2")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.optionFrame_2)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.gridLayout = QtWidgets.QGridLayout(self.optionFrame_2)
+        self.gridLayout.setObjectName("gridLayout")
+        self.radioButton_4 = QtWidgets.QRadioButton(self.optionFrame_2)
+        self.radioButton_4.setObjectName("radioButton_4")
+        self.gridLayout.addWidget(self.radioButton_4, 1, 1, 1, 1)
+        self.radioButton_5 = QtWidgets.QRadioButton(self.optionFrame_2)
+        self.radioButton_5.setObjectName("radioButton_5")
+        self.gridLayout.addWidget(self.radioButton_5, 1, 2, 1, 1)
+        self.radioButton_6 = QtWidgets.QRadioButton(self.optionFrame_2)
+        self.radioButton_6.setObjectName("radioButton_6")
+        self.gridLayout.addWidget(self.radioButton_6, 1, 3, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.optionFrame_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -40,16 +50,8 @@ class Ui_Form(object):
         self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
-        self.horizontalLayout_3.addWidget(self.label_2)
-        self.radioButton_4 = QtWidgets.QRadioButton(self.optionFrame_2)
-        self.radioButton_4.setObjectName("radioButton_4")
-        self.horizontalLayout_3.addWidget(self.radioButton_4)
-        self.radioButton_5 = QtWidgets.QRadioButton(self.optionFrame_2)
-        self.radioButton_5.setObjectName("radioButton_5")
-        self.horizontalLayout_3.addWidget(self.radioButton_5)
-        self.radioButton_6 = QtWidgets.QRadioButton(self.optionFrame_2)
-        self.radioButton_6.setObjectName("radioButton_6")
-        self.horizontalLayout_3.addWidget(self.radioButton_6)
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.optionFrame_2, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -57,7 +59,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.label_2.setText(_translate("Form", "Option"))
         self.radioButton_4.setText(_translate("Form", "1st"))
         self.radioButton_5.setText(_translate("Form", "2nd"))
         self.radioButton_6.setText(_translate("Form", "3rd"))
+        self.label_2.setText(_translate("Form", "Option"))
