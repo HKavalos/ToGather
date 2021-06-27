@@ -256,7 +256,7 @@ class Ui_MainWindow(object):
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l"+str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.description))
 
             temp = 0
             i = 1
@@ -410,8 +410,8 @@ class Ui_MainWindow(object):
         for x, y in self.event_ranks.items():
             if(x < top):
                 top = x
-                winner = y.activity
-            standings += "\n"+str(x)+". "+y.activity
+                winner = y.description
+            standings += "\n"+str(x)+". "+y.description
         submit_msg.setInformativeText(standings)
         submit_msg.exec_()
         winner_msg = QtWidgets.QMessageBox()
