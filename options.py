@@ -7,12 +7,11 @@ class Options:
     votes that are a pair of users and the vote choice: 1,2,3,4 . . .
     """
 
-    def __init__(self, activity, place, tim=Time(), chosen=False, votes=[]):
+    def __init__(self, activity, tim=Time(), chosen=False, votes=[]):
         self._activity = activity
         self._time = tim
         self._chosen = chosen
         self._votes = votes
-        self._place = place
 
     @property
     def activity(self):
@@ -45,11 +44,3 @@ class Options:
     @votes.setter
     def votes(self, votes):
         self._votes = votes
-
-    @property
-    def place(self):
-        return self._place
-
-    @place.setter
-    def place(self, place):
-        self._place = place
