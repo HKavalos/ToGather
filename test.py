@@ -301,7 +301,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.description))
 
             temp = 0
             c = 1
@@ -475,13 +475,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for x, y in self.event_ranks.items():
             if (y > top):
                 top = y
-                winner = x.activity
-            print(str(y) + ". " + x.activity)
+                winner = x.description
+            print(str(y) + ". " + x.description)
         print("\n" + winner + " has won the masses")
 
     def vote(self, x, y):
         self.event_ranks[x] = y
-        print(x.activity)
+        print(x.description)
 
     def gotologin(self):
         login_page = LogIn()
@@ -537,7 +537,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.label_16.setText(new_name)
 
     def update_event(self, event):
-        self.event_title.setText(event.activity)
+        self.event_title.setText(event.description)
         self.event_date.setText(event.time)  # time equals place??
         self.event_place.setText(event.place)
 
