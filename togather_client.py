@@ -1,5 +1,6 @@
 import io
 import socket
+import sys
 import threading
 import pickle
 import sqlite3
@@ -19,12 +20,12 @@ from group import group
 # Using name as primary key, storing serialized class objects as blobs (Binary Large Objects) in a sqlite3 database.
 # Each method uses a new database connection because sqlite throws an error if a single connection is accessed by more
 # than one thread.
-class Data:
+class Data(threading.local):
     DB_FILENAME = "db.db"
 
-    # TODO: Have database initialization in separate method that is called by __init__()
-    def __init__(self):
-        # Create database connection and create tables and as static variables if they don't already exist.
+    # Method to create database connection and create tables and as static variables if they don't already exist.
+    @staticmethod
+    def create_tables():
         try:
             db_connection = sqlite3.connect(Data.DB_FILENAME)
             cursor = db_connection.cursor()
@@ -35,73 +36,87 @@ class Data:
             db_connection.commit()
             db_connection.close()
         except Exception as e:
-            print(e.with_traceback())
+            print(e)
 
     # Delete database file. Useful if corrupted.
     @staticmethod
-    def reset():
+    def db_reset():
         try:
             os.remove(Data.DB_FILENAME)  # Dangerous :)
+            Data.create_tables()
         except Exception as e:
             print(e.with_traceback())
 
+    # Request a copy of database from server.  Fulfilled by other clients.
+    @staticmethod
+    def db_request():
+        sender = Client.Send("request_db()", 2)
+        sender.start()
+
     # Method to regenerate database using file received from server.
     @staticmethod
-    def reload(db):
-        Data.reset()
+    def db_reload(db):
+        Data.db_reset()
         try:
-            with open(Data.DB_FILENAME, "w") as file:
+            with open(Data.DB_FILENAME, "wb") as file:  # Write bytes back to file
                 file.write(db)
         except Exception as e:
             print(e.with_traceback())
 
-    # Method to send pickled db file to server when requested.  Unpickle will let us know it's a file in Receive class.
+    # Method to send pickled db to server when requested.  Unpickle will let us know it's a file in Receive class.
     @staticmethod
-    def send():
+    def db_send():
         try:
-            with open(Data.DB_FILENAME, "r") as file:
-                Client.send(pickle.dumps(file))
+            with open(Data.DB_FILENAME, "rb") as file:
+                db_file = file.read()
+                sender = Client.Send(db_file, 1)
+                sender.start()
         except Exception as e:
-            print(e.with_traceback())
+            print(e)
 
-    # TODO: Create methods to add objects that have already been serialized.
     @staticmethod
     def add_user(user):
         try:
-            db_connection = sqlite3.connect(Data.DB_FILENAME)
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-            db_connection.commit()
+            if Data.get_users(user.name) is None:
+                cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                db_connection.commit()
+                sender = Client.Send(pickle.dumps(user))
+                sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
     @staticmethod
-    def get_users(name=None):  # Returns selected user if parameter is given, otherwise returns tuple of all users
+    def get_users(name=None):  # Returns User object if parameter is given, otherwise returns list of all users
         try:
             if name is None:
-                db_connection = sqlite3.connect(Data.DB_FILENAME)
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
                 cursor.execute("SELECT `user` FROM `users`")
                 users = cursor.fetchall()
                 db_connection.commit()
                 db_connection.close()
+
                 # Unpickle each object into new list to return.
                 unpickled_users = []
                 for user in users:
                     unpickled_users.append(pickle.loads(user[0]))
                 return unpickled_users
             else:
-                db_connection = sqlite3.connect(Data.DB_FILENAME)
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
                 cursor.execute("SELECT `user` FROM `users` WHERE `name`=?", (name,))  # Parameter must be tuple
-                user = cursor.fetchone()
+                user = cursor.fetchone()  # Returns None if nothing found.
                 db_connection.commit()
                 db_connection.close()
-                user = pickle.loads(user[0])
+                if user is not None:
+                    user = pickle.loads(user[0])
                 return user
         except Exception as e:
-            print(e.with_traceback())  # User not found
+            print(e)
+            return None
 
 
 class Receive(threading.Thread):
@@ -115,44 +130,37 @@ class Receive(threading.Thread):
     def run(self):
         while True:
             try:
-                msg = self._sock.recv(4096)
+                length = int.from_bytes(self._sock.recv(4), "big")  # Get length of message from first 4 bytes
+                is_db = int.from_bytes(self._sock.recv(1), "big")
+                msg = self._sock.recv(length)
                 if msg:
                     try:  # Parse for string commands received from server.
                         cmd = msg.decode()
                         if cmd == "request_db()":  # Send db if requested
-                            print("Request for database file received.  Sending.")
-                            Data.send()
-                            break
-                    except Exception as e:
-                        print(e.with_traceback())
+                            print("Request for database file received. Sending.")
+                            Data.db_send()
+                    except UnicodeDecodeError:
+                        try:  # Try to unpickle if you can't decode
+                            unpickled_message = pickle.loads(msg)
+                            # Add received user to local db.
+                            if type(unpickled_message) is User:
+                                Data.add_user(unpickled_message)
+                            elif type(unpickled_message) is event:
+                                pass
+                            elif type(unpickled_message) is message:
+                                pass
+                        except pickle.PickleError as e:
+                            # Must be a database file we need to load.
+                            # TODO: Check if received file is actually db.db
+                            try:
+                                print("Database file received.  Reloading.")
+                                Data.db_reload(msg)
+                            except Exception as e:
+                                # print(e.with_traceback())
+                                pass
 
-                    unpickled_message = pickle.loads(msg)
-
-                    # Add received user to local db.
-                    if type(unpickled_message) is User:
-                        print("User data received from server.")
-                        print("Name:", unpickled_message.name)
-                        print("Groups:", unpickled_message.groups)
-                        Data.add_user(unpickled_message)
-
-                    elif type(unpickled_message) is event:
-                        print("Event data received from server.")
-                        print("Activity:", unpickled_message.activity)
-                        print("Time:", unpickled_message.time)
-                        print("Place:", unpickled_message.place)
-
-                    elif type(unpickled_message) is message:
-                        print("Event data received from server.")
-                        print("Sender:", unpickled_message.sender)
-                        print("Recipient:", unpickled_message.reciever)
-                        print("Message:", unpickled_message.message)
-
-                    # Load database if file is received.
-                    # TODO: This could be a security flaw because we're not checking if received file is actually db.db
-                    elif type(unpickled_message) is io.BytesIO:
-                        print("Database file received.  Reloading.")
-                        Data.reload(unpickled_message)
-            except OSError:  # Catch exception when loop trys to connect after program closes socket.
+            except OSError as e:  # Catch exception when loop trys to connect after program closes socket.
+                print(e)
                 break
 
 
@@ -160,11 +168,12 @@ class Receive(threading.Thread):
 # Changed so that connection is stored as class variable and can be accessed from other classes we define.
 class Client(threading.Thread):
 
-    sock = socket.socket  # Store connection info outside of instances.
+    sock = socket.socket()  # Store connection info outside of instances.
 
     def __init__(self, addr):
         super().__init__()
         self._address = addr
+        data = Data()
 
     def run(self):
         with socket.create_connection(address) as srv:
@@ -192,71 +201,63 @@ class Client(threading.Thread):
             while selection != "0":
 
                 if selection == "1":
-                    first_user = User("Ryan")
-                    first_user.groups = ["Group1", "Group2"]
-                    print("first_user created, sending.")
-                    Client.send(first_user)
-                    second_user = User("RyRy")
-                    second_user.groups = ["Group2"]
-                    print("second_user created, sending.")
-                    Client.send(second_user)
+                    Data.add_user(User("Ryan", ["Constraint1"], ["Group1", "Group2"]))
+                    Data.add_user(User("RyRy", ["Constraint1", "Constraint2"], ["Group2"]))
 
                 elif selection == "2":
-                    Client.send(event("activity1", "time to shine", "florida"))
-                    Client.send(event("activity2", "afternoon", "texas"))
+                    Client.Send(event("activity1", "time to shine", "florida"))
+                    Client.Send(event("activity2", "afternoon", "texas"))
 
                 elif selection == "3":
-                    Client.send(message("test_sender","test_recipient", "test_message"))
-                    Client.send(message("test_sender2", "test_recipient2", "test_message2"))
+                    Client.Send(message("test_sender","test_recipient", "test_message"))
+                    Client.Send(message("test_sender2", "test_recipient2", "test_message2"))
 
                 elif selection == "4":  # Test database
-                    # First, get some sample data
-                    first_user = User("Ryan")
-                    first_user.groups = ["Group1", "Group2"]
-                    second_user = User("RyRy")
-                    second_user.groups = ["Group2"]
-                    Data.reset()  # Delete the database file if it exists.  Prints error if it doesn't
-                    Data()  # Initialize Data class to create tables.
-                    Data.add_user(first_user)  # Add first user to table.
-                    # Print all users.  get_users() returns a list of singular tuples that must be unpickled.
-                    # TODO: Unpickle in get_users() instead of here? Or at least get rid of singular tuples.
-                    for user in Data.get_users():
-                        print(user.name, user.groups)
-                    # Repeat for second user.
-                    Data.add_user(second_user)
-                    for user in Data.get_users():
-                        print("Name:", user.name, "Groups:", user.groups)
-                    # Search for each user by name.
-                    search_result = Data.get_users(first_user.name)
-                    print(search_result.name, search_result.groups)
-                    search_result = Data.get_users(second_user.name)
-                    print(search_result.name, search_result.groups)
+                    pass
 
                 elif selection == "5":  # Request database from server.
-                    Client.send("request_db()".encode())
+                    Data.db_request()
 
                 elif selection == "6":  # Print users from local database
-                    for user in Data.get_users():
-                        print(user.name, user.groups)
+                    for user in Data().get_users():
+                        print(user.name, user.constraints, user.groups)
 
                 elif selection == "7":  # Deletes database and reinitializes.
-                    Data.reset()
-                    Data()
+                    Data.db_reset()
 
                 selection = input("\nEnter selection:")
 
             srv.sendall("exit()".encode())  # Send exit command to server.
 
-    # TODO: Send data in separate thread?
-    # Accepts an object and then pickles before sending to server.
-    @staticmethod
-    def send(obj):
-        Client.sock.sendall(pickle.dumps(obj))  # TODO: Implement compression, catch socket errors
+    # Creates a thread to accept an object and then encode or pickle before sending to server, depending on object type.
+    # Attaches a 4 byte header to the object that specifies size
+    # is_db is added to header, let's server know to only request from newest connection
+    class Send(threading.Thread):
+        def __init__(self, obj, is_db=0):
+            super().__init__()
+            self.obj = obj
+            self.is_db = is_db
+
+        def run(self):
+            if type(self.obj) is str:
+                self.obj = self.obj.encode()
+
+            self.attach_header()
+            Client.sock.sendall(self.obj)
+
+        # Appends length of object being sent to beginning of it's byte string
+        # Also adds a byte to specify if this is a database file.
+        def attach_header(self):
+            prefix = sys.getsizeof(self.obj)  # Get length of message so we can create header.
+            prefix = prefix.to_bytes(4, "big")  # Convert length to bytes
+            self.is_db = bytes([self.is_db])
+            # Create bytearray to add header then convert back to bytes.
+            self.obj = bytes(bytearray(prefix + self.is_db + self.obj))
 
 
 if __name__ == '__main__':
     # TODO: Make host IP configurable by user.
-    address = ("99.167.109.219", 55557)
+    address = ("localhost", 55557)
     client = Client(address)
     client.start()
     print("Client started.")
