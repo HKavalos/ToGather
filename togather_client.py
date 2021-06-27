@@ -5,6 +5,7 @@ import threading
 import pickle
 import sqlite3
 import os
+import time
 import traceback
 
 from user import User
@@ -213,7 +214,7 @@ class Client(threading.Thread):
                     Client.Send(message("test_sender2", "test_recipient2", "test_message2"))
 
                 elif selection == "4":  # Test database
-                    pass
+                    Data.add_user(User("third_user", ["Constraint12"], ["Group12", "Group22"]))
 
                 elif selection == "5":  # Request database from server.
                     Data.db_request()

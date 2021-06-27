@@ -17,7 +17,7 @@ class PythonHandler(BaseRequestHandler):
         data = ""
         print("Connected to client: %s:%d" % self.client_address)
 
-        # TODO: Commands for server. Ping?
+        # TODO: Exit command needs to close connection
         # TODO: Create method to handle header
         while data != "exit()":
             length = int.from_bytes(self.request.recv(4), "big")  # Get length of message from first 4 bytes
