@@ -562,8 +562,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def update_event(self, event):
         self.event_title.setText(event.description)
-        self.event_date.setText(event.options)  # time equals place??
-        self.event_place.setText(event.status)
+        self.event_date.setText(event.time)  # time equals place??
+        self.event_place.setText(event.place)
 
 
 class LogIn(QMainWindow):
