@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from event import Event
 
 class VoteButton(QtWidgets.QRadioButton):
     def __init__(self, f):

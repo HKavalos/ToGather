@@ -1,4 +1,4 @@
-class event:
+class Event:
     """A class that contains a list of options, a description and is either"""
     "complete or incomplete, completes are in the calendar, both are in the group"
 

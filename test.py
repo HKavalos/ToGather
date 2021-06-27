@@ -11,8 +11,8 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
 from PyQt5.uic import loadUi
-from group import group
-from user import user
+from group import Group
+from user import User
 from event import Event
 
 

@@ -1,4 +1,4 @@
-class group:
+class Group:
     "the group class contains a list of users, a list of events and a calendar"
     def __init__(self, calendar, name="", users=[], events=[]):
         self._calendar = calendar
