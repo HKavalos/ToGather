@@ -74,7 +74,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setGeometry(QtCore.QRect(30, 30, 141, 16))
         self.home_new_messages.setObjectName("home_new_messages")
         self.home_image = QtWidgets.QLabel(self.home_tab)
-        self.home_image.setGeometry(QtCore.QRect(460, 0, 301, 161))
+        self.home_image.setGeometry(QtCore.QRect(470, 20, 211, 101))
         self.home_image.setObjectName("home_image")
         self.mainTab.addTab(self.home_tab, "")
 
@@ -382,9 +382,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
                                            "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
-        pixmap = QtGui.QPixmap('img/Logo.png')
-        self.home_image.setPixmap(pixmap)
-        self.home_image.setScaledContents(True)
         self.mainTab.setTabText(self.mainTab.indexOf(self.home_tab), _translate("MainWindow", "Home"))
 
         # User Settings
@@ -564,9 +561,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.label_16.setText(new_name)
 
     def update_event(self, event):
-        self.event_title.setText(event.activity)
-        self.event_date.setText(event.time)  # time equals place??
-        self.event_place.setText(event.place)
+        self.event_title.setText(event.description)
+        self.event_date.setText(event.options)  # time equals place??
+        self.event_place.setText(event.status)
 
 
 class LogIn(QMainWindow):
@@ -615,7 +612,7 @@ class GroupCreate(QMainWindow):
     def submit(self):
         print("Submitted")
         mwindow = MainWindow
-        new_group = group("not available", str(self.group_name_entry.text()))
+        new_group = Group("not available", str(self.group_name_entry.text()))
         # mwindow.groups.append(new_group)
         ui.update_group(new_group)
         widget.addWidget(mwindow)
@@ -683,7 +680,4 @@ if __name__ == "__main__":
     widget.setMinimumWidth(1280)
     widget.setMinimumHeight(720)
     widget.show()
-
-    ui.mainTab.setCurrentIndex(0)
-
     sys.exit(app.exec_())
