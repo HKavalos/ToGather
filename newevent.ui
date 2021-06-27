@@ -29,7 +29,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Add Member</string>
+     <string>Add Event</string>
     </property>
    </widget>
    <widget class="QLabel" name="name_label">
@@ -61,8 +61,8 @@
    <widget class="QPushButton" name="submission_button">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>140</y>
+      <x>140</x>
+      <y>200</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -71,7 +71,7 @@
      <string>Submit</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="group_name_entry">
+   <widget class="QLineEdit" name="date_entry">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -81,10 +81,10 @@
      </rect>
     </property>
     <property name="text">
-     <string/>
+     <string>mm/dd/yyyy</string>
     </property>
    </widget>
-   <widget class="QLabel" name="group_name_label">
+   <widget class="QLabel" name="date_label">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -94,7 +94,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>Group Name:</string>
+     <string>Date:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="place_entry">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>140</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="date_label_2">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Place:</string>
     </property>
    </widget>
   </widget>
