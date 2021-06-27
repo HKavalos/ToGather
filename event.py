@@ -2,10 +2,19 @@ class Event:
     """A class that contains a list of options, a description and is either"""
     "complete or incomplete, completes are in the calendar, both are in the group"
 
-    def __init__(self, description="", options=[], status=False):
+    def __init__(self, name, description="", options=[], status=False):
+        self._name = name
         self._description = description
         self._options = options
         self._status = status
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @property
     def description(self):

@@ -64,6 +64,7 @@ if __name__ == '__main__':
     # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
     # Creates an instance of PythonHandler class whenever connection is received from server.
     # ThreadingTCPServer uses threads to connect to each client.
+    # Use
     with ThreadingTCPServer(("localhost", 55557), PythonHandler) as _server:
         _server.allow_reuse_address = True
         print("Python server started.")

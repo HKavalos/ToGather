@@ -268,7 +268,7 @@ class Ui_MainWindow(object):
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
                 self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
-
+                
                 temp += 1
                 i += 1
             count += 1
@@ -395,7 +395,7 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.tab_9), _translate("MainWindow", "Messages"))
-
+        
     # Determines which event won among the submitted results.
     # A notification popup informs the user that they successfully submitted their vote.
     # After the winner is chosen, another popup appears stating which event won.
@@ -430,7 +430,6 @@ class Ui_MainWindow(object):
             if (k == y):
                 return x
         return "Error: event doesn't exist."
-
     # Switches the rankings between different events based on the option the user picks.
     # - Rebecca Ling
     def vote(self, x, y):
