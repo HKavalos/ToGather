@@ -32,6 +32,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def setupUi(self, MainWindow):
 
         # Main
+        MainWindow.setWindowTitle("ToGather")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -383,6 +384,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Welcome Page"))
 
+
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
         self.commandLinkButton_4.setText(_translate("MainWindow", "Vote 2"))
@@ -664,7 +666,10 @@ class AddMember(QMainWindow):
         new_user = self.name_entry.text()
         # ui.add_member_group(new_user, str(self.group_name_entry.text()))
         Data.add_user(User(new_user))
-        circlearr[0].label.setText(new_user)
+        if len(circlearr) != 0:
+            circlearr[0].label.setText(new_user)
+        else:
+            print("No current circles!")
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -709,7 +714,7 @@ class NewEvent(QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(["ToGather"])
     widget = QtWidgets.QStackedWidget()
     MainWindow = QtWidgets.QMainWindow()
     widget.addWidget(MainWindow)
