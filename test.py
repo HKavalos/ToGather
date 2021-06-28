@@ -22,9 +22,9 @@ from togather_server import *
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
-    e1 = Event("Arcade", "Play games!", "12:00 p.m.", False)
-    e2 = Event("Donut Taste Testing", "You never know what you're gonna get!", "1:00 p.m.", False)
-    e3 = Event("Paintball", "Free tie-dye!", "12:00 p.m.", False)
+    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
+    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
+    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House")
     event_ranks = {1: e1, 2: e2, 3: e3}
 
     def setupUi(self, MainWindow):
@@ -299,7 +299,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.description))
 
             temp = 0
             i = 1
@@ -488,8 +488,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for x, y in self.event_ranks.items():
             if(x < top):
                 top = x
-                winner = y.name
-            standings += "\n"+str(x)+". "+y.name
+                winner = y.description
+            standings += "\n"+str(x)+". "+y.description
         submit_msg.setInformativeText(standings)
         submit_msg.exec_()
         winner_msg = QtWidgets.QMessageBox()
