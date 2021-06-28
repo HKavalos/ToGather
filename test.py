@@ -636,7 +636,7 @@ class AddMember(QMainWindow):
         mwindow = MainWindow
         new_user = self.name_entry.text()
         ui.add_member_group(new_user, str(self.group_name_entry.text()))
-        Data.add_user(new_user)
+        Data.add_user(User(new_user))
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
