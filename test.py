@@ -690,6 +690,8 @@ if __name__ == "__main__":
     widget.setMinimumHeight(720)
     widget.show()
     ui.mainTab.setCurrentIndex(0)
+    Data.create_tables()
+    Data.db_reset()
     sys.exit(app.exec_())
 
     with ThreadingTCPServer(("localhost", 55557), PythonHandler) as _server:
