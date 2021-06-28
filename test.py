@@ -615,6 +615,7 @@ class GroupCreate(QMainWindow):
         print("Submitted")
         mwindow = MainWindow
         new_group = Group("not available", str(self.group_name_entry.text()))
+        Data.add_group(new_group)
         # mwindow.groups.append(new_group)
         ui.update_group(new_group)
         widget.addWidget(mwindow)
@@ -632,6 +633,7 @@ class AddMember(QMainWindow):
         mwindow = MainWindow
         new_user = self.name_entry.text()
         ui.add_member_group(new_user, str(self.group_name_entry.text()))
+        Data.add_member(add_member)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -659,6 +661,7 @@ class NewEvent(QMainWindow):
         print("Added Event")
         mwindow = MainWindow
         new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
+        Data.add_event(new_event)
         ui.update_event(new_event)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -678,6 +681,7 @@ if __name__ == "__main__":
     ui.pushButton_6.clicked.connect(ui.gotoadd)
     ui.pushButton_7.clicked.connect(ui.gotoremove)
     ui.add_event.clicked.connect(ui.gotoaddevent)
+    print()
 
     widget.setMinimumWidth(1280)
     widget.setMinimumHeight(720)
