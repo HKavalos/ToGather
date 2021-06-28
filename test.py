@@ -20,7 +20,7 @@ from togather_server import *
 import eventwidget
 import groupwidget
 
-
+circlearr = []
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
@@ -645,8 +645,8 @@ class GroupCreate(QMainWindow):
         frames = groupwidget.Ui_Form()
         frames.setupUi(app)
         frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
+        circlearr.append(frames)
         ui.scrollArea2WidgetContents.layout().addWidget(app)
-
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -663,6 +663,7 @@ class AddMember(QMainWindow):
         new_user = self.name_entry.text()
         # ui.add_member_group(new_user, str(self.group_name_entry.text()))
         Data.add_user(User(new_user))
+        circlearr[0].label.setText(new_user)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
