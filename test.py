@@ -17,19 +17,22 @@ from user import User
 from event import Event
 from VoteButton import VoteButton
 from togather_server import *
+import eventwidget
+import groupwidget
 
-
+circlearr = []
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
-    e1 = Event("Arcade", "Play games!", "12:00 p.m.", False)
-    e2 = Event("Donut Taste Testing", "You never know what you're gonna get!", "1:00 p.m.", False)
-    e3 = Event("Paintball", "Free tie-dye!", "12:00 p.m.", False)
+    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
+    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
+    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House")
     event_ranks = {1: e1, 2: e2, 3: e3}
 
     def setupUi(self, MainWindow):
 
         # Main
+        MainWindow.setWindowTitle("ToGather")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -131,24 +134,27 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.add_event = QtWidgets.QPushButton(self.events_tab)
         self.add_event.setGeometry(QtCore.QRect(1100, 50, 91, 23))
         self.add_event.setObjectName("add_event")
-        self.event_title = QtWidgets.QLabel(self.events_tab)
-        self.event_title.setGeometry(QtCore.QRect(850, 70, 111, 21))
-        self.event_title.setObjectName("event_title")
-        self.event_date = QtWidgets.QLabel(self.events_tab)
-        self.event_date.setGeometry(QtCore.QRect(850, 90, 111, 21))
-        self.event_date.setObjectName("event_date")
-        self.event_place = QtWidgets.QLabel(self.events_tab)
-        self.event_place.setGeometry(QtCore.QRect(850, 110, 111, 21))
-        self.event_place.setObjectName("event_author")
-        # self.stackedWidget_2 = QtWidgets.QStackedWidget(self.events_tab)
-        # self.stackedWidget_2.setGeometry(QtCore.QRect(530, 60, 521, 471))
-        # self.stackedWidget_2.setObjectName("stackedWidget_2")
-        # self.page_4 = QtWidgets.QWidget()
-        # self.page_4.setObjectName("page_4")
-        # self.stackedWidget_2.addWidget(self.page_4)
-        # self.page_5 = QtWidgets.QWidget()
-        # self.page_5.setObjectName("page_5")
-        # self.stackedWidget_2.addWidget(self.page_5)
+        self.scrollArea = QtWidgets.QScrollArea(self.events_tab)
+        self.scrollArea.setGeometry(QtCore.QRect(750, 80, 400, 500))
+        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 300, 100))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.gridLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        # self.event_title = QtWidgets.QLabel(self.scrollArea)
+        # self.event_title.setGeometry(QtCore.QRect(850, 70, 111, 21))
+        # self.event_title.setObjectName("event_title")
+        # self.event_date = QtWidgets.QLabel(self.scrollArea)
+        # self.event_date.setGeometry(QtCore.QRect(850, 90, 111, 21))
+        # self.event_date.setObjectName("event_date")
+        # self.event_place = QtWidgets.QLabel(self.scrollArea)
+        # self.event_place.setGeometry(QtCore.QRect(850, 110, 111, 21))
+        # self.event_place.setObjectName("event_author")
         self.mainTab.addTab(self.events_tab, "")
 
         # Schedule
@@ -219,62 +225,76 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Circles
         self.circles_tab = QtWidgets.QWidget()
         self.circles_tab.setObjectName("circles_tab")
-        self.stackedWidget_3 = QtWidgets.QStackedWidget(self.circles_tab)
-        self.stackedWidget_3.setGeometry(QtCore.QRect(230, 80, 641, 431))
-        self.stackedWidget_3.setObjectName("stackedWidget_3")
-        self.page_6 = QtWidgets.QWidget()
-        self.page_6.setObjectName("page_6")
-        self.frame_4 = QtWidgets.QFrame(self.page_6)
-        self.frame_4.setGeometry(QtCore.QRect(70, 20, 501, 391))
-        self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_4.setObjectName("frame_4")
-        self.circle_name = QtWidgets.QLabel(self.frame_4)
-        self.circle_name.setGeometry(QtCore.QRect(230, 10, 151, 16))
-        self.circle_name.setObjectName("circle_name")
-        self.add_group = QtWidgets.QPushButton(self.frame_4)
-        self.add_group.setGeometry(QtCore.QRect(380, 270, 91, 23))
+        # self.stackedWidget_3 = QtWidgets.QStackedWidget(self.circles_tab)
+        # self.stackedWidget_3.setGeometry(QtCore.QRect(230, 80, 641, 431))
+        # self.stackedWidget_3.setObjectName("stackedWidget_3")
+        # self.page_6 = QtWidgets.QWidget()
+        # self.page_6.setObjectName("page_6")
+        # self.frame_4 = QtWidgets.QFrame(self.page_6)
+        # self.frame_4.setGeometry(QtCore.QRect(70, 20, 501, 391))
+        # self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_4.setObjectName("frame_4")
+        # self.circle_name = QtWidgets.QLabel(self.frame_4)
+        # self.circle_name.setGeometry(QtCore.QRect(230, 10, 151, 16))
+        # self.circle_name.setObjectName("circle_name")
+        self.circle_title = QtWidgets.QLabel(self.circles_tab)
+        self.circle_title.setGeometry(QtCore.QRect(600, 40, 151, 16))
+        self.circle_title.setObjectName("circle_title")
+        self.add_group = QtWidgets.QPushButton(self.circles_tab)
+        self.add_group.setGeometry(QtCore.QRect(800, 270, 112, 26))
         self.add_group.setObjectName("add_group")
-        self.pushButton_6 = QtWidgets.QPushButton(self.frame_4)
-        self.pushButton_6.setGeometry(QtCore.QRect(380, 300, 91, 23))
+        self.pushButton_6 = QtWidgets.QPushButton(self.circles_tab)
+        self.pushButton_6.setGeometry(QtCore.QRect(800, 300, 112, 26))
         self.pushButton_6.setObjectName("pushButton_6")
-        self.pushButton_7 = QtWidgets.QPushButton(self.frame_4)
-        self.pushButton_7.setGeometry(QtCore.QRect(380, 330, 91, 23))
+        self.pushButton_7 = QtWidgets.QPushButton(self.circles_tab)
+        self.pushButton_7.setGeometry(QtCore.QRect(800, 330, 112, 26))
         self.pushButton_7.setObjectName("pushButton_7")
-        self.graphicsView_3 = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView_3.setGeometry(QtCore.QRect(30, 70, 71, 81))
-        self.graphicsView_3.setObjectName("graphicsView_3")
-        self.graphicsView_4 = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView_4.setGeometry(QtCore.QRect(120, 70, 71, 81))
-        self.graphicsView_4.setObjectName("graphicsView_4")
-        self.graphicsView_5 = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView_5.setGeometry(QtCore.QRect(220, 70, 71, 81))
-        self.graphicsView_5.setObjectName("graphicsView_5")
-        self.graphicsView_6 = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView_6.setGeometry(QtCore.QRect(410, 70, 71, 81))
-        self.graphicsView_6.setObjectName("graphicsView_6")
-        self.graphicsView_7 = QtWidgets.QGraphicsView(self.frame_4)
-        self.graphicsView_7.setGeometry(QtCore.QRect(320, 70, 71, 81))
-        self.graphicsView_7.setObjectName("graphicsView_7")
-        self.label_16 = QtWidgets.QLabel(self.frame_4)
-        self.label_16.setGeometry(QtCore.QRect(40, 160, 51, 16))
-        self.label_16.setObjectName("label_16")
-        self.label_17 = QtWidgets.QLabel(self.frame_4)
-        self.label_17.setGeometry(QtCore.QRect(130, 160, 51, 16))
-        self.label_17.setObjectName("label_17")
-        self.label_18 = QtWidgets.QLabel(self.frame_4)
-        self.label_18.setGeometry(QtCore.QRect(230, 160, 51, 16))
-        self.label_18.setObjectName("label_18")
-        self.label_19 = QtWidgets.QLabel(self.frame_4)
-        self.label_19.setGeometry(QtCore.QRect(330, 160, 51, 16))
-        self.label_19.setObjectName("label_19")
-        self.label_20 = QtWidgets.QLabel(self.frame_4)
-        self.label_20.setGeometry(QtCore.QRect(420, 160, 51, 16))
-        self.label_20.setObjectName("label_20")
-        self.stackedWidget_3.addWidget(self.page_6)
-        self.page_7 = QtWidgets.QWidget()
-        self.page_7.setObjectName("page_7")
-        self.stackedWidget_3.addWidget(self.page_7)
+        self.scrollArea2 = QtWidgets.QScrollArea(self.circles_tab)
+        self.scrollArea2.setGeometry(QtCore.QRect(350, 140, 400, 500))
+        self.scrollArea2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.scrollArea2.setObjectName("scrollArea")
+        self.scrollArea2.setWidgetResizable(True)
+        self.scrollArea2WidgetContents = QtWidgets.QWidget()
+        self.scrollArea2WidgetContents.setGeometry(QtCore.QRect(0, 0, 300, 100))
+        self.scrollArea2WidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.gridLayout_4 = QtWidgets.QVBoxLayout(self.scrollArea2WidgetContents)
+        self.gridLayout_4.setObjectName("gridLayout_3")
+        self.scrollArea2.setWidget(self.scrollArea2WidgetContents)
+        # self.graphicsView_3 = QtWidgets.QGraphicsView(self.frame_4)
+        # self.graphicsView_3.setGeometry(QtCore.QRect(30, 70, 71, 81))
+        # self.graphicsView_3.setObjectName("graphicsView_3")
+        # self.graphicsView_4 = QtWidgets.QGraphicsView(self.frame_4)
+        # self.graphicsView_4.setGeometry(QtCore.QRect(120, 70, 71, 81))
+        # self.graphicsView_4.setObjectName("graphicsView_4")
+        # self.graphicsView_5 = QtWidgets.QGraphicsView(self.frame_4)
+        # self.graphicsView_5.setGeometry(QtCore.QRect(220, 70, 71, 81))
+        # self.graphicsView_5.setObjectName("graphicsView_5")
+        # self.graphicsView_6 = QtWidgets.QGraphicsView(self.frame_4)
+        # self.graphicsView_6.setGeometry(QtCore.QRect(410, 70, 71, 81))
+        # self.graphicsView_6.setObjectName("graphicsView_6")
+        # self.graphicsView_7 = QtWidgets.QGraphicsView(self.frame_4)
+        # self.graphicsView_7.setGeometry(QtCore.QRect(320, 70, 71, 81))
+        # self.graphicsView_7.setObjectName("graphicsView_7")
+        # self.label_16 = QtWidgets.QLabel(self.frame_4)
+        # self.label_16.setGeometry(QtCore.QRect(40, 160, 51, 16))
+        # self.label_16.setObjectName("label_16")
+        # self.label_17 = QtWidgets.QLabel(self.frame_4)
+        # self.label_17.setGeometry(QtCore.QRect(130, 160, 51, 16))
+        # self.label_17.setObjectName("label_17")
+        # self.label_18 = QtWidgets.QLabel(self.frame_4)
+        # self.label_18.setGeometry(QtCore.QRect(230, 160, 51, 16))
+        # self.label_18.setObjectName("label_18")
+        # self.label_19 = QtWidgets.QLabel(self.frame_4)
+        # self.label_19.setGeometry(QtCore.QRect(330, 160, 51, 16))
+        # self.label_19.setObjectName("label_19")
+        # self.label_20 = QtWidgets.QLabel(self.frame_4)
+        # self.label_20.setGeometry(QtCore.QRect(420, 160, 51, 16))
+        # self.label_20.setObjectName("label_20")
+        # self.stackedWidget_3.addWidget(self.page_6)
+        # self.page_7 = QtWidgets.QWidget()
+        # self.page_7.setObjectName("page_7")
+        # self.stackedWidget_3.addWidget(self.page_7)
         self.mainTab.addTab(self.circles_tab, "")
 
         # Voting
@@ -299,7 +319,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.description))
 
             temp = 0
             i = 1
@@ -357,12 +377,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.retranslateUi(MainWindow)
         self.mainTab.setCurrentIndex(5)
         self.home_votes_widget.setCurrentIndex(1)
-        self.stackedWidget_3.setCurrentIndex(0)
+        # self.stackedWidget_3.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Welcome Page"))
+
 
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
@@ -405,6 +426,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Events
         self.upcoming_events_title.setText(_translate("MainWindow", "Upcoming Events"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.events_tab), _translate("MainWindow", "Events"))
+        # self.event_date.setText(_translate("MainWindow", "Event Date"))
+        # self.event_place.setText(_translate("MainWindow", "Event Place"))
+        # self.event_title.setText(_translate("MainWindow", "Event Title"))
 
         # Schedule
         self.label_6.setText(_translate("MainWindow", "Sunday"))
@@ -419,19 +443,17 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
 
         # Circles
-        self.circle_name.setText(_translate("MainWindow", "Circle Name"))
+        self.circle_title.setText(_translate("MainWindow", "Circles"))
+        # self.circle_name.setText(_translate("MainWindow", "Circle Name"))
         self.add_group.setText(_translate("MainWindow", "Add Circle"))
         self.pushButton_6.setText(_translate("MainWindow", "Add Member"))
         self.pushButton_7.setText(_translate("MainWindow", "Remove Member"))
         self.add_event.setText(_translate("MainWindow", "Add Event"))
-        self.event_date.setText(_translate("MainWindow", "Event Date"))
-        self.event_place.setText(_translate("MainWindow", "Event Place"))
-        self.event_title.setText(_translate("MainWindow", "Event Title"))
-        self.label_16.setText(_translate("MainWindow", "Username"))
-        self.label_17.setText(_translate("MainWindow", "Username"))
-        self.label_18.setText(_translate("MainWindow", "Username"))
-        self.label_19.setText(_translate("MainWindow", "Username"))
-        self.label_20.setText(_translate("MainWindow", "Username"))
+        # self.label_16.setText(_translate("MainWindow", "Username"))
+        # self.label_17.setText(_translate("MainWindow", "Username"))
+        # self.label_18.setText(_translate("MainWindow", "Username"))
+        # self.label_19.setText(_translate("MainWindow", "Username"))
+        # self.label_20.setText(_translate("MainWindow", "Username"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.circles_tab), _translate("MainWindow", "Circles"))
 
         # Voting
@@ -488,8 +510,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for x, y in self.event_ranks.items():
             if(x < top):
                 top = x
-                winner = y.name
-            standings += "\n"+str(x)+". "+y.name
+                winner = y.description
+            standings += "\n"+str(x)+". "+y.description
         submit_msg.setInformativeText(standings)
         submit_msg.exec_()
         winner_msg = QtWidgets.QMessageBox()
@@ -620,7 +642,14 @@ class GroupCreate(QMainWindow):
         new_group = Group("not available", str(self.group_name_entry.text()))
         Data.add_group(new_group)
         # mwindow.groups.append(new_group)
-        ui.update_group(new_group)
+        # ui.update_group(new_group)
+
+        app = QtWidgets.QFrame()
+        frames = groupwidget.Ui_Form()
+        frames.setupUi(app)
+        frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
+        circlearr.append(frames)
+        ui.scrollArea2WidgetContents.layout().addWidget(app)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -635,8 +664,12 @@ class AddMember(QMainWindow):
         print("Added New Member")
         mwindow = MainWindow
         new_user = self.name_entry.text()
-        ui.add_member_group(new_user, str(self.group_name_entry.text()))
+        # ui.add_member_group(new_user, str(self.group_name_entry.text()))
         Data.add_user(User(new_user))
+        if len(circlearr) != 0:
+            circlearr[0].label.setText(new_user)
+        else:
+            print("No current circles!")
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -666,13 +699,22 @@ class NewEvent(QMainWindow):
         new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
         Data.add_event(new_event)
         print(Data.get_events(new_event.name).name)
-        ui.update_event(new_event)
+        #ui.update_event(new_event)
+
+        app = QtWidgets.QFrame()
+        frames = eventwidget.Ui_Form()
+        frames.setupUi(app)
+        frames.name_label.setText("Name: " + self.name_entry.text())
+        frames.date_label.setText("Date: " + self.date_entry.text())
+        frames.place_label.setText("Place: " + self.place_entry.text())
+        ui.scrollAreaWidgetContents.layout().addWidget(app)
+
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(["ToGather"])
     widget = QtWidgets.QStackedWidget()
     MainWindow = QtWidgets.QMainWindow()
     widget.addWidget(MainWindow)
