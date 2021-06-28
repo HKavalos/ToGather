@@ -8,7 +8,7 @@ import os
 from user import User
 from event import Event
 from group import Group
-from calendar import Calendar
+from calendar import GroupCalendar
 from option import Option
 # TODO: Use CamelCase for class names
 
@@ -369,7 +369,7 @@ class Receive(threading.Thread):
                                 Data.add_event(unpickled_message)
                             elif type(unpickled_message) is Group:
                                 Data.add_group(unpickled_message)
-                            elif type(unpickled_message) is Calendar:
+                            elif type(unpickled_message) is GroupCalendar:
                                 Data.add_calendar(unpickled_message)
                             elif type(unpickled_message) is Option:
                                 Data.add_option(unpickled_message)
@@ -400,14 +400,14 @@ class Client(threading.Thread):
         data = Data()
 
     def run(self):
-        with socket.create_connection(address) as srv:
+        with socket.create_connection(self._address) as srv:
             Client.sock = srv
 
             # Start Receive thread to listen for data from server.
             rcv = Receive(srv)
             rcv.start()
 
-            print("Connected to server: %s:%d\n" % address)
+            print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
             print("-1. Request database.")
             print("0. Reset database.\n")
@@ -485,11 +485,11 @@ class Client(threading.Thread):
                         print(group.name, group.calendar, group.users, group.events)
                         
                 if selection == "7":  # Add different calendars for testing
-                    Data.add_calendar(Calendar("Calendar1", ["Event1", "Event2"]))
+                    Data.add_calendar(GroupCalendar("Calendar1", ["Event1", "Event2"]))
                 elif selection == "77":
-                    Data.add_calendar(Calendar("Calendar2", ["Event11", "Event22"]))
+                    Data.add_calendar(GroupCalendar("Calendar2", ["Event11", "Event22"]))
                 elif selection == "777":
-                    Data.add_calendar(Calendar("Calendar3", ["Event111", "Event222"]))
+                    Data.add_calendar(GroupCalendar("Calendar3", ["Event111", "Event222"]))
 
                 elif selection == "8":  # Print calendars from local database
                     for calendar in Data().get_calendars():
