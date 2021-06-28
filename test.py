@@ -26,7 +26,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # - Rebecca Ling
     e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
     e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House")
+    e3 = Event("Paintball", "11:00 p.m.", "Hazel's House")
     event_ranks = {1: e1, 2: e2, 3: e3}
 
     def setupUi(self, MainWindow):
