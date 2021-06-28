@@ -76,7 +76,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setGeometry(QtCore.QRect(30, 30, 141, 16))
         self.home_new_messages.setObjectName("home_new_messages")
         self.home_image = QtWidgets.QLabel(self.home_tab)
-        self.home_image.setGeometry(QtCore.QRect(470, 20, 211, 101))
+        self.home_image.setGeometry(QtCore.QRect(460, 0, 301, 161))
         self.home_image.setObjectName("home_image")
         self.mainTab.addTab(self.home_tab, "")
 
@@ -384,6 +384,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
                                            "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
+        pixmap = QtGui.QPixmap('img/Logo.png')
+        self.home_image.setPixmap(pixmap)
+        self.home_image.setScaledContents(True)
         self.mainTab.setTabText(self.mainTab.indexOf(self.home_tab), _translate("MainWindow", "Home"))
 
         # User Settings
@@ -686,6 +689,7 @@ if __name__ == "__main__":
     widget.setMinimumWidth(1280)
     widget.setMinimumHeight(720)
     widget.show()
+    ui.mainTab.setCurrentIndex(0)
     sys.exit(app.exec_())
     with ThreadingTCPServer(("localhost", 55557), PythonHandler) as _server:
         _server.allow_reuse_address = True
