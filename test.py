@@ -676,6 +676,7 @@ if __name__ == "__main__":
     widget = QtWidgets.QStackedWidget()
     MainWindow = QtWidgets.QMainWindow()
     widget.addWidget(MainWindow)
+
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     ui.home_login.clicked.connect(ui.gotologin)
@@ -686,18 +687,29 @@ if __name__ == "__main__":
     ui.add_event.clicked.connect(ui.gotoaddevent)
     print()
 
+    # Try to start server.
+    try:
+        server = StartServer()  # From togather_server module
+        server.start()
+    except:
+        print("Server already started by other local client")
+
+    # Start client.
+    address = ("localhost", 55557)
+    client = Client(address)
+    try:  # Always close connection when failing.
+        client.start()
+
+    except:
+        if server.is_alive():
+            server.kill()
+        ui.close()
+        Client.exit()
+
+    print("Client started.")
+
     widget.setMinimumWidth(1280)
     widget.setMinimumHeight(720)
     widget.show()
     ui.mainTab.setCurrentIndex(0)
     sys.exit(app.exec_())
-
-    with ThreadingTCPServer(("localhost", 55557), PythonHandler) as _server:
-        _server.allow_reuse_address = True
-        print("Python server started.")
-        _server.serve_forever()
-        _server.shutdown()
-    address = ("localhost", 55557)
-    client = Client(address)
-    client.start()
-    print("Client started.")

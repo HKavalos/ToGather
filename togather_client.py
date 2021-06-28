@@ -397,15 +397,16 @@ class Client(threading.Thread):
     def __init__(self, addr):
         super().__init__()
         self._address = addr
-        data = Data()
+        Data()
+        self.srv = socket.create_connection(self._address)
+        self.rcv = Receive(self.srv)
 
     def run(self):
-        with socket.create_connection(self._address) as srv:
+        with self.srv as srv:
             Client.sock = srv
 
             # Start Receive thread to listen for data from server.
-            rcv = Receive(srv)
-            rcv.start()
+            self.rcv.start()
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
@@ -508,7 +509,12 @@ class Client(threading.Thread):
 
                 selection = input("\nEnter selection:")
 
-            srv.sendall("exit()".encode())  # Send exit command to server.
+            Client.exit()
+
+    @staticmethod
+    def exit():
+        ex = Client.Send("exit()", 3)  # Send exit command to server.
+        ex.start()
 
     # Creates a thread to accept an object and then encode or pickle before sending to server, depending on object type.
     # Attaches a 4 byte header to the object that specifies size
