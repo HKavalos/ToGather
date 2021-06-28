@@ -636,7 +636,7 @@ class AddMember(QMainWindow):
         mwindow = MainWindow
         new_user = self.name_entry.text()
         ui.add_member_group(new_user, str(self.group_name_entry.text()))
-        Data.add_member(add_member)
+        Data.add_user(new_user)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -665,6 +665,7 @@ class NewEvent(QMainWindow):
         mwindow = MainWindow
         new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
         Data.add_event(new_event)
+        print(Data.get_events(new_event.name).name)
         ui.update_event(new_event)
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -675,7 +676,6 @@ if __name__ == "__main__":
     widget = QtWidgets.QStackedWidget()
     MainWindow = QtWidgets.QMainWindow()
     widget.addWidget(MainWindow)
-
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     ui.home_login.clicked.connect(ui.gotologin)
@@ -691,6 +691,7 @@ if __name__ == "__main__":
     widget.show()
     ui.mainTab.setCurrentIndex(0)
     sys.exit(app.exec_())
+
     with ThreadingTCPServer(("localhost", 55557), PythonHandler) as _server:
         _server.allow_reuse_address = True
         print("Python server started.")
