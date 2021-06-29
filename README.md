@@ -4,7 +4,7 @@ Using threading, SQLite3, sockets, and PyQt5, ToGather is a group event planner 
 
 # Package Installation
 
-sudo pip install ToGather
+pip install ToGather
 
 # Run Command
 
@@ -14,8 +14,10 @@ ToGather
 
 [GitHub - HKavalos/ToGather](https://github.com/HKavalos/ToGather)
 
-
-
 ## Note
 
-We are still having issues getting our program to run as required by the project specifications, to have full functionality please unzip the tar.gz file and run ToGather.py in the main directory. Thank you!
+If the run command doesn't work immediately please try relaunching the terminal!
+
+As of this moment, pip still does not install the full set of libraries needed to run a PyQt5 application, please use "sudo apt-get install python3-pyqt5" to resolve this.
+
+Also due to an error in the server/client interaction on our end it may take around 60 seconds to relaunch the program.
