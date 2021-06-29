@@ -1,4 +1,3 @@
-#!/usr/bin python3
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'C:\Users\LuckyCat\PycharmProjects\ToGather\framework.ui'
@@ -18,22 +17,16 @@ from bin.user import User
 from bin.event import Event
 from bin.VoteButton import VoteButton
 from bin.togather_server import *
-from bin.eventwidget import *
-from bin.groupwidget import *
+import bin.eventwidget
+import bin.groupwidget
+
+
+
 def main():
     app = QtWidgets.QApplication(["ToGather"])
-    widget = QtWidgets.QStackedWidget()
     MainWindow = QtWidgets.QMainWindow()
-    widget.addWidget(MainWindow)
-
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    ui.home_login.clicked.connect(ui.gotologin)
-    ui.submitVote.clicked.connect(ui.voteResults)
-    ui.add_group.clicked.connect(ui.gotocreate)
-    ui.pushButton_6.clicked.connect(ui.gotoadd)
-    ui.pushButton_7.clicked.connect(ui.gotoremove)
-    ui.add_event.clicked.connect(ui.gotoaddevent)
     print()
 
     # Try to start server.
@@ -52,19 +45,22 @@ def main():
     except:
         if server.is_alive():
             server.kill()
-        ui.close()
         Client.exit()
 
     print("Client started.")
 
-    widget.setMinimumWidth(1280)
-    widget.setMinimumHeight(720)
-    widget.show()
-    ui.mainTab.setCurrentIndex(0)
+
+
     Data.create_tables()
     Data.db_reset()
     sys.exit(app.exec_())
-circlearr = []
+
+
+class windowPopup(QDialog):
+    def __init__(self, name, parent=None):
+        super().__init__(parent)
+        self.name = name
+        
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
@@ -72,13 +68,14 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
     e3 = Event("Paintball", "11:00 p.m.", "Hazel's House")
     event_ranks = {1: e1, 2: e2, 3: e3}
-
+    circlearr = []
     def setupUi(self, MainWindow):
 
         # Main
         MainWindow.setWindowTitle("ToGather")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
+        MainWindow.show()
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.mainTab = QtWidgets.QTabWidget(self.centralwidget)
@@ -116,6 +113,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_login = QtWidgets.QPushButton(self.home_tab)
         self.home_login.setGeometry(QtCore.QRect(920, 20, 75, 23))
         self.home_login.setObjectName("home_login")
+        self.home_login.clicked.connect(self.gotologin)
         self.home_logout = QtWidgets.QPushButton(self.home_tab)
         self.home_logout.setGeometry(QtCore.QRect(1010, 20, 75, 23))
         self.home_logout.setObjectName("home_logout")
@@ -178,6 +176,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.add_event = QtWidgets.QPushButton(self.events_tab)
         self.add_event.setGeometry(QtCore.QRect(1100, 50, 91, 23))
         self.add_event.setObjectName("add_event")
+        self.add_event.clicked.connect(self.gotoaddevent)
         self.scrollArea = QtWidgets.QScrollArea(self.events_tab)
         self.scrollArea.setGeometry(QtCore.QRect(750, 80, 400, 500))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -288,12 +287,15 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.add_group = QtWidgets.QPushButton(self.circles_tab)
         self.add_group.setGeometry(QtCore.QRect(800, 270, 112, 26))
         self.add_group.setObjectName("add_group")
+        self.add_group.clicked.connect(self.gotocreate)
         self.pushButton_6 = QtWidgets.QPushButton(self.circles_tab)
         self.pushButton_6.setGeometry(QtCore.QRect(800, 300, 112, 26))
         self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_6.clicked.connect(self.gotoadd)
         self.pushButton_7 = QtWidgets.QPushButton(self.circles_tab)
         self.pushButton_7.setGeometry(QtCore.QRect(800, 330, 112, 26))
         self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.clicked.connect(self.gotoremove)
         self.scrollArea2 = QtWidgets.QScrollArea(self.circles_tab)
         self.scrollArea2.setGeometry(QtCore.QRect(350, 140, 400, 500))
         self.scrollArea2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -374,7 +376,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
+                self.r.clicked.connect(lambda checked, a=x, b=i: self.vote(a, b))
 
                 temp += 1
                 i += 1
@@ -383,6 +385,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.submitVote = QtWidgets.QPushButton(self.voting_tab)
         self.submitVote.setGeometry(QtCore.QRect(1000, 610, 75, 23))
         self.submitVote.setObjectName("submitVote")
+        self.submitVote.clicked.connect(self.voteResults)
         self.mainTab.addTab(self.voting_tab, "")
 
         # Messages
@@ -419,7 +422,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.mainTab.setCurrentIndex(5)
+        self.mainTab.setCurrentIndex(0)
         self.home_votes_widget.setCurrentIndex(1)
         # self.stackedWidget_3.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -579,29 +582,29 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
 
     def gotologin(self):
-        login_page = LogIn()
-        widget.addWidget(login_page)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.login_page = LogIn()
+        self.login_page.adjustSize()
+        self.login_page.show()
 
     def gotocreate(self):
-        groupcreate = GroupCreate()
-        widget.addWidget(groupcreate)  # should be changed to insertWidget and removeWidget
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.groupcreate = GroupCreate(self)
+        self.groupcreate.adjustSize()
+        self.groupcreate.show()
 
     def gotoadd(self):
-        addmember = AddMember()
-        widget.addWidget(addmember)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.addmember = AddMember(self)
+        self.addmember.adjustSize()
+        self.addmember.show()
 
     def gotoremove(self):
-        removemember = RemoveMember()
-        widget.addWidget(removemember)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.removemember = RemoveMember(self)
+        self.removemember.adjustSize()
+        self.removemember.show()
 
     def gotoaddevent(self):
-        newevent = NewEvent()
-        widget.addWidget(newevent)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.newevent = NewEvent(self)
+        self.newevent.adjustSize()
+        self.newevent.show()
 
     def update_group(self, new_group):
         self.circle_name.setText("Circle Name: " + new_group.calendar)
@@ -647,16 +650,15 @@ class LogIn(QMainWindow):
 
     def login_acc(self):
         print("Logged In")
-        mwindow = MainWindow
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-
+        self.close()
 
     def nav(self):
         print("To Signup!")
-        signup_window = SignUp()
-        widget.addWidget(signup_window)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.signup_window = SignUp()
+        self.setWindowTitle("Sign Up")
+        self.signup_window.adjustSize()
+        self.signup_window.show()
+        self.close()
 
 
 class SignUp(QMainWindow):
@@ -669,96 +671,89 @@ class SignUp(QMainWindow):
 
     def submit(self):
         print("Submitted")
-        login_window = LogIn()
-        widget.addWidget(login_window)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.close()
 
 
 class GroupCreate(QMainWindow):
-    def __init__(self):
-        super(GroupCreate, self).__init__()
+    def __init__(self, parent):
+        super(GroupCreate, self).__init__(parent)
+        self.parent = parent
         loadUi("bin/popup.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
         print("Submitted")
-        mwindow = MainWindow
         new_group = Group("not available", str(self.group_name_entry.text()))
         Data.add_group(new_group)
-        # mwindow.groups.append(new_group)
-        # ui.update_group(new_group)
 
         app = QtWidgets.QFrame()
-        frames = groupwidget.Ui_Form()
+        frames = bin.groupwidget.Ui_Form()
         frames.setupUi(app)
         frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
-        circlearr.append(frames)
-        ui.scrollArea2WidgetContents.layout().addWidget(app)
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.parent.circlearr.append(frames)
+        self.parent.scrollArea2WidgetContents.layout().addWidget(app)
+        self.close()
 
 
 class AddMember(QMainWindow):
-    def __init__(self):
-        super(AddMember, self).__init__()
+    def __init__(self, parent):
+        super(AddMember, self).__init__(parent)
+        self.parent = parent
         loadUi("bin/newmember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
         print("Added New Member")
-        mwindow = MainWindow
         new_user = self.name_entry.text()
         # ui.add_member_group(new_user, str(self.group_name_entry.text()))
         Data.add_user(User(new_user))
-        if len(circlearr) != 0:
-            circlearr[0].label.setText(new_user)
+        if len(self.parent.circlearr) != 0:
+            self.parent.circlearr[0].label.setText(new_user)
         else:
             print("No current circles!")
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.close()
 
 
 class RemoveMember(QMainWindow):
-    def __init__(self):
-        super(RemoveMember, self).__init__()
+    def __init__(self, parent):
+        super(RemoveMember, self).__init__(parent)
+        self.parent = parent
         loadUi("bin/removemember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
         print("Removed Member")
-        mwindow = MainWindow
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.parent.circlearr[0].label.setText("Member 1")
+        self.close()
 
 
 class NewEvent(QMainWindow):
-    def __init__(self):
-        super(NewEvent, self).__init__()
+    def __init__(self, parent):
+        super(NewEvent, self).__init__(parent)
+        self.parent = parent
         loadUi("bin/newevent.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
         print("Added Event")
-        mwindow = MainWindow
         new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
         Data.add_event(new_event)
         print(Data.get_events(new_event.name).name)
-        #ui.update_event(new_event)
 
         app = QtWidgets.QFrame()
-        frames = eventwidget.Ui_Form()
+        frames = bin.eventwidget.Ui_Form()
         frames.setupUi(app)
         frames.name_label.setText("Name: " + self.name_entry.text())
         frames.date_label.setText("Date: " + self.date_entry.text())
         frames.place_label.setText("Place: " + self.place_entry.text())
-        ui.scrollAreaWidgetContents.layout().addWidget(app)
+        self.parent.scrollAreaWidgetContents.layout().addWidget(app)
 
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
+        self.close()
 
 
 
 
 
 if __name__ == "__main__":
+
     main()

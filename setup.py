@@ -2,8 +2,10 @@ import setuptools
 
 setuptools.setup(
     name='ToGather',
-    version='0.0.4',
+    version='0.0.5',
     packages=setuptools.find_namespace_packages(include=['bin','bin.*']),
+    package_data={'': ['bin/*']},
+    include_package_data=True,
     install_requires=['PyQt5'],
     entry_points={
         'console_scripts': [
@@ -11,8 +13,6 @@ setuptools.setup(
         ]
     },
     url='',
-    package_data={'': ['bin/*.ui', 'bin/Logo.png']},
-    include_package_data=True,
     license='',
     author='ToGather',
     author_email='',
