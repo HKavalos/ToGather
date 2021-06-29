@@ -366,7 +366,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.l = QtWidgets.QLabel(self.f)
             self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
             self.l.setObjectName("l" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.description))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
 
             temp = 0
             i = 1
