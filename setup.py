@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='ToGather',
-    version='0.0.5',
+    version='0.0.9',
     packages=setuptools.find_namespace_packages(include=['bin','bin.*']),
     package_data={'': ['bin/*']},
     include_package_data=True,

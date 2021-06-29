@@ -597,7 +597,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 class LogIn(QMainWindow):
     def __init__(self):
         super(LogIn, self).__init__()
-        loadUi("bin/login.ui", self)
+        loadUi("login.ui", self)
         self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)

@@ -19,6 +19,7 @@ from bin.VoteButton import VoteButton
 from bin.togather_server import *
 import bin.eventwidget
 import bin.groupwidget
+import importlib.resources as importlib_resources
 
 
 
@@ -452,7 +453,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
                                            "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
-        pixmap = QtGui.QPixmap('bin/Logo.png')
+        with importlib_resources.path(bin, "Logo.png") as p:
+            path = p
+        pixmap = QtGui.QPixmap(str(path))
         self.home_image.setPixmap(pixmap)
         self.home_image.setScaledContents(True)
         self.mainTab.setTabText(self.mainTab.indexOf(self.home_tab), _translate("MainWindow", "Home"))
@@ -643,7 +646,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 class LogIn(QMainWindow):
     def __init__(self):
         super(LogIn, self).__init__()
-        loadUi("bin/login.ui", self)
+        with importlib_resources.path(bin, "login.ui") as p:
+            path = p
+        loadUi(str(path), self)
         self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
@@ -664,7 +669,9 @@ class LogIn(QMainWindow):
 class SignUp(QMainWindow):
     def __init__(self):
         super(SignUp, self).__init__()
-        loadUi("bin/signup.ui", self)
+        with importlib_resources.path(bin, "signup.ui") as p:
+            path = p
+        loadUi(str(path), self)
         self.signup_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup_c_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup_submit_button.clicked.connect(self.submit)
@@ -678,7 +685,9 @@ class GroupCreate(QMainWindow):
     def __init__(self, parent):
         super(GroupCreate, self).__init__(parent)
         self.parent = parent
-        loadUi("bin/popup.ui", self)
+        with importlib_resources.path(bin, "popup.ui") as p:
+            path = p
+        loadUi(str(path), self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -699,7 +708,9 @@ class AddMember(QMainWindow):
     def __init__(self, parent):
         super(AddMember, self).__init__(parent)
         self.parent = parent
-        loadUi("bin/newmember.ui", self)
+        with importlib_resources.path(bin, "newmember.ui") as p:
+            path = p
+        loadUi(str(path), self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -718,7 +729,9 @@ class RemoveMember(QMainWindow):
     def __init__(self, parent):
         super(RemoveMember, self).__init__(parent)
         self.parent = parent
-        loadUi("bin/removemember.ui", self)
+        with importlib_resources.path(bin, "removemember.ui") as p:
+            path = p
+        loadUi(str(path), self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -731,7 +744,9 @@ class NewEvent(QMainWindow):
     def __init__(self, parent):
         super(NewEvent, self).__init__(parent)
         self.parent = parent
-        loadUi("bin/newevent.ui", self)
+        with importlib_resources.path(bin, "newevent.ui") as p:
+            path = p
+        loadUi(path, self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
