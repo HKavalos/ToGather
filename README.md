@@ -4,21 +4,20 @@ Using threading, SQLite3, sockets, and PyQt5, ToGather is a group event planner 
 
 # Package Installation
 
-pip3 install PyQt5
-sudo apt-get install libxcb-icccm4
-sudo apt-get install libxcb-image0
-sudo apt-get install libxcb-keysyms1
-sudo apt-get install libxcb-render-util0
-sudo apt-get install libxcb-xinerama0
-sudo apt-get install libxcb-xkb1
-sudo apt-get install libxkbcommon-x11-0
+pip install ToGather
 
 # Run Command
 
-python3 test.py
+ToGather
 
 # GitHub Repository
 
 [GitHub - HKavalos/ToGather](https://github.com/HKavalos/ToGather)
 
+## Note
 
+If the run command doesn't work immediately please try relaunching the terminal!
+
+As of this moment, pip still does not install the full set of libraries needed to run a PyQt5 application, please use "sudo apt-get install python3-pyqt5" to resolve this.
+
+Also due to an error in the server/client interaction on our end it may take around 60 seconds to relaunch the program.
