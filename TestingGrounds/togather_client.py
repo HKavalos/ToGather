@@ -19,6 +19,8 @@ from option import Option
 # TODO: Specify object type/name in message header so we don't have to unpickle in Receiver thread.
 # TODO: Pass info from header to generic methods that interact with database, instead of separate methods for each type. 
 #       For easier maintenance, the different classes for adding objects could be combined into a single class.
+# TODO: Create methods for cases where the local database is recieveing an update to information
+# TODO: Delete and overwrite methods for data in data base
 
 class Data(threading.local):
     """
@@ -97,6 +99,25 @@ class Data(threading.local):
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(user))
                 sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
+
+    def update_user(user):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_users(user.name) is None:
+                #('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                #cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                temp= pickle.dumps(user)
+                #cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("UPDATE `users` SET user = ? WHERE name = ?", (pickle.dumps(user),user.name))
+                db_connection.commit()
+                #sender = Client.Send(pickle.dumps(user))
+                #sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -506,6 +527,13 @@ class Client(threading.Thread):
                 elif selection == "10":  # Print options from local database
                     for option in Data().get_options():
                         print(option.name, option.activity, option.time, option.chosen, option.votes)
+
+                elif selection == "420":
+                    Data.update_user(User("Bibidibobodiboo","howdy","yall"))
+                    print((Data.get_users("Bibidibobodiboo")).constraints)
+                    print((Data.get_users("Bibidibobodiboo")).groups)
+                elif selection == "69":
+                    Data.add_user(User("Bibidibobodiboo"))
 
                 selection = input("\nEnter selection:")
 
