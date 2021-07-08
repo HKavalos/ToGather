@@ -646,9 +646,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 class LogIn(QMainWindow):
     def __init__(self):
         super(LogIn, self).__init__()
-        with importlib_resources.path(bin, "login.ui") as p:
-            path = p
-        loadUi(str(path), self)
+        #with importlib_resources.path(bin, "login.ui") as p:
+        #    path = p
+        loadUi("login.ui", self)
         self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
@@ -669,9 +669,9 @@ class LogIn(QMainWindow):
 class SignUp(QMainWindow):
     def __init__(self):
         super(SignUp, self).__init__()
-        with importlib_resources.path(bin, "signup.ui") as p:
-            path = p
-        loadUi(str(path), self)
+        #with importlib_resources.path(bin, "signup.ui") as p:
+        #    path = p
+        loadUi(("signup.ui"), self)
         self.signup_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup_c_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup_submit_button.clicked.connect(self.submit)
@@ -685,9 +685,9 @@ class GroupCreate(QMainWindow):
     def __init__(self, parent):
         super(GroupCreate, self).__init__(parent)
         self.parent = parent
-        with importlib_resources.path(bin, "popup.ui") as p:
-            path = p
-        loadUi(str(path), self)
+        #with importlib_resources.path(bin, "popup.ui") as p:
+        #    path = p
+        loadUi("popup.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -696,7 +696,7 @@ class GroupCreate(QMainWindow):
         Data.add_group(new_group)
 
         app = QtWidgets.QFrame()
-        frames = bin.groupwidget.Ui_Form()
+        frames = groupwidget.Ui_Form()
         frames.setupUi(app)
         frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
         self.parent.circlearr.append(frames)
@@ -708,9 +708,9 @@ class AddMember(QMainWindow):
     def __init__(self, parent):
         super(AddMember, self).__init__(parent)
         self.parent = parent
-        with importlib_resources.path(bin, "newmember.ui") as p:
-            path = p
-        loadUi(str(path), self)
+        #with importlib_resources.path(bin, "newmember.ui") as p:
+        #    path = p
+        loadUi("newmember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -729,9 +729,9 @@ class RemoveMember(QMainWindow):
     def __init__(self, parent):
         super(RemoveMember, self).__init__(parent)
         self.parent = parent
-        with importlib_resources.path(bin, "removemember.ui") as p:
-            path = p
-        loadUi(str(path), self)
+        #with importlib_resources.path(bin, "removemember.ui") as p:
+        #    path = p
+        loadUi("removemember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -744,9 +744,9 @@ class NewEvent(QMainWindow):
     def __init__(self, parent):
         super(NewEvent, self).__init__(parent)
         self.parent = parent
-        with importlib_resources.path(bin, "newevent.ui") as p:
-            path = p
-        loadUi(path, self)
+        #with importlib_resources.path(bin, "newevent.ui") as p:
+        #   path = p
+        loadUi("newevent.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
@@ -756,7 +756,7 @@ class NewEvent(QMainWindow):
         print(Data.get_events(new_event.name).name)
 
         app = QtWidgets.QFrame()
-        frames = bin.eventwidget.Ui_Form()
+        frames = eventwidget.Ui_Form()
         frames.setupUi(app)
         frames.name_label.setText("Name: " + self.name_entry.text())
         frames.date_label.setText("Date: " + self.date_entry.text())
