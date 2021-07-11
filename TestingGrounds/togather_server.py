@@ -77,10 +77,16 @@ class PythonHandler(BaseRequestHandler):
         destination.sendall(message)
 
 
+class TogatherTCPServer(ThreadingTCPServer):
+    def __init__(self, host, port):
+        self.allow_reuse_address = True
+        super().__init__(host, port)
+
+
 class StartServer(threading.Thread):
     def __init__(self):
         super().__init__()
-        self.server = ThreadingTCPServer(("localhost", 55557), PythonHandler)
+        self.server = TogatherTCPServer(("localhost", 55557), PythonHandler)
 
     def run(self):
         try:
@@ -88,7 +94,6 @@ class StartServer(threading.Thread):
             # Creates an instance of PythonHandler class whenever connection is received from server.
             # ThreadingTCPServer uses threads to connect to each client.
             with self.server as _server:
-                _server.allow_reuse_address = True
                 print("Python server started.")
                 _server.serve_forever()
                 _server.shutdown()
@@ -97,4 +102,3 @@ class StartServer(threading.Thread):
 
     def kill(self):
         self.server.shutdown()
-
