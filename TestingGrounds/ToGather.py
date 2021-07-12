@@ -294,10 +294,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.pushButton_6.setGeometry(QtCore.QRect(800, 300, 112, 26))
         self.pushButton_6.setObjectName("pushButton_6")
         self.pushButton_6.clicked.connect(self.gotoadd)
-        self.pushButton_7 = QtWidgets.QPushButton(self.circles_tab)
-        self.pushButton_7.setGeometry(QtCore.QRect(800, 330, 112, 26))
-        self.pushButton_7.setObjectName("pushButton_7")
-        self.pushButton_7.clicked.connect(self.gotoremove)
         self.scrollArea2 = QtWidgets.QScrollArea(self.circles_tab)
         self.scrollArea2.setGeometry(QtCore.QRect(350, 140, 400, 500))
         self.scrollArea2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -498,7 +494,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # self.circle_name.setText(_translate("MainWindow", "Circle Name"))
         self.add_group.setText(_translate("MainWindow", "Add Circle"))
         self.pushButton_6.setText(_translate("MainWindow", "Add Member"))
-        self.pushButton_7.setText(_translate("MainWindow", "Remove Member"))
         self.add_event.setText(_translate("MainWindow", "Add Event"))
         # self.label_16.setText(_translate("MainWindow", "Username"))
         # self.label_17.setText(_translate("MainWindow", "Username"))
@@ -619,6 +614,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         new_name = new_user  # need to find a way to get
         print(new_user)
         print(the_group)
+
+
         # print(len(self.groups))
 
         # for x in self.groups:
@@ -637,6 +634,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
         if new_name != "":
             self.label_16.setText(new_name)
+
 
     def update_event(self, event):
         self.event_title.setText(event.name)
@@ -729,19 +727,32 @@ class AddMember(QMainWindow):
         loadUi("newmember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
+
     def submit(self):
+
         print("Added New Member")
         new_user = self.name_entry.text()
         # ui.add_member_group(new_user, str(self.group_name_entry.text()))
         Data.add_user(User(new_user))
         if len(self.parent.circlearr) != 0:
             groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
-            self.parent.circlearr[groupindex][2].append(new_user)
-            self.parent.circlearr[groupindex][1].label.setText(new_user)
+            self.memwidget = loadUi("member.ui")
+
+            self.parent.circlearr[groupindex][2].append((new_user, self.memwidget))
+            self.parent.circlearr[groupindex][1].memberDisplayContents.layout().addWidget(self.memwidget)
+            self.memwidget.memberName.setText(new_user)
+            self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
+
+
+
         else:
             print("No current circles!")
         self.close()
 
+    def removeMember(self, index, name):
+        memindex = [x[0] for x in self.parent.circlearr[index][2]].index(name)
+        self.parent.circlearr[index][2][memindex][1].close()
+        del self.parent.circlearr[index][2][memindex]
 
 class RemoveMember(QMainWindow):
     def __init__(self, parent):
@@ -753,8 +764,9 @@ class RemoveMember(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
+        groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
         print("Removed Member")
-        self.parent.circlearr[0].label.setText("Member 1")
+        self.parent.circlearr[groupindex][1].label.setText("Member 1")
         self.close()
 
 
