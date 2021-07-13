@@ -51,8 +51,8 @@ def main():
     print("Client started.")
 
 
-
-    #Data.create_tables()
+    if not os.path.isfile("db.db"):
+        Data.create_tables()
     #Data.db_reset()
     sys.exit(app.exec_())
 
