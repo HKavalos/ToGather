@@ -105,7 +105,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # Updates users
+    # Updates users by replacing it with passed class object
     def update_user(user):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -213,7 +213,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # Updates events
+    # Updates events by replacing it with passed class object
     def update_event(event):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -283,7 +283,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #Updates group
+    #Updates group by replacing it with passed class object
     def update_group(group):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -375,7 +375,7 @@ class Data(threading.local):
     # Returns User object if parameter is given, otherwise returns list of all calendars
     # Returns None if nothing is found.
 
-    #updates calendar
+    #updates calendar by replacing it with passed class object
     def update_calendar(calendar):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -462,7 +462,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #Updates Option
+    #Updates Option by replacing it with passed class object
     def update_option(option):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
