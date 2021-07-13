@@ -22,7 +22,7 @@ from option import Option
 # TODO: Pass info from header to generic methods that interact with database, instead of separate methods for each type. 
 #       For easier maintenance, the different classes for adding objects could be combined into a single class.
 # TODO: Create methods for cases where the local database is recieveing an update to information
-# TODO: Delete and overwrite methods for data in data base
+# TODO: Exists function
 
 class Data(threading.local):
     """
@@ -125,6 +125,25 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
+    #Deletes user based on primary key
+    def delete_user(user):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_users(user) is None:
+                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                # cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("DELETE FROM `users` WHERE name = ?", (user,))
+                db_connection.commit()
+                # sender = Client.Send(pickle.dumps(user))
+                # sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
+
     # Returns User object if parameter is given, otherwise returns list of all users
     # Returns None if nothing is found.
     @staticmethod
@@ -171,6 +190,25 @@ class Data(threading.local):
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(event))
                 sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
+
+    #deletes event based on primary key
+    def delete_event(event):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_events(event) is None:
+                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                # cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("DELETE FROM `events` WHERE name = ?", (event,))
+                db_connection.commit()
+                # sender = Client.Send(pickle.dumps(user))
+                # sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -258,6 +296,25 @@ class Data(threading.local):
                 temp = pickle.dumps(group)
                 # cursor.execute('UPDATE users SET user= tempy')
                 cursor.execute("UPDATE `groups` SET `group` = ? WHERE name = ?", (pickle.dumps(group), group.name))
+                db_connection.commit()
+                # sender = Client.Send(pickle.dumps(user))
+                # sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
+
+    # deletes group based on primary key
+    def delete_group(group):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_groups(group) is None:
+                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                # cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("DELETE FROM `groups` WHERE name = ?", (group,))
                 db_connection.commit()
                 # sender = Client.Send(pickle.dumps(user))
                 # sender.start()
@@ -371,6 +428,25 @@ class Data(threading.local):
         except Exception as e:
             return None
 
+    # deletes calendar based on primary key
+    def delete_calendar(calendar):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_calendars(calendar) is None:
+                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user))
+                # cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("DELETE FROM `calendars` WHERE name = ?", (calendar,))
+                db_connection.commit()
+                # sender = Client.Send(pickle.dumps(user))
+                # sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
+
     # Adds an object to database if it doesn't exist.
     @staticmethod
     def add_option(option):
@@ -442,7 +518,24 @@ class Data(threading.local):
                 return option
         except Exception as e:
             return None
-
+    # deletes option based on primary key
+    def delete_option(option):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_options(option) is None:
+                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
+                print("Does not exist")
+            else:
+                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
+                # cursor.execute('UPDATE users SET user= tempy')
+                cursor.execute("DELETE FROM `options` WHERE name = ?", (option,))
+                db_connection.commit()
+                # sender = Client.Send(pickle.dumps(user))
+                # sender.start()
+            db_connection.close()
+        except Exception as e:
+            print(e.with_traceback())  # Can't have duplicate name.
 
 class Receive(threading.Thread):
     """
@@ -614,13 +707,11 @@ class Client(threading.Thread):
                     for option in Data().get_options():
                         print(option.name, option.activity, option.time, option.chosen, option.votes)
 
-                elif selection == "420":
-                    Data.update_option(Option("Bibidibobodiboo8", "howdy"))
-                    print((Data.get_options("Bibidibobodiboo8")).activity)
-                    #print((Data.get_groups("Bibidibobodiboo3")).options)
                 elif selection == "69":
-                    Data.add_option(Option("Bibidibobodiboo8", "yikes"))
-                    print(Data.get_options("Bibidibobodiboo8").activity)
+                    Data.add_option(Option("Bibidibobodiboo", "yikes"))
+                    print(Data.get_options("Bibidibobodiboo"))
+                    Data.delete_option("Bibidibobodiboo")
+                    print(Data.get_options("Bibidibobodiboo"))
 
                 selection = input("\nEnter selection:")
 
