@@ -52,8 +52,8 @@ def main():
 
 
 
-    Data.create_tables()
-    Data.db_reset()
+    #Data.create_tables()
+    #Data.db_reset()
     sys.exit(app.exec_())
 
 
