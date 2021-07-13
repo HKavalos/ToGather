@@ -9,8 +9,10 @@
 
 import sys
 from togather_client import *
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
+from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
+from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.uic import loadUi
 from group import Group
 from user import User
@@ -21,8 +23,6 @@ from togather_server import *
 import eventwidget
 import groupwidget
 import importlib.resources as importlib_resources
-
-
 
 def main():
     app = QtWidgets.QApplication(["ToGather"])
@@ -572,6 +572,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             top = float('inf')
             standings = ""
             winner = ""
+            set0 = QBarSet('User 1')
             # names = []
             # ranks = []
 
@@ -580,6 +581,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                     top = x.votes["User1"]
                     winner = x.name
                 standings += "\n" + str(x.votes["User1"]) + ". " + x.name
+                set0.append(x.votes["User1"])
                 # names.append(y.name)
                 # ranks.append(x)
             submit_msg.setInformativeText(standings)
@@ -591,12 +593,30 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             # x_axis.setTicks([test_plot.items()])
             # plot = test_win.addPlot(axisItems={'bottom': x_axis})
             # plot.plot(list(test_plot.keys()), ranks)
+            usrs = ('User 1')
+            res = QBarSeries()
+            res.append(set0)
+            graph = QChart()
+            graph.addSeries(res)
+            graph.setTitle('Voting Results')
+            graph.setAnimationOptions(QChart.SeriesAnimations)
+            x_axis = QBarCategoryAxis()
+            x_axis.append(usrs)
+            y_axis = QValueAxis()
+            y_axis.setRange(1,3)
+            graph.addAxis(x_axis, Qt.AlignBottom)
+            graph.addAxis(y_axis, Qt.AlignLeft)
+            graph.legend().setVisible(True)
+            graph.legend().setAlignment(Qt.AlignBottom)
 
-            winner_msg = QtWidgets.QMessageBox()
+            winner_msg = VoteRes()
+            widget.addWidget(winner_msg)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+
             winner_msg.setWindowTitle("Voting Results")
-            winner_msg.setText(winner + " has won the masses.")
-            winner_msg.setIcon(QtWidgets.QMessageBox.Information)
-            winner_msg.exec_()
+            viewer = QChartView(graph)
+            winner_msg.setCentralWidget(viewer)
+            #winner_msg.setText(winner + " has won the masses.")
 
 
     # Finds the rank of a passed in event.
@@ -672,6 +692,20 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.event_date.setText(event.description)  # time equals place??
         self.event_place.setText(event.options)
 
+class VoteRes(QMainWindow):
+    def __init__(self):
+        super(VoteRes, self).__init__()
+        self.return_button = QtWidgets.QPushButton()
+        self.return_button.setGeometry(QtCore.QRect(920, 20, 75, 23))
+        self.return_button.setObjectName("return_vote")
+        self.return_button.setText(QtCore.QCoreApplication.translate("MainWindow", "Return to Voting"))
+        self.return_button.clicked.connect(self.return_voting)
+
+    def return_voting(self):
+        print("Return to Voting")
+        mwindow = MainWindow
+        widget.addWidget(mwindow)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class LogIn(QMainWindow):
     def __init__(self):
