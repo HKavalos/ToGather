@@ -23,7 +23,6 @@ import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
 
 
-
 def main():
     global app
     app = QtWidgets.QApplication(["ToGather"])
