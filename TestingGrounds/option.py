@@ -1,4 +1,4 @@
-from _time import Time
+from bin._time import Time
 
 
 class Option:
@@ -7,9 +7,10 @@ class Option:
     votes that are a pair of users and the vote choice: 1,2,3,4 . . .
     """
 
-    def __init__(self, name, activity, tim=Time(), chosen=False, votes=[]):
+    def __init__(self, name, activity, location, tim=Time(), chosen=False, votes={}):
         self._name = name
         self._activity = activity
+        self._location = location
         self._time = tim
         self._chosen = chosen
         self._votes = votes
@@ -29,6 +30,14 @@ class Option:
     @activity.setter
     def activity(self, activity):
         self._activity = activity
+
+    @property
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, location):
+        self._location = location
 
     @property
     def time(self):
