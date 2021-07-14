@@ -66,9 +66,9 @@ class windowPopup(QDialog):
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event and option data. Each event has its own option with a unique ranked choice value.
     # - Rebecca Ling
-    o1 = Option("Arcade", "Play games!", None, False, {"User1" : 1})
-    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", None, False, {"User1" : 2})
-    o3 = Option("Paintball", "Free tie-dye!", None, False, {"User1" : 3})
+    o1 = Option("Arcade", "Play games!", "Party Pizazz Plaza", None, False, {"User1" : 1})
+    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", "Silly Sweet Shop", None, False, {"User1" : 2})
+    o3 = Option("Paintball", "Free tie-dye!", "Hazel's House", None, False, {"User1" : 3})
     e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
     #event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
@@ -587,12 +587,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             submit_msg.setInformativeText(standings)
             submit_msg.exec_()
 
-            # test_plot = dict(enumerate(names))
-            # test_win = pyqtgraph.GraphicsLayoutWidget()
-            # x_axis = pyqtgraph.AxisItem(orientation='bottom')
-            # x_axis.setTicks([test_plot.items()])
-            # plot = test_win.addPlot(axisItems={'bottom': x_axis})
-            # plot.plot(list(test_plot.keys()), ranks)
             usrs = ('User 1')
             res = QBarSeries()
             res.append(set0)
@@ -614,9 +608,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             widget.setCurrentIndex(widget.currentIndex() + 1)
 
             winner_msg.setWindowTitle("Voting Results")
-            viewer = QChartView(graph)
-            winner_msg.setCentralWidget(viewer)
-            #winner_msg.setText(winner + " has won the masses.")
+            winner_msg.chart_view.setChart(graph)
+            winner_msg.winner_label.setText(winner + " has won the masses.")
 
 
     # Finds the rank of a passed in event.
@@ -695,10 +688,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 class VoteRes(QMainWindow):
     def __init__(self):
         super(VoteRes, self).__init__()
-        self.return_button = QtWidgets.QPushButton()
-        self.return_button.setGeometry(QtCore.QRect(920, 20, 75, 23))
-        self.return_button.setObjectName("return_vote")
-        self.return_button.setText(QtCore.QCoreApplication.translate("MainWindow", "Return to Voting"))
+        loadUi("voting.ui", self)
         self.return_button.clicked.connect(self.return_voting)
 
     def return_voting(self):
