@@ -735,6 +735,7 @@ class LogIn(QMainWindow):
                 self.parent.current_user = user
                 # TODO: Create a method to update other UI objects that use current user.
                 self.parent.user_settings_name.setText(self.parent.current_user.name)
+                self.close()
             else:
                 print("Incorrect password.")
         else:
@@ -809,18 +810,21 @@ class GroupCreate(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        print("Submitted")
-        new_group = Group("not available", str(self.group_name_entry.text()))
-        Data.add_group(new_group)
-
-        app = QtWidgets.QFrame()
-        frames = groupwidget.Ui_Form()
-        frames.setupUi(app)
-        frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
-        memberarr = []
-        self.parent.circlearr.append((self.group_name_entry.text(), frames, memberarr))
-        self.parent.scrollArea2WidgetContents.layout().addWidget(app)
-        self.close()
+        if Data.get_groups((self.group_name_entry.text())):
+            print("Group already exists!")
+        else:
+            print("Submitted")
+            app = QtWidgets.QFrame()
+            frames = groupwidget.Ui_Form()
+            frames.setupUi(app)
+            frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
+            memberarr = []
+            eventarr = []
+            grouptuple = Group(self.group_name_entry.text(), "", memberarr, eventarr)
+            self.parent.circlearr.append(grouptuple)
+            Data.add_group(grouptuple)
+            self.parent.scrollArea2WidgetContents.layout().addWidget(app)
+            self.close()
 
 
 class AddMember(QMainWindow):
@@ -834,24 +838,29 @@ class AddMember(QMainWindow):
 
 
     def submit(self):
-
-        print("Added New Member")
-        new_user = self.name_entry.text()
-        # ui.add_member_group(new_user, str(self.group_name_entry.text()))
-        Data.add_user(User(new_user))
-        if len(self.parent.circlearr) != 0:
-            groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
-            self.memwidget = loadUi("member.ui")
-
-            self.parent.circlearr[groupindex][2].append((new_user, self.memwidget))
-            self.parent.circlearr[groupindex][1].memberDisplayContents.layout().addWidget(self.memwidget)
-            self.memwidget.memberName.setText(new_user)
-            self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
-
-
-
+        if not Data.get_users(self.name_entry.text()):
+            print("User does not exist!")
         else:
-            print("No current circles!")
+
+            # ui.add_member_group(new_user, str(self.group_name_entry.text()))
+            #Data.add_user(User(new_user))
+            if len(Data.get_groups()) != 0:
+                #groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
+                self.memwidget = loadUi("member.ui")
+                valid = True
+                currentgroup = Data.get_groups(self.group_name_entry.text())
+                userarray = currentgroup.users
+                if self.name_entry.text() in userarray:
+                    print("User already in group!")
+                else:
+                    userarray.append(self.name_entry.text())
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events))
+                    #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
+                    print("Added New Member")
+
+
+            else:
+                print("No current circles!")
         self.close()
 
     def removeMember(self, index, name):
