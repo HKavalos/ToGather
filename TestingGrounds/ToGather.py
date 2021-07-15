@@ -33,10 +33,11 @@ def main():
     print()
 
     # Try to start server.
+    # TODO: We need to test this using our nonlocal server.
     try:
         server = StartServer()  # From togather_server module
         server.start()
-    except:
+    except OSError:
         print("Server already started by other local client")
 
     # Start client.
@@ -44,19 +45,24 @@ def main():
     client = Client(address)
     try:  # Always close connection when failing.
         client.start()
-
     except:
-        if server.is_alive():
-            server.kill()
         Client.exit()
-
     print("Client started.")
 
-
+    # Initialize database if it doesn't exist.
     if not os.path.isfile("db.db"):
         Data.create_tables()
-    #Data.db_reset()
-    sys.exit(app.exec_())
+
+    # Load database from the client that is running the server.
+    # If this is the client running the server, just reloads the database.
+    # Only relevant if two clients are running from separate directories.
+    Data.db_request()
+
+    # Close client when UI is exited.
+    ret = app.exec_()
+    if client.is_alive():
+        client.exit()
+    sys.exit(ret)
 
 
 class windowPopup(QDialog):
@@ -73,7 +79,10 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
     usersarr = []
+
     def setupUi(self, MainWindow):
+        self.current_user = User
+
         # Main
         MainWindow.setWindowTitle("ToGather")
         MainWindow.setObjectName("MainWindow")
@@ -713,13 +722,32 @@ class LogIn(QMainWindow):
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
 
+    # TODO: Show errors in UI.
+    # Method that runs when login button is pressed.
     def login_acc(self):
-        valid = [x for x, y in enumerate(self.parent.usersarr) if y[0] == self.login_username_entry.text() and y[1] == self.login_password_entry.text()]
-        if valid:
-            print("Logged In")
-            self.close()
+        # Check if username exists.
+        if Data.get_users(self.login_username_entry.text()):
+            # Check if password matches the password from database.
+            user = Data.get_users(self.login_username_entry.text())
+            if user.password == self.login_password_entry.text():
+                # Update the current_user variable stored in MainWindow
+                print("Login successful")
+                self.parent.current_user = user
+                # TODO: Create a method to update other UI objects that use current user.
+                self.parent.user_settings_name.setText(self.parent.current_user.name)
+            else:
+                print("Incorrect password.")
         else:
-            print("Invalid login!")
+            print("Username doesn't exist.")
+
+
+        #valid = [x for x, y in enumerate(self.parent.usersarr) if y[0] == self.login_username_entry.text() and y[1] == self.login_password_entry.text()]
+        #if valid:
+        #    print("Logged In")
+        #    self.close()
+        #else:
+        #    print("Invalid login!")
+
     def nav(self):
         print("To Signup!")
         self.signup_window = SignUp(self)
@@ -740,18 +768,35 @@ class SignUp(QMainWindow):
         self.signup_c_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup_submit_button.clicked.connect(self.submit)
 
-
     def submit(self):
         if (self.signup_username_entry.text() == "" or self.signup_password_entry.text() == "" or self.signup_c_password_entry.text() == ""):
             print("Please enter all required information")
         elif self.signup_password_entry.text() == self.signup_c_password_entry.text():
+
+            # Add user to local array for testing.
             userpair = (self.signup_username_entry.text(), self.signup_password_entry.text())
             self.parent.parent.usersarr.append(userpair)
-            print("Submitted")
-            self.close()
+
+            # Make sure username doesn't already exist.
+            if not Data.get_users(self.signup_username_entry.text()):
+                # Add new user to database.
+                user = User(self.signup_username_entry.text(), self.signup_password_entry.text())
+                Data.add_user(user)
+
+                # Update the current_user variable stored in MainWindow
+                self.parent.current_user = user
+
+                # TODO: Create a method to update all UI objects that use current user.
+                # Update UI elements that relate to current user.
+                self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
+
+                # TODO: Window doesn't close for some reason. Go to user settings page after signing up?
+                print("Submitted")
+                self.close()
+            else:
+                print("Username already exists.")
         else:
             print("Passwords do not match!")
-
 
 
 class GroupCreate(QMainWindow):

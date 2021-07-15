@@ -106,6 +106,7 @@ class Data(threading.local):
             print(e.with_traceback())  # Can't have duplicate name.
 
     # Updates users by replacing it with passed class object
+    @staticmethod
     def update_user(user):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -125,7 +126,8 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #Deletes user based on primary key
+    # Deletes user based on primary key
+    @staticmethod
     def delete_user(user):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -194,7 +196,8 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #deletes event based on primary key
+    # deletes event based on primary key
+    @staticmethod
     def delete_event(event):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -214,6 +217,7 @@ class Data(threading.local):
             print(e.with_traceback())  # Can't have duplicate name.
 
     # Updates events by replacing it with passed class object
+    @staticmethod
     def update_event(event):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -283,7 +287,8 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #Updates group by replacing it with passed class object
+    # Updates group by replacing it with passed class object
+    @staticmethod
     def update_group(group):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -304,6 +309,7 @@ class Data(threading.local):
             print(e.with_traceback())  # Can't have duplicate name.
 
     # deletes group based on primary key
+    @staticmethod
     def delete_group(group):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -375,7 +381,8 @@ class Data(threading.local):
     # Returns User object if parameter is given, otherwise returns list of all calendars
     # Returns None if nothing is found.
 
-    #updates calendar by replacing it with passed class object
+    # updates calendar by replacing it with passed class object
+    @staticmethod
     def update_calendar(calendar):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -429,6 +436,7 @@ class Data(threading.local):
             return None
 
     # deletes calendar based on primary key
+    @staticmethod
     def delete_calendar(calendar):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -462,7 +470,8 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    #Updates Option by replacing it with passed class object
+    # Updates Option by replacing it with passed class object
+    @staticmethod
     def update_option(option):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -482,7 +491,6 @@ class Data(threading.local):
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
-
 
     # Returns User object if parameter is given, otherwise returns list of all options
     # Returns None if nothing is found.
@@ -519,6 +527,7 @@ class Data(threading.local):
         except Exception as e:
             return None
     # deletes option based on primary key
+    @staticmethod
     def delete_option(option):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
@@ -537,6 +546,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
+
 class Receive(threading.Thread):
     """
     A class to create a thread and listen on socket passed as parameter.
@@ -544,7 +554,7 @@ class Receive(threading.Thread):
     """
 
     def __init__(self, sock):
-        super().__init__()
+        super().__init__(daemon=True)
         self._sock = sock
 
     # If a message is received from server, unpickle it.  Otherwise, keep listening until the connection is closed.
@@ -595,7 +605,7 @@ class Client(threading.Thread):
     sock = socket.socket()  # Store connection info outside of instances.
 
     def __init__(self, addr):
-        super().__init__()
+        super().__init__(daemon=True)
         self._address = addr
         Data()
         self.srv = socket.create_connection(self._address)
@@ -721,6 +731,7 @@ class Client(threading.Thread):
     def exit():
         ex = Client.Send("exit()", 3)  # Send exit command to server.
         ex.start()
+        sys.exit(0)
 
     # Creates a thread to accept an object and then encode or pickle before sending to server, depending on object type.
     # Attaches a 4 byte header to the object that specifies size
