@@ -360,15 +360,30 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for x in self.e1.options:
 
             self.f = QtWidgets.QFrame(self.voting_tab)
-            self.f.setGeometry(QtCore.QRect(220, 80 + (60 * count), 721, 61))
+            self.f.setGeometry(QtCore.QRect(50, 80 + (60 * count), 721, 61))
             self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
             self.f.setFrameShadow(QtWidgets.QFrame.Raised)
             self.f.setObjectName("f" + str(count))
 
             self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
-            self.l.setObjectName("l" + str(count))
+            self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
+            self.l.setObjectName("n_label" + str(count))
             self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(130, 20, 250, 13))
+            self.l.setObjectName("a_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(230, 20, 250, 13))
+            self.l.setObjectName("l_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.location))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(330, 20, 150, 13))
+            self.l.setObjectName("t_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.time))
 
             temp = 0
             i = 1
@@ -376,7 +391,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 self.r = VoteButton(self.f)
                 self.r.ev = x
                 self.r.value = i
-                self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
+                self.r.setGeometry(QtCore.QRect(430 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
                 self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
@@ -384,6 +399,10 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 temp += 1
                 i += 1
             count += 1
+
+        self.propose_button = QtWidgets.QPushButton(self.voting_tab)
+        self.propose_button.setGeometry(QtCore.QRect(1000, 10, 100, 23))
+        self.propose_button.setObjectName("propose_button")
 
         self.submitVote = QtWidgets.QPushButton(self.voting_tab)
         self.submitVote.setGeometry(QtCore.QRect(1000, 610, 75, 23))
@@ -511,6 +530,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Voting
         self.label_21.setText(_translate("MainWindow", "Voting"))
         self.submitVote.setText(_translate("MainWindow", "Submit"))
+        self.propose_button.setText(_translate("MainWindow", "Propose Options"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.voting_tab), _translate("MainWindow", "Voting"))
 
         self.textBrowser_2.setHtml(_translate("MainWindow",
@@ -571,7 +591,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
             top = float('inf')
             standings = ""
-            winner = ""
+            winner = self.e1.options[0]
             set0 = QBarSet('User 1')
             # names = []
             # ranks = []
@@ -579,11 +599,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             for x in self.e1.options:
                 if (x.votes["User1"] < top):
                     top = x.votes["User1"]
-                    winner = x.name
+                    winner = x
                 standings += "\n" + str(x.votes["User1"]) + ". " + x.name
                 set0.append(x.votes["User1"])
                 # names.append(y.name)
                 # ranks.append(x)
+            winner.chosen = True
+            self.e1.status = True
             submit_msg.setInformativeText(standings)
             submit_msg.exec_()
 
@@ -609,8 +631,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
             winner_msg.setWindowTitle("Voting Results")
             winner_msg.chart_view.setChart(graph)
-            winner_msg.winner_label.setText(winner + " has won the masses.")
-
+            winner_msg.winner_label.setText(winner.name + " has won the masses.")
 
     # Finds the rank of a passed in event.
     # - Rebecca Ling
