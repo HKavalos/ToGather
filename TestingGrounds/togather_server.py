@@ -23,32 +23,36 @@ class PythonHandler(BaseRequestHandler):
         # TODO: Handle when connection is closed incorrectly by client.
         # TODO: Create method to handle header
         while PythonHandler.data != "exit()":
-            length = int.from_bytes(self.request.recv(4), "big")  # Get length of message from first 4 bytes
+            length = int.from_bytes(self.request.recv(4), "big")  # Get length of message from first 4 bytes.
 
-            is_db = int.from_bytes(self.request.recv(1), "big")
+            msg_type = int.from_bytes(self.request.recv(1), "big")
 
             PythonHandler.data = self.request.recv(length)
-            prefix = length.to_bytes(4, "big")  # Convert length to bytes
-            is_db = is_db.to_bytes(1, "big")
+            prefix = length.to_bytes(4, "big")  # Convert length to bytes.
+            msg_type = msg_type.to_bytes(1, "big")
             # Create bytearray to append then convert back to bytes.
-            PythonHandler.data = bytes(bytearray(prefix + is_db + PythonHandler.data))
+            PythonHandler.data = bytes(bytearray(prefix + msg_type + PythonHandler.data))
 
-            # Added a check in header to prevent server from sending db to everyone
-            if int.from_bytes(is_db, "big") == 0:  # Broadcast to everyone
+            # Added a check in header to prevent server from sending db to everyone.
+            if int.from_bytes(msg_type, "big") == 0:  # Broadcast to everyone.
                 PythonHandler.broadcast(PythonHandler.data, self.request)
-            if int.from_bytes(is_db, "big") == 1:  # Broadcast db to requester only.
+            if int.from_bytes(msg_type, "big") == 1:  # Broadcast db to requester only.
                 PythonHandler.send(PythonHandler.data, PythonHandler._db_requester)
-            # Broadcast db request to second newest connection.
-            if int.from_bytes(is_db, "big") == 2:
+
+            # Send db
+            if int.from_bytes(msg_type, "big") == 2:
                 # TODO: Handle if second newest connection was caller
                 # TODO: Handle if no other users request database from
                 PythonHandler._db_requester = self.request
                 target = PythonHandler._connections.pop(0)
                 PythonHandler.send(PythonHandler.data, target)
                 PythonHandler._connections.insert(0, target)
-            if int.from_bytes(is_db, "big") == 3:  # Exit command.  Close connection.
+            if int.from_bytes(msg_type, "big") == 3:  # Exit command.  Close connection.
                 PythonHandler.data = "exit()"
                 break
+            if int.from_bytes(msg_type, "big") == 4:  # Broadcast database update
+                PythonHandler.broadcast(PythonHandler.data, self.request)
+
         self.request.close()
 
     def finish(self):

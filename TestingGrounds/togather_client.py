@@ -120,13 +120,13 @@ class Data(threading.local):
                 # cursor.execute('UPDATE users SET user= tempy')
                 cursor.execute("UPDATE `users` SET user = ? WHERE name = ?", (pickle.dumps(user), user.name))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(user), 4)
+                sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # Deletes user based on primary key
+    # Deletes user based on primary key.
     @staticmethod
     def delete_user(user):
         try:
@@ -196,7 +196,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # deletes event based on primary key
+    # deletes event based on primary key.
     @staticmethod
     def delete_event(event):
         try:
@@ -287,7 +287,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # Updates group by replacing it with passed class object
+    # Updates group by replacing it with passed class object.
     @staticmethod
     def update_group(group):
         try:
@@ -308,7 +308,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # deletes group based on primary key
+    # Deletes group based on primary key.
     @staticmethod
     def delete_group(group):
         try:
@@ -562,7 +562,7 @@ class Receive(threading.Thread):
         while True:
             try:
                 length = int.from_bytes(self._sock.recv(4), "big")  # Get length of message from first 4 bytes
-                is_db = int.from_bytes(self._sock.recv(1), "big")
+                msg_type = int.from_bytes(self._sock.recv(1), "big")
                 msg = self._sock.recv(length)
                 if msg:
                     try:  # Parse for string commands received from server.
@@ -575,6 +575,8 @@ class Receive(threading.Thread):
                             unpickled_message = pickle.loads(msg)
                             # Add received user to local db.
                             if type(unpickled_message) is User:
+                                if msg_type == 4:
+                                    Data.update_user()
                                 Data.add_user(unpickled_message)
                             elif type(unpickled_message) is Event:
                                 Data.add_event(unpickled_message)
@@ -620,6 +622,7 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
+            print("-2. Update user.")
             print("-1. Request database.")
             print("0. Reset database.\n")
 
@@ -656,6 +659,9 @@ class Client(threading.Thread):
             selection = input("\nEnter selection:")
             while selection != "exit()":
 
+                if selection == "-2":
+                    Data.update_user(User("User1", "pw", ["Updated_Constraint1"], ["Updated_Group1", "Updated_Group2"]))
+
                 if selection == "-1":  # Request database from server.
                     Data.db_request()
 
@@ -663,11 +669,11 @@ class Client(threading.Thread):
                     Data.db_reset()
 
                 elif selection == "1":  # Add different users for testing
-                    Data.add_user(User("User1", ["Constraint1"], ["Group1", "Group2"]))
+                    Data.add_user(User(name="User1", password="pw", constraints=["C1", "C2"], groups=["Group1", "Group2"]))
                 elif selection == "11":
-                    Data.add_user(User("User2", ["Constraint1", "Constraint2"], ["Group2"]))
+                    Data.add_user(User("User2", "pw", ["Constraint1", "Constraint2"], ["Group2"]))
                 elif selection == "111":
-                    Data.add_user(User("User3", ["Constraint12"], ["Group12", "Group22"]))
+                    Data.add_user(User("User3", "pw", ["Constraint12"], ["Group12", "Group22"]))
 
                 elif selection == "2":  # Print users from local database
                     for user in Data().get_users():
@@ -735,12 +741,13 @@ class Client(threading.Thread):
 
     # Creates a thread to accept an object and then encode or pickle before sending to server, depending on object type.
     # Attaches a 4 byte header to the object that specifies size
-    # is_db is added to header, let's server know to only request from newest connection
+    # If msg_type is added to header, let's server know to only request from newest connection
+
     class Send(threading.Thread):
-        def __init__(self, obj, is_db=0):
+        def __init__(self, obj, msg_type=0):
             super().__init__()
             self.obj = obj
-            self.is_db = is_db
+            self.msg_type = msg_type
 
         def run(self):
             try:
@@ -757,9 +764,9 @@ class Client(threading.Thread):
         def attach_header(self):
             prefix = sys.getsizeof(self.obj)  # Get length of message so we can create header.
             prefix = prefix.to_bytes(4, "big")  # Convert length to bytes
-            self.is_db = bytes([self.is_db])
+            self.msg_type = bytes([self.msg_type])
             # Create bytearray to add header then convert back to bytes.
-            self.obj = bytes(bytearray(prefix + self.is_db + self.obj))
+            self.obj = bytes(bytearray(prefix + self.msg_type + self.obj))
 
 
 if __name__ == '__main__':

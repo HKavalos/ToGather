@@ -500,8 +500,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
                                            "<html><head/><body><p align=\"center\">ToGather </p><p align=\"center\">(logo not implemented remotely yet)</p></body></html>"))
-       # with importlib_resources.path(bin, "Logo.png") as p:
-       #     path = p
+        # with importlib_resources.path(bin, "Logo.png") as p:
+        #     path = p
         pixmap = QtGui.QPixmap("Logo.png")
         self.home_image.setPixmap(pixmap)
         self.home_image.setScaledContents(True)
