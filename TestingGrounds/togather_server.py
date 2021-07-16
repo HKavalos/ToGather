@@ -50,7 +50,9 @@ class PythonHandler(BaseRequestHandler):
             if int.from_bytes(msg_type, "big") == 3:  # Exit command.  Close connection.
                 PythonHandler.data = "exit()"
                 break
-            if int.from_bytes(msg_type, "big") == 4:  # Broadcast database update
+            if int.from_bytes(msg_type, "big") == 4:  # Broadcast database update.
+                PythonHandler.broadcast(PythonHandler.data, self.request)
+            if int.from_bytes(msg_type, "big") == 5:  # Broadcast database deletion.
                 PythonHandler.broadcast(PythonHandler.data, self.request)
 
         self.request.close()

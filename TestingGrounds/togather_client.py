@@ -112,39 +112,31 @@ class Data(threading.local):
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
             if Data.get_users(user.name) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
                 print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                temp = pickle.dumps(user)
-                # cursor.execute('UPDATE users SET user= tempy')
+            # Only perform update if new object is different from current object.
+            elif user != Data.get_users(user.name):
                 cursor.execute("UPDATE `users` SET user = ? WHERE name = ?", (pickle.dumps(user), user.name))
                 db_connection.commit()
-                sender = Client.Send(pickle.dumps(user), 4)
+                sender = Client.Send(pickle.dumps(Data.get_users(user.name)), 4)
                 sender.start()
             db_connection.close()
-        except Exception as e:
-            print(e.with_traceback())  # Can't have duplicate name.
+        except:
+            pass  # Can't have duplicate name.
 
-    # Deletes user based on primary key.
+    # Deletes user based on primary key. Parameter is not a full user object.
     @staticmethod
     def delete_user(user):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_users(user) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("DELETE FROM `users` WHERE name = ?", (user,))
+            if Data.get_users(user.name).name == user.name:
+                cursor.execute("DELETE FROM `users` WHERE name = ?", (user.name,))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(user), 5)
+                sender.start()
             db_connection.close()
-        except Exception as e:
-            print(e.with_traceback())  # Can't have duplicate name.
+        except Exception as e:  # Fails when object doesn't exist because it won't have name attribute for comparison.
+            pass
 
     # Returns User object if parameter is given, otherwise returns list of all users
     # Returns None if nothing is found.
@@ -576,8 +568,11 @@ class Receive(threading.Thread):
                             # Add received user to local db.
                             if type(unpickled_message) is User:
                                 if msg_type == 4:
-                                    Data.update_user()
-                                Data.add_user(unpickled_message)
+                                    Data.update_user(unpickled_message)
+                                elif msg_type == 5:
+                                    Data.delete_user(unpickled_message)
+                                else:
+                                    Data.add_user(unpickled_message)
                             elif type(unpickled_message) is Event:
                                 Data.add_event(unpickled_message)
                             elif type(unpickled_message) is Group:
@@ -622,6 +617,7 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
+            print("-22. Delete user.")
             print("-2. Update user.")
             print("-1. Request database.")
             print("0. Reset database.\n")
@@ -653,14 +649,17 @@ class Client(threading.Thread):
 
             print("exit() to Exit")
 
-            # TODO: Implement menu w/ UI
+            # TODO: Delete or hide before release.
             # Create and send dummy class objects for testing.
             # If there are other clients connected, they should receive what is sent with their receive thread.
             selection = input("\nEnter selection:")
             while selection != "exit()":
 
+                if selection == "-22":
+                    Data.delete_user(User(name="User1"))
+
                 if selection == "-2":
-                    Data.update_user(User("User1", "pw", ["Updated_Constraint1"], ["Updated_Group1", "Updated_Group2"]))
+                    Data.update_user(User(name="User1", password="pw", constraints=["C", "C"], groups=["Group", "Group"]))
 
                 if selection == "-1":  # Request database from server.
                     Data.db_request()
