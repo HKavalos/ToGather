@@ -112,39 +112,31 @@ class Data(threading.local):
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
             if Data.get_users(user.name) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
                 print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                temp = pickle.dumps(user)
-                # cursor.execute('UPDATE users SET user= tempy')
+            # Only perform update if new object is different from current object.
+            elif user != Data.get_users(user.name):
                 cursor.execute("UPDATE `users` SET user = ? WHERE name = ?", (pickle.dumps(user), user.name))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(Data.get_users(user.name)), 4)
+                sender.start()
             db_connection.close()
-        except Exception as e:
-            print(e.with_traceback())  # Can't have duplicate name.
+        except:
+            pass  # Can't have duplicate name.
 
-    # Deletes user based on primary key
+    # Deletes user based on primary key. Parameter is not a full user object.
     @staticmethod
     def delete_user(user):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_users(user) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("DELETE FROM `users` WHERE name = ?", (user,))
+            if Data.get_users(user.name).name == user.name:
+                cursor.execute("DELETE FROM `users` WHERE name = ?", (user.name,))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(user), 5)
+                sender.start()
             db_connection.close()
-        except Exception as e:
-            print(e.with_traceback())  # Can't have duplicate name.
+        except Exception as e:  # Fails when object doesn't exist because it won't have name attribute for comparison.
+            pass
 
     # Returns User object if parameter is given, otherwise returns list of all users
     # Returns None if nothing is found.
@@ -196,7 +188,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # deletes event based on primary key
+    # deletes event based on primary key.
     @staticmethod
     def delete_event(event):
         try:
@@ -287,7 +279,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # Updates group by replacing it with passed class object
+    # Updates group by replacing it with passed class object.
     @staticmethod
     def update_group(group):
         try:
@@ -308,7 +300,7 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
-    # deletes group based on primary key
+    # Deletes group based on primary key.
     @staticmethod
     def delete_group(group):
         try:
@@ -562,7 +554,7 @@ class Receive(threading.Thread):
         while True:
             try:
                 length = int.from_bytes(self._sock.recv(4), "big")  # Get length of message from first 4 bytes
-                is_db = int.from_bytes(self._sock.recv(1), "big")
+                msg_type = int.from_bytes(self._sock.recv(1), "big")
                 msg = self._sock.recv(length)
                 if msg:
                     try:  # Parse for string commands received from server.
@@ -575,7 +567,12 @@ class Receive(threading.Thread):
                             unpickled_message = pickle.loads(msg)
                             # Add received user to local db.
                             if type(unpickled_message) is User:
-                                Data.add_user(unpickled_message)
+                                if msg_type == 4:
+                                    Data.update_user(unpickled_message)
+                                elif msg_type == 5:
+                                    Data.delete_user(unpickled_message)
+                                else:
+                                    Data.add_user(unpickled_message)
                             elif type(unpickled_message) is Event:
                                 Data.add_event(unpickled_message)
                             elif type(unpickled_message) is Group:
@@ -620,6 +617,8 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
+            print("-22. Delete user.")
+            print("-2. Update user.")
             print("-1. Request database.")
             print("0. Reset database.\n")
 
@@ -650,11 +649,17 @@ class Client(threading.Thread):
 
             print("exit() to Exit")
 
-            # TODO: Implement menu w/ UI
+            # TODO: Delete or hide before release.
             # Create and send dummy class objects for testing.
             # If there are other clients connected, they should receive what is sent with their receive thread.
             selection = input("\nEnter selection:")
             while selection != "exit()":
+
+                if selection == "-22":
+                    Data.delete_user(User(name="User1"))
+
+                if selection == "-2":
+                    Data.update_user(User(name="User1", password="pw", constraints=["C", "C"], groups=["Group", "Group"]))
 
                 if selection == "-1":  # Request database from server.
                     Data.db_request()
@@ -663,11 +668,11 @@ class Client(threading.Thread):
                     Data.db_reset()
 
                 elif selection == "1":  # Add different users for testing
-                    Data.add_user(User("User1", ["Constraint1"], ["Group1", "Group2"]))
+                    Data.add_user(User(name="User1", password="pw", constraints=["C1", "C2"], groups=["Group1", "Group2"]))
                 elif selection == "11":
-                    Data.add_user(User("User2", ["Constraint1", "Constraint2"], ["Group2"]))
+                    Data.add_user(User("User2", "pw", ["Constraint1", "Constraint2"], ["Group2"]))
                 elif selection == "111":
-                    Data.add_user(User("User3", ["Constraint12"], ["Group12", "Group22"]))
+                    Data.add_user(User("User3", "pw", ["Constraint12"], ["Group12", "Group22"]))
 
                 elif selection == "2":  # Print users from local database
                     for user in Data().get_users():
@@ -735,12 +740,13 @@ class Client(threading.Thread):
 
     # Creates a thread to accept an object and then encode or pickle before sending to server, depending on object type.
     # Attaches a 4 byte header to the object that specifies size
-    # is_db is added to header, let's server know to only request from newest connection
+    # If msg_type is added to header, let's server know to only request from newest connection
+
     class Send(threading.Thread):
-        def __init__(self, obj, is_db=0):
+        def __init__(self, obj, msg_type=0):
             super().__init__()
             self.obj = obj
-            self.is_db = is_db
+            self.msg_type = msg_type
 
         def run(self):
             try:
@@ -757,9 +763,9 @@ class Client(threading.Thread):
         def attach_header(self):
             prefix = sys.getsizeof(self.obj)  # Get length of message so we can create header.
             prefix = prefix.to_bytes(4, "big")  # Convert length to bytes
-            self.is_db = bytes([self.is_db])
+            self.msg_type = bytes([self.msg_type])
             # Create bytearray to add header then convert back to bytes.
-            self.obj = bytes(bytearray(prefix + self.is_db + self.obj))
+            self.obj = bytes(bytearray(prefix + self.msg_type + self.obj))
 
 
 if __name__ == '__main__':
