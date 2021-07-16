@@ -23,19 +23,23 @@ from togather_server import *
 import eventwidget
 import groupwidget
 import importlib.resources as importlib_resources
+from qt_material import apply_stylesheet
 
 def main():
+    global app
     app = QtWidgets.QApplication(["ToGather"])
     MainWindow = QtWidgets.QMainWindow()
+    apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     print()
 
     # Try to start server.
+    # TODO: We need to test this using our nonlocal server.
     try:
         server = StartServer()  # From togather_server module
         server.start()
-    except:
+    except OSError:
         print("Server already started by other local client")
 
     # Start client.
@@ -43,19 +47,24 @@ def main():
     client = Client(address)
     try:  # Always close connection when failing.
         client.start()
-
     except:
-        if server.is_alive():
-            server.kill()
         Client.exit()
-
     print("Client started.")
 
+    # Initialize database if it doesn't exist.
+    if not os.path.isfile("db.db"):
+        Data.create_tables()
 
+    # Load database from the client that is running the server.
+    # If this is the client running the server, just reloads the database.
+    # Only relevant if two clients are running from separate directories.
+    Data.db_request()
 
-    Data.create_tables()
-    Data.db_reset()
-    sys.exit(app.exec_())
+    # Close client when UI is exited.
+    ret = app.exec_()
+    if client.is_alive():
+        client.exit()
+    sys.exit(ret)
 
 
 class windowPopup(QDialog):
@@ -72,7 +81,10 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
     #event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
+    usersarr = []
+
     def setupUi(self, MainWindow):
+        self.current_user = User
 
         # Main
         MainWindow.setWindowTitle("ToGather")
@@ -90,7 +102,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_tab = QtWidgets.QWidget()
         self.home_tab.setObjectName("home_tab")
         self.home_votes_widget = QtWidgets.QTabWidget(self.home_tab)
-        self.home_votes_widget.setGeometry(QtCore.QRect(40, 170, 291, 341))
+        self.home_votes_widget.setGeometry(QtCore.QRect(40, 170, 320, 341))
         self.home_votes_widget.setObjectName("home_votes_widget")
         self.finished_vote_tab = QtWidgets.QWidget()
         self.finished_vote_tab.setObjectName("finished_vote_tab")
@@ -114,11 +126,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_upcoming_events.setGeometry(QtCore.QRect(730, 350, 351, 251))
         self.home_upcoming_events.setObjectName("home_upcoming_events")
         self.home_login = QtWidgets.QPushButton(self.home_tab)
-        self.home_login.setGeometry(QtCore.QRect(920, 20, 75, 23))
+        self.home_login.setGeometry(QtCore.QRect(904, 20, 100, 30))
         self.home_login.setObjectName("home_login")
         self.home_login.clicked.connect(self.gotologin)
         self.home_logout = QtWidgets.QPushButton(self.home_tab)
-        self.home_logout.setGeometry(QtCore.QRect(1010, 20, 75, 23))
+        self.home_logout.setGeometry(QtCore.QRect(1010, 20, 100, 30))
         self.home_logout.setObjectName("home_logout")
         self.home_new_messages = QtWidgets.QLabel(self.home_tab)
         self.home_new_messages.setGeometry(QtCore.QRect(30, 30, 141, 16))
@@ -138,7 +150,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.user_settings_profile_pic.setGeometry(QtCore.QRect(20, 10, 71, 71))
         self.user_settings_profile_pic.setObjectName("user_settings_profile_pic")
         self.notification_settings = QtWidgets.QLabel(self.user_settings_tab)
-        self.notification_settings.setGeometry(QtCore.QRect(70, 210, 111, 21))
+        self.notification_settings.setGeometry(QtCore.QRect(70, 210, 124, 21))
         self.notification_settings.setObjectName("notification_settings")
         self.checkBox = QtWidgets.QCheckBox(self.user_settings_tab)
         self.checkBox.setGeometry(QtCore.QRect(80, 250, 70, 17))
@@ -159,8 +171,15 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.checkBox_5.setGeometry(QtCore.QRect(450, 280, 70, 17))
         self.checkBox_5.setObjectName("checkBox_5")
         self.submit_settings = QtWidgets.QPushButton(self.user_settings_tab)
-        self.submit_settings.setGeometry(QtCore.QRect(450, 310, 110, 30))
+        self.submit_settings.setGeometry(QtCore.QRect(450, 310, 118, 34))
         self.submit_settings.setObjectName("submit_settings")
+        self.background_style = QtWidgets.QLabel(self.user_settings_tab)
+        self.background_style.setGeometry(QtCore.QRect(830, 210, 101, 16))
+        self.background_style.setObjectName("background_style")
+        self.style_button = QtWidgets.QPushButton(self.user_settings_tab)
+        self.style_button.setGeometry(QtCore.QRect(830, 310, 118, 34))
+        self.style_button.setObjectName("style_button")
+        self.style_button.clicked.connect(self.change_theme)
         # self.checkBox_6 = QtWidgets.QCheckBox(self.user_settings_tab)
         # self.checkBox_6.setGeometry(QtCore.QRect(450, 310, 70, 17))
         # self.checkBox_6.setObjectName("checkBox_6")
@@ -177,11 +196,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.upcoming_events_title.setGeometry(QtCore.QRect(160, 70, 111, 21))
         self.upcoming_events_title.setObjectName("upcoming_events_title")
         self.add_event = QtWidgets.QPushButton(self.events_tab)
-        self.add_event.setGeometry(QtCore.QRect(1100, 50, 91, 23))
+        self.add_event.setGeometry(QtCore.QRect(1078, 50, 114, 24))
         self.add_event.setObjectName("add_event")
         self.add_event.clicked.connect(self.gotoaddevent)
         self.scrollArea = QtWidgets.QScrollArea(self.events_tab)
-        self.scrollArea.setGeometry(QtCore.QRect(750, 80, 400, 500))
+        self.scrollArea.setGeometry(QtCore.QRect(750, 110, 400, 500))
         self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollArea.setWidgetResizable(True)
@@ -192,113 +211,175 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        # self.event_title = QtWidgets.QLabel(self.scrollArea)
-        # self.event_title.setGeometry(QtCore.QRect(850, 70, 111, 21))
-        # self.event_title.setObjectName("event_title")
-        # self.event_date = QtWidgets.QLabel(self.scrollArea)
-        # self.event_date.setGeometry(QtCore.QRect(850, 90, 111, 21))
-        # self.event_date.setObjectName("event_date")
-        # self.event_place = QtWidgets.QLabel(self.scrollArea)
-        # self.event_place.setGeometry(QtCore.QRect(850, 110, 111, 21))
-        # self.event_place.setObjectName("event_author")
         self.mainTab.addTab(self.events_tab, "")
 
         # Schedule
         self.schedule_tab = QtWidgets.QWidget()
         self.schedule_tab.setObjectName("schedule_tab")
-        self.frame = QtWidgets.QFrame(self.schedule_tab)
-        self.frame.setGeometry(QtCore.QRect(30, 60, 191, 551))
+
+        self.frame = QtWidgets.QFrame(self.schedule_tab) # Sunday
+        self.frame.setGeometry(QtCore.QRect(10, 60, 141, 551))
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.label_6 = QtWidgets.QLabel(self.frame)
-        self.label_6.setGeometry(QtCore.QRect(70, 20, 81, 16))
+        self.label_6 = QtWidgets.QLabel(self.frame) # Day
+        self.label_6.setGeometry(QtCore.QRect(40, 20, 51, 16))
         self.label_6.setObjectName("label_6")
         self.timeEdit = QtWidgets.QTimeEdit(self.frame)
-        self.timeEdit.setGeometry(QtCore.QRect(50, 80, 118, 22))
+        self.timeEdit.setGeometry(QtCore.QRect(10, 80, 118, 31))
         self.timeEdit.setObjectName("timeEdit")
-        self.label_7 = QtWidgets.QLabel(self.frame)
-        self.label_7.setGeometry(QtCore.QRect(80, 110, 47, 13))
+        self.label_7 = QtWidgets.QLabel(self.frame) # To
+        self.label_7.setGeometry(QtCore.QRect(50, 120, 47, 13))
         self.label_7.setObjectName("label_7")
         self.timeEdit_2 = QtWidgets.QTimeEdit(self.frame)
-        self.timeEdit_2.setGeometry(QtCore.QRect(50, 140, 118, 22))
+        self.timeEdit_2.setGeometry(QtCore.QRect(10, 140, 118, 31))
         self.timeEdit_2.setObjectName("timeEdit_2")
-        self.label_8 = QtWidgets.QLabel(self.frame)
-        self.label_8.setGeometry(QtCore.QRect(10, 60, 71, 16))
+        self.label_8 = QtWidgets.QLabel(self.frame) # Not Available
+        self.label_8.setGeometry(QtCore.QRect(30, 60, 79, 16))
         self.label_8.setObjectName("label_8")
-        self.frame_2 = QtWidgets.QFrame(self.schedule_tab)
-        self.frame_2.setGeometry(QtCore.QRect(230, 60, 191, 551))
+
+        self.frame_2 = QtWidgets.QFrame(self.schedule_tab) # Monday
+        self.frame_2.setGeometry(QtCore.QRect(160, 60, 141, 551))
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.label_9 = QtWidgets.QLabel(self.frame_2)
-        self.label_9.setGeometry(QtCore.QRect(70, 20, 81, 16))
+        self.label_9.setGeometry(QtCore.QRect(40, 20, 51, 16))
         self.label_9.setObjectName("label_9")
         self.timeEdit_3 = QtWidgets.QTimeEdit(self.frame_2)
-        self.timeEdit_3.setGeometry(QtCore.QRect(50, 80, 118, 22))
+        self.timeEdit_3.setGeometry(QtCore.QRect(10, 80, 118, 31))
         self.timeEdit_3.setObjectName("timeEdit_3")
         self.label_10 = QtWidgets.QLabel(self.frame_2)
-        self.label_10.setGeometry(QtCore.QRect(80, 110, 47, 13))
+        self.label_10.setGeometry(QtCore.QRect(50, 120, 47, 13))
         self.label_10.setObjectName("label_10")
         self.timeEdit_4 = QtWidgets.QTimeEdit(self.frame_2)
-        self.timeEdit_4.setGeometry(QtCore.QRect(50, 140, 118, 22))
+        self.timeEdit_4.setGeometry(QtCore.QRect(10, 140, 118, 31))
         self.timeEdit_4.setObjectName("timeEdit_4")
         self.label_11 = QtWidgets.QLabel(self.frame_2)
-        self.label_11.setGeometry(QtCore.QRect(10, 60, 71, 16))
+        self.label_11.setGeometry(QtCore.QRect(30, 60, 79, 16))
         self.label_11.setObjectName("label_11")
-        self.frame_3 = QtWidgets.QFrame(self.schedule_tab)
-        self.frame_3.setGeometry(QtCore.QRect(430, 60, 191, 551))
+
+        self.frame_33 = QtWidgets.QFrame(self.schedule_tab) # Tuesday
+        self.frame_33.setGeometry(QtCore.QRect(310, 60, 141, 551))
+        self.frame_33.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_33.setObjectName("frame_33")
+        self.label_12 = QtWidgets.QLabel(self.frame_33)
+        self.label_12.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        self.label_12.setObjectName("label_12")
+        self.timeEdit_5 = QtWidgets.QTimeEdit(self.frame_33)
+        self.timeEdit_5.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        self.timeEdit_5.setObjectName("timeEdit_5")
+        self.label_13 = QtWidgets.QLabel(self.frame_33)
+        self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        self.label_13.setObjectName("label_13")
+        self.timeEdit_6 = QtWidgets.QTimeEdit(self.frame_33)
+        self.timeEdit_6.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        self.timeEdit_6.setObjectName("timeEdit_6")
+        self.label_14 = QtWidgets.QLabel(self.frame_33)
+        self.label_14.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        self.label_14.setObjectName("label_14")
+        self.mainTab.addTab(self.schedule_tab, "")
+
+        self.frame_21 = QtWidgets.QFrame(self.schedule_tab)  # Wednesday
+        self.frame_21.setGeometry(QtCore.QRect(460, 60, 141, 551))
+        self.frame_21.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_21.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_21.setObjectName("frame_21")
+        self.label_96 = QtWidgets.QLabel(self.frame_21)
+        self.label_96.setGeometry(QtCore.QRect(40, 20, 70, 16))
+        self.label_96.setObjectName("label_96")
+        self.timeEdit_27 = QtWidgets.QTimeEdit(self.frame_21)
+        self.timeEdit_27.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        self.timeEdit_27.setObjectName("timeEdit_27")
+        self.label_97 = QtWidgets.QLabel(self.frame_21)
+        self.label_97.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        self.label_97.setObjectName("label_97")
+        self.timeEdit_28 = QtWidgets.QTimeEdit(self.frame_21)
+        self.timeEdit_28.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        self.timeEdit_28.setObjectName("timeEdit_28")
+        self.label_98 = QtWidgets.QLabel(self.frame_21)
+        self.label_98.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        self.label_98.setObjectName("label_98")
+
+        self.frame_3 = QtWidgets.QFrame(self.schedule_tab)  # Thursday
+        self.frame_3.setGeometry(QtCore.QRect(610, 60, 141, 551))
         self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
-        self.label_12 = QtWidgets.QLabel(self.frame_3)
-        self.label_12.setGeometry(QtCore.QRect(70, 20, 81, 16))
-        self.label_12.setObjectName("label_12")
-        self.timeEdit_5 = QtWidgets.QTimeEdit(self.frame_3)
-        self.timeEdit_5.setGeometry(QtCore.QRect(50, 80, 118, 22))
-        self.timeEdit_5.setObjectName("timeEdit_5")
-        self.label_13 = QtWidgets.QLabel(self.frame_3)
-        self.label_13.setGeometry(QtCore.QRect(80, 110, 47, 13))
+        self.label_28 = QtWidgets.QLabel(self.frame_3)
+        self.label_28.setGeometry(QtCore.QRect(40, 20, 55, 16))
+        self.label_28.setObjectName("label_28")
+        self.timeEdit_7 = QtWidgets.QTimeEdit(self.frame_3)
+        self.timeEdit_7.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        self.timeEdit_7.setObjectName("timeEdit_7")
+        self.label_22 = QtWidgets.QLabel(self.frame_3)
+        self.label_22.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        self.label_22.setObjectName("label_22")
+        self.timeEdit_8 = QtWidgets.QTimeEdit(self.frame_3)
+        self.timeEdit_8.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        self.timeEdit_8.setObjectName("timeEdit_8")
+        self.label_23 = QtWidgets.QLabel(self.frame_3)
+        self.label_23.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        self.label_23.setObjectName("label_23")
+
+        self.frame_22 = QtWidgets.QFrame(self.schedule_tab)  # Friday
+        self.frame_22.setGeometry(QtCore.QRect(760, 60, 141, 551))
+        self.frame_22.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_22.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_22.setObjectName("frame_22")
+        self.label_29 = QtWidgets.QLabel(self.frame_22)
+        self.label_29.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        self.label_29.setObjectName("label_29")
+        self.timeEdit_11 = QtWidgets.QTimeEdit(self.frame_22)
+        self.timeEdit_11.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        self.timeEdit_11.setObjectName("timeEdit_11")
+        self.label_13 = QtWidgets.QLabel(self.frame_22)
+        self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
         self.label_13.setObjectName("label_13")
-        self.timeEdit_6 = QtWidgets.QTimeEdit(self.frame_3)
-        self.timeEdit_6.setGeometry(QtCore.QRect(50, 140, 118, 22))
-        self.timeEdit_6.setObjectName("timeEdit_6")
-        self.label_14 = QtWidgets.QLabel(self.frame_3)
-        self.label_14.setGeometry(QtCore.QRect(10, 60, 71, 16))
-        self.label_14.setObjectName("label_14")
-        self.mainTab.addTab(self.schedule_tab, "")
+        self.timeEdit_67 = QtWidgets.QTimeEdit(self.frame_22)
+        self.timeEdit_67.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        self.timeEdit_67.setObjectName("timeEdit_67")
+        self.label_32 = QtWidgets.QLabel(self.frame_22)
+        self.label_32.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        self.label_32.setObjectName("label_32")
+
+        self.frame_5 = QtWidgets.QFrame(self.schedule_tab)  # Saturday
+        self.frame_5.setGeometry(QtCore.QRect(910, 60, 141, 551))
+        self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_5.setObjectName("frame_5")
+        self.label_24 = QtWidgets.QLabel(self.frame_5)
+        self.label_24.setGeometry(QtCore.QRect(40, 20, 58, 16))
+        self.label_24.setObjectName("label_24")
+        self.timeEdit_9 = QtWidgets.QTimeEdit(self.frame_5)
+        self.timeEdit_9.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        self.timeEdit_9.setObjectName("timeEdit_9")
+        self.label_26 = QtWidgets.QLabel(self.frame_5)
+        self.label_26.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        self.label_26.setObjectName("label_26")
+        self.timeEdit_10 = QtWidgets.QTimeEdit(self.frame_5)
+        self.timeEdit_10.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        self.timeEdit_10.setObjectName("timeEdit_10")
+        self.label_27 = QtWidgets.QLabel(self.frame_5)
+        self.label_27.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        self.label_27.setObjectName("label_27")
 
         # Circles
         self.circles_tab = QtWidgets.QWidget()
         self.circles_tab.setObjectName("circles_tab")
-        # self.stackedWidget_3 = QtWidgets.QStackedWidget(self.circles_tab)
-        # self.stackedWidget_3.setGeometry(QtCore.QRect(230, 80, 641, 431))
-        # self.stackedWidget_3.setObjectName("stackedWidget_3")
-        # self.page_6 = QtWidgets.QWidget()
-        # self.page_6.setObjectName("page_6")
-        # self.frame_4 = QtWidgets.QFrame(self.page_6)
-        # self.frame_4.setGeometry(QtCore.QRect(70, 20, 501, 391))
-        # self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        # self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
-        # self.frame_4.setObjectName("frame_4")
-        # self.circle_name = QtWidgets.QLabel(self.frame_4)
-        # self.circle_name.setGeometry(QtCore.QRect(230, 10, 151, 16))
-        # self.circle_name.setObjectName("circle_name")
+
         self.circle_title = QtWidgets.QLabel(self.circles_tab)
         self.circle_title.setGeometry(QtCore.QRect(600, 40, 151, 16))
         self.circle_title.setObjectName("circle_title")
         self.add_group = QtWidgets.QPushButton(self.circles_tab)
-        self.add_group.setGeometry(QtCore.QRect(800, 270, 112, 26))
+        self.add_group.setGeometry(QtCore.QRect(800, 270, 130, 36))
         self.add_group.setObjectName("add_group")
         self.add_group.clicked.connect(self.gotocreate)
         self.pushButton_6 = QtWidgets.QPushButton(self.circles_tab)
-        self.pushButton_6.setGeometry(QtCore.QRect(800, 300, 112, 26))
+        self.pushButton_6.setGeometry(QtCore.QRect(800, 320, 130, 36))
         self.pushButton_6.setObjectName("pushButton_6")
         self.pushButton_6.clicked.connect(self.gotoadd)
-        self.pushButton_7 = QtWidgets.QPushButton(self.circles_tab)
-        self.pushButton_7.setGeometry(QtCore.QRect(800, 330, 112, 26))
-        self.pushButton_7.setObjectName("pushButton_7")
-        self.pushButton_7.clicked.connect(self.gotoremove)
         self.scrollArea2 = QtWidgets.QScrollArea(self.circles_tab)
         self.scrollArea2.setGeometry(QtCore.QRect(350, 140, 400, 500))
         self.scrollArea2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -310,40 +391,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.gridLayout_4 = QtWidgets.QVBoxLayout(self.scrollArea2WidgetContents)
         self.gridLayout_4.setObjectName("gridLayout_3")
         self.scrollArea2.setWidget(self.scrollArea2WidgetContents)
-        # self.graphicsView_3 = QtWidgets.QGraphicsView(self.frame_4)
-        # self.graphicsView_3.setGeometry(QtCore.QRect(30, 70, 71, 81))
-        # self.graphicsView_3.setObjectName("graphicsView_3")
-        # self.graphicsView_4 = QtWidgets.QGraphicsView(self.frame_4)
-        # self.graphicsView_4.setGeometry(QtCore.QRect(120, 70, 71, 81))
-        # self.graphicsView_4.setObjectName("graphicsView_4")
-        # self.graphicsView_5 = QtWidgets.QGraphicsView(self.frame_4)
-        # self.graphicsView_5.setGeometry(QtCore.QRect(220, 70, 71, 81))
-        # self.graphicsView_5.setObjectName("graphicsView_5")
-        # self.graphicsView_6 = QtWidgets.QGraphicsView(self.frame_4)
-        # self.graphicsView_6.setGeometry(QtCore.QRect(410, 70, 71, 81))
-        # self.graphicsView_6.setObjectName("graphicsView_6")
-        # self.graphicsView_7 = QtWidgets.QGraphicsView(self.frame_4)
-        # self.graphicsView_7.setGeometry(QtCore.QRect(320, 70, 71, 81))
-        # self.graphicsView_7.setObjectName("graphicsView_7")
-        # self.label_16 = QtWidgets.QLabel(self.frame_4)
-        # self.label_16.setGeometry(QtCore.QRect(40, 160, 51, 16))
-        # self.label_16.setObjectName("label_16")
-        # self.label_17 = QtWidgets.QLabel(self.frame_4)
-        # self.label_17.setGeometry(QtCore.QRect(130, 160, 51, 16))
-        # self.label_17.setObjectName("label_17")
-        # self.label_18 = QtWidgets.QLabel(self.frame_4)
-        # self.label_18.setGeometry(QtCore.QRect(230, 160, 51, 16))
-        # self.label_18.setObjectName("label_18")
-        # self.label_19 = QtWidgets.QLabel(self.frame_4)
-        # self.label_19.setGeometry(QtCore.QRect(330, 160, 51, 16))
-        # self.label_19.setObjectName("label_19")
-        # self.label_20 = QtWidgets.QLabel(self.frame_4)
-        # self.label_20.setGeometry(QtCore.QRect(420, 160, 51, 16))
-        # self.label_20.setObjectName("label_20")
-        # self.stackedWidget_3.addWidget(self.page_6)
-        # self.page_7 = QtWidgets.QWidget()
-        # self.page_7.setObjectName("page_7")
-        # self.stackedWidget_3.addWidget(self.page_7)
+
         self.mainTab.addTab(self.circles_tab, "")
 
         # Voting
@@ -405,7 +453,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.propose_button.setObjectName("propose_button")
 
         self.submitVote = QtWidgets.QPushButton(self.voting_tab)
-        self.submitVote.setGeometry(QtCore.QRect(1000, 610, 75, 23))
+        self.submitVote.setGeometry(QtCore.QRect(990, 610, 90, 23)) # Updated vote button size for styling - Jakob
         self.submitVote.setObjectName("submitVote")
         self.submitVote.clicked.connect(self.voteResults)
         self.mainTab.addTab(self.voting_tab, "")
@@ -490,16 +538,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.privacy_settings.setText(_translate("MainWindow", "Privacy Settings"))
         self.checkBox_4.setText(_translate("MainWindow", "Public"))
         self.checkBox_5.setText(_translate("MainWindow", "Private"))
-        self.submit_settings.setText(_translate("MainWindow", "Submit Settings"))
+        self.submit_settings.setText(_translate("MainWindow", "Submit \n Settings")) # does the \n cause issues?
+        self.background_style.setText(_translate("MainWindow", "Style Settings"))
+        self.style_button.setText(_translate("MainWindow", "Dark Mode"))
         # self.checkBox_6.setText(_translate("MainWindow", "CheckBox"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
 
         # Events
         self.upcoming_events_title.setText(_translate("MainWindow", "Upcoming Events"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.events_tab), _translate("MainWindow", "Events"))
-        # self.event_date.setText(_translate("MainWindow", "Event Date"))
-        # self.event_place.setText(_translate("MainWindow", "Event Place"))
-        # self.event_title.setText(_translate("MainWindow", "Event Title"))
+        self.add_event.setText(_translate("MainWindow", "Add Event"))
 
         # Schedule
         self.label_6.setText(_translate("MainWindow", "Sunday"))
@@ -511,6 +559,18 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_12.setText(_translate("MainWindow", "Tuesday"))
         self.label_13.setText(_translate("MainWindow", "to"))
         self.label_14.setText(_translate("MainWindow", "Not Available"))
+        self.label_96.setText(_translate("MainWindow", "Wednesday"))
+        self.label_97.setText(_translate("MainWindow", "to"))
+        self.label_98.setText(_translate("MainWindow", "Not Available"))
+        self.label_28.setText(_translate("MainWindow", "Thursday"))
+        self.label_22.setText(_translate("MainWindow", "to"))
+        self.label_23.setText(_translate("MainWindow", "Not Available"))
+        self.label_29.setText(_translate("MainWindow", "Friday"))
+        self.label_13.setText(_translate("MainWindow", "to"))
+        self.label_32.setText(_translate("MainWindow", "Not Available"))
+        self.label_24.setText(_translate("MainWindow", "Saturday"))
+        self.label_26.setText(_translate("MainWindow", "to"))
+        self.label_27.setText(_translate("MainWindow", "Not Available"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
 
         # Circles
@@ -518,8 +578,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # self.circle_name.setText(_translate("MainWindow", "Circle Name"))
         self.add_group.setText(_translate("MainWindow", "Add Circle"))
         self.pushButton_6.setText(_translate("MainWindow", "Add Member"))
-        self.pushButton_7.setText(_translate("MainWindow", "Remove Member"))
-        self.add_event.setText(_translate("MainWindow", "Add Event"))
         # self.label_16.setText(_translate("MainWindow", "Username"))
         # self.label_17.setText(_translate("MainWindow", "Username"))
         # self.label_18.setText(_translate("MainWindow", "Username"))
@@ -649,7 +707,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         x.votes["User1"] = y
 
     def gotologin(self):
-        self.login_page = LogIn()
+        self.login_page = LogIn(self)
         self.login_page.adjustSize()
         self.login_page.show()
 
@@ -682,6 +740,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         new_name = new_user  # need to find a way to get
         print(new_user)
         print(the_group)
+
+
         # print(len(self.groups))
 
         # for x in self.groups:
@@ -701,10 +761,19 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         if new_name != "":
             self.label_16.setText(new_name)
 
+
     def update_event(self, event):
         self.event_title.setText(event.name)
         self.event_date.setText(event.description)  # time equals place??
         self.event_place.setText(event.options)
+
+    def change_theme(self):
+        if self.style_button.text() == "Dark Mode":
+            apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
+            self.style_button.setText("Light Mode")
+        else:
+            apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
+            self.style_button.setText("Dark Mode")
 
 class VoteRes(QMainWindow):
     def __init__(self):
@@ -717,10 +786,11 @@ class VoteRes(QMainWindow):
         mwindow = MainWindow
         widget.addWidget(mwindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-
+        
 class LogIn(QMainWindow):
-    def __init__(self):
-        super(LogIn, self).__init__()
+    def __init__(self, parent):
+        super(LogIn, self).__init__(parent)
+        self.parent = parent
         #with importlib_resources.path(bin, "login.ui") as p:
         #    path = p
         loadUi("login.ui", self)
@@ -728,13 +798,36 @@ class LogIn(QMainWindow):
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
 
+    # TODO: Show errors in UI.
+    # Method that runs when login button is pressed.
     def login_acc(self):
-        print("Logged In")
-        self.close()
+        # Check if username exists.
+        if Data.get_users(self.login_username_entry.text()):
+            # Check if password matches the password from database.
+            user = Data.get_users(self.login_username_entry.text())
+            if user.password == self.login_password_entry.text():
+                # Update the current_user variable stored in MainWindow
+                print("Login successful")
+                self.parent.current_user = user
+                # TODO: Create a method to update other UI objects that use current user.
+                self.parent.user_settings_name.setText(self.parent.current_user.name)
+                self.close()
+            else:
+                print("Incorrect password.")
+        else:
+            print("Username doesn't exist.")
+
+
+        #valid = [x for x, y in enumerate(self.parent.usersarr) if y[0] == self.login_username_entry.text() and y[1] == self.login_password_entry.text()]
+        #if valid:
+        #    print("Logged In")
+        #    self.close()
+        #else:
+        #    print("Invalid login!")
 
     def nav(self):
         print("To Signup!")
-        self.signup_window = SignUp()
+        self.signup_window = SignUp(self)
         self.setWindowTitle("Sign Up")
         self.signup_window.adjustSize()
         self.signup_window.show()
@@ -742,8 +835,9 @@ class LogIn(QMainWindow):
 
 
 class SignUp(QMainWindow):
-    def __init__(self):
-        super(SignUp, self).__init__()
+    def __init__(self, parent):
+        super(SignUp, self).__init__(parent)
+        self.parent = parent
         #with importlib_resources.path(bin, "signup.ui") as p:
         #    path = p
         loadUi(("signup.ui"), self)
@@ -752,8 +846,34 @@ class SignUp(QMainWindow):
         self.signup_submit_button.clicked.connect(self.submit)
 
     def submit(self):
-        print("Submitted")
-        self.close()
+        if (self.signup_username_entry.text() == "" or self.signup_password_entry.text() == "" or self.signup_c_password_entry.text() == ""):
+            print("Please enter all required information")
+        elif self.signup_password_entry.text() == self.signup_c_password_entry.text():
+
+            # Add user to local array for testing.
+            userpair = (self.signup_username_entry.text(), self.signup_password_entry.text())
+            self.parent.parent.usersarr.append(userpair)
+
+            # Make sure username doesn't already exist.
+            if not Data.get_users(self.signup_username_entry.text()):
+                # Add new user to database.
+                user = User(self.signup_username_entry.text(), self.signup_password_entry.text())
+                Data.add_user(user)
+
+                # Update the current_user variable stored in MainWindow
+                self.parent.current_user = user
+
+                # TODO: Create a method to update all UI objects that use current user.
+                # Update UI elements that relate to current user.
+                self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
+
+                # TODO: Window doesn't close for some reason. Go to user settings page after signing up?
+                print("Submitted")
+                self.close()
+            else:
+                print("Username already exists.")
+        else:
+            print("Passwords do not match!")
 
 
 class GroupCreate(QMainWindow):
@@ -766,17 +886,21 @@ class GroupCreate(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        print("Submitted")
-        new_group = Group("not available", str(self.group_name_entry.text()))
-        Data.add_group(new_group)
-
-        app = QtWidgets.QFrame()
-        frames = groupwidget.Ui_Form()
-        frames.setupUi(app)
-        frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
-        self.parent.circlearr.append(frames)
-        self.parent.scrollArea2WidgetContents.layout().addWidget(app)
-        self.close()
+        if Data.get_groups((self.group_name_entry.text())):
+            print("Group already exists!")
+        else:
+            print("Submitted")
+            app = QtWidgets.QFrame()
+            frames = groupwidget.Ui_Form()
+            frames.setupUi(app)
+            frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
+            memberarr = []
+            eventarr = []
+            grouptuple = Group(self.group_name_entry.text(), "", memberarr, eventarr)
+            self.parent.circlearr.append(grouptuple)
+            Data.add_group(grouptuple)
+            self.parent.scrollArea2WidgetContents.layout().addWidget(app)
+            self.close()
 
 
 class AddMember(QMainWindow):
@@ -788,17 +912,37 @@ class AddMember(QMainWindow):
         loadUi("newmember.ui", self)
         self.submission_button.clicked.connect(self.submit)
 
+
     def submit(self):
-        print("Added New Member")
-        new_user = self.name_entry.text()
-        # ui.add_member_group(new_user, str(self.group_name_entry.text()))
-        Data.add_user(User(new_user))
-        if len(self.parent.circlearr) != 0:
-            self.parent.circlearr[0].label.setText(new_user)
+        if not Data.get_users(self.name_entry.text()):
+            print("User does not exist!")
         else:
-            print("No current circles!")
+
+            # ui.add_member_group(new_user, str(self.group_name_entry.text()))
+            #Data.add_user(User(new_user))
+            if len(Data.get_groups()) != 0:
+                #groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
+                self.memwidget = loadUi("member.ui")
+                valid = True
+                currentgroup = Data.get_groups(self.group_name_entry.text())
+                userarray = currentgroup.users
+                if self.name_entry.text() in userarray:
+                    print("User already in group!")
+                else:
+                    userarray.append(self.name_entry.text())
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events))
+                    #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
+                    print("Added New Member")
+
+
+            else:
+                print("No current circles!")
         self.close()
 
+    def removeMember(self, index, name):
+        memindex = [x[0] for x in self.parent.circlearr[index][2]].index(name)
+        self.parent.circlearr[index][2][memindex][1].close()
+        del self.parent.circlearr[index][2][memindex]
 
 class RemoveMember(QMainWindow):
     def __init__(self, parent):
@@ -810,8 +954,9 @@ class RemoveMember(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
+        groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
         print("Removed Member")
-        self.parent.circlearr[0].label.setText("Member 1")
+        self.parent.circlearr[groupindex][1].label.setText("Member 1")
         self.close()
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'groupwidget.ui'
+# Form implementation generated from reading ui file 'C:\Users\Logan\Documents\GitHub\ToGather\TestingGrounds\groupwidget.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -20,21 +20,16 @@ class Ui_Form(object):
         self.group_name_label = QtWidgets.QLabel(Form)
         self.group_name_label.setObjectName("group_name_label")
         self.verticalLayout.addWidget(self.group_name_label)
-        self.label = QtWidgets.QLabel(Form)
-        self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
-        self.label_2 = QtWidgets.QLabel(Form)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
-        self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setObjectName("label_3")
-        self.verticalLayout.addWidget(self.label_3)
-        self.label_4 = QtWidgets.QLabel(Form)
-        self.label_4.setObjectName("label_4")
-        self.verticalLayout.addWidget(self.label_4)
-        self.label_5 = QtWidgets.QLabel(Form)
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout.addWidget(self.label_5)
+        self.memberDisplay = QtWidgets.QScrollArea(Form)
+        self.memberDisplay.setWidgetResizable(True)
+        self.memberDisplay.setObjectName("memberDisplay")
+        self.memberDisplayContents = QtWidgets.QWidget()
+        self.memberDisplayContents.setGeometry(QtCore.QRect(0, 0, 333, 206))
+        self.memberDisplayContents.setObjectName("memberDisplayContents")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.memberDisplayContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.memberDisplay.setWidget(self.memberDisplayContents)
+        self.verticalLayout.addWidget(self.memberDisplay)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -43,18 +38,3 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.group_name_label.setText(_translate("Form", "Group Name:"))
-        self.label.setText(_translate("Form", "Member 1"))
-        self.label_2.setText(_translate("Form", "Member 2"))
-        self.label_3.setText(_translate("Form", "Member 3"))
-        self.label_4.setText(_translate("Form", "Member 4"))
-        self.label_5.setText(_translate("Form", "Member 5"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())

@@ -1,3 +1,4 @@
+import sys
 from socketserver import *
 import threading
 import socket
@@ -42,9 +43,9 @@ class PythonHandler(BaseRequestHandler):
                 # TODO: Handle if second newest connection was caller
                 # TODO: Handle if no other users request database from
                 PythonHandler._db_requester = self.request
-                target = PythonHandler._connections.pop(-2)
+                target = PythonHandler._connections.pop(0)
                 PythonHandler.send(PythonHandler.data, target)
-                PythonHandler._connections.insert(-2, target)
+                PythonHandler._connections.insert(0, target)
             if int.from_bytes(is_db, "big") == 3:  # Exit command.  Close connection.
                 PythonHandler.data = "exit()"
                 break
@@ -77,24 +78,21 @@ class PythonHandler(BaseRequestHandler):
         destination.sendall(message)
 
 
+class TogatherTCPServer(ThreadingTCPServer):
+    def __init__(self, host, port):
+        self.allow_reuse_address = True
+        super().__init__(host, port)
+
+
 class StartServer(threading.Thread):
     def __init__(self):
-        super().__init__()
-        self.server = ThreadingTCPServer(("localhost", 55557), PythonHandler)
+        super().__init__(daemon=True)
+        self.server = TogatherTCPServer(("localhost", 55557), PythonHandler)
 
     def run(self):
-        try:
-            # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
-            # Creates an instance of PythonHandler class whenever connection is received from server.
-            # ThreadingTCPServer uses threads to connect to each client.
-            with self.server as _server:
-                _server.allow_reuse_address = True
-                print("Python server started.")
-                _server.serve_forever()
-                _server.shutdown()
-        except:
-            self.kill()
-
-    def kill(self):
-        self.server.shutdown()
-
+        # TODO: Run server in a thread to allow for exit command that calls _server.shutdown()
+        # Creates an instance of PythonHandler class whenever connection is received from server.
+        # ThreadingTCPServer uses threads to connect to each client.
+        with self.server as _server:
+            print("Python server started.")
+            _server.serve_forever()

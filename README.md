@@ -19,5 +19,3 @@ ToGather
 If the run command doesn't work immediately please try relaunching the terminal!
 
 As of this moment, pip still does not install the full set of libraries needed to run a PyQt5 application, please use "sudo apt-get install python3-pyqt5" to resolve this.
-
-Also due to an error in the server/client interaction on our end it may take around 60 seconds to relaunch the program.
