@@ -1,4 +1,4 @@
-from bin._time import Time
+from _time import Time
 
 
 class Option:
