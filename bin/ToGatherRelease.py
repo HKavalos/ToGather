@@ -61,12 +61,13 @@ class windowPopup(QDialog):
 
 
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
-    # Dummy event data. Each event has its own ranked choice value.
+    # Dummy option and event data. Each event has its options, which have a unique ranked choice value.
     # - Rebecca Ling
-    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
-    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Paintball", "11:00 p.m.", "Hazel's House")
-    event_ranks = {1: e1, 2: e2, 3: e3}
+    o1 = Option("Arcade", "Play games!", None, False, {"User1" : 1})
+    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", None, False, {"User1" : 2})
+    o3 = Option("Paintball", "Free tie-dye!", None, False, {"User1" : 3})
+    e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
+    #event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
     usersarr = []
 
@@ -351,11 +352,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_21.setGeometry(QtCore.QRect(560, 20, 61, 51))
         self.label_21.setObjectName("label_21")
 
-        # Generates each event and their ranked voting options in voting tab
-        # Each event gets a unique frame with its own label and ranked choice voting options
+        # Generates each event option and their ranked votes in voting tab
+        # Each event option gets a unique frame with its own label and ranked choice votes
         # - Rebecca Ling
         count = 0
-        for x in self.event_ranks.values():
+        for x in self.e1.options:
 
             self.f = QtWidgets.QFrame(self.voting_tab)
             self.f.setGeometry(QtCore.QRect(220, 80 + (60 * count), 721, 61))
@@ -370,14 +371,14 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
             temp = 0
             i = 1
-            for y in self.event_ranks:
+            for y in self.e1.options:
                 self.r = VoteButton(self.f)
                 self.r.ev = x
                 self.r.value = i
                 self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda checked, a=x, b=i: self.vote(a, b))
+                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
 
                 temp += 1
                 i += 1
@@ -549,40 +550,68 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def voteResults(self, MainWindow):
 
         submit_msg = QtWidgets.QMessageBox()
-        submit_msg.setWindowTitle("Submit Successful")
-        submit_msg.setText("Your vote has been submitted.")
         submit_msg.setIcon(QtWidgets.QMessageBox.Information)
 
-        top = float('inf')
-        standings = ""
-        winner = ""
-        for x, y in self.event_ranks.items():
-            if (x < top):
-                top = x
-                winner = y.description
-            standings += "\n" + str(x) + ". " + y.description
-        submit_msg.setInformativeText(standings)
-        submit_msg.exec_()
-        winner_msg = QtWidgets.QMessageBox()
-        winner_msg.setWindowTitle("Voting Results")
-        winner_msg.setText(winner + " has won the masses.")
-        winner_msg.setIcon(QtWidgets.QMessageBox.Information)
-        winner_msg.exec_()
+
+        success = True
+        for i in range(1, len(self.e1.options)+1):
+            dup = 0
+            for x in self.e1.options:
+                if (x.votes["User1"] == i):
+                    dup += 1
+            if (dup > 1):
+                submit_msg.setWindowTitle("Submit Failed")
+                submit_msg.setText("You can only choose one rank for each option. Your vote has not been submitted.")
+                submit_msg.exec_()
+                success = False
+                break
+        if success:
+            submit_msg.setWindowTitle("Submit Successful")
+            submit_msg.setText("Your vote has been submitted.")
+
+            top = float('inf')
+            standings = ""
+            winner = ""
+            # names = []
+            # ranks = []
+
+            for x in self.e1.options:
+                if (x.votes["User1"] < top):
+                    top = x.votes["User1"]
+                    winner = x.name
+                standings += "\n" + str(x.votes["User1"]) + ". " + x.name
+                # names.append(y.name)
+                # ranks.append(x)
+            submit_msg.setInformativeText(standings)
+            submit_msg.exec_()
+
+            # test_plot = dict(enumerate(names))
+            # test_win = pyqtgraph.GraphicsLayoutWidget()
+            # x_axis = pyqtgraph.AxisItem(orientation='bottom')
+            # x_axis.setTicks([test_plot.items()])
+            # plot = test_win.addPlot(axisItems={'bottom': x_axis})
+            # plot.plot(list(test_plot.keys()), ranks)
+
+            winner_msg = QtWidgets.QMessageBox()
+            winner_msg.setWindowTitle("Voting Results")
+            winner_msg.setText(winner + " has won the masses.")
+            winner_msg.setIcon(QtWidgets.QMessageBox.Information)
+            winner_msg.exec_()
 
     # Finds the rank of a passed in event.
     # - Rebecca Ling
-    def key(self, k):
-        for x, y in self.event_ranks.items():
-            if (k == y):
-                return x
-        return "Error: event doesn't exist."
+    #def key(self, k):
+        #for x, y in self.event_ranks.items():
+            #if (k == y):
+                #return x
+        #return "Error: event doesn't exist."
 
     # Switches the rankings between different events based on the option the user picks.
     # - Rebecca Ling
     def vote(self, x, y):
-        swap = self.key(x)
-        self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
-
+        #swap = self.key(x)
+        #self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
+        x.votes["User1"] = y
     def gotologin(self):
         self.login_page = LogIn(self)
         self.login_page.adjustSize()

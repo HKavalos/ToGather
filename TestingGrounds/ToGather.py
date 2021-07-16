@@ -9,19 +9,21 @@
 
 import sys
 from togather_client import *
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
+from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
+from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.uic import loadUi
 from group import Group
 from user import User
 from event import Event
+from option import Option
 from VoteButton import VoteButton
 from togather_server import *
 import eventwidget
 import groupwidget
 import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
-
 
 def main():
     global app
@@ -71,12 +73,13 @@ class windowPopup(QDialog):
         self.name = name
         
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
-    # Dummy event data. Each event has its own ranked choice value.
+    # Dummy event and option data. Each event has its own option with a unique ranked choice value.
     # - Rebecca Ling
-    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
-    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Paintball", "11:00 p.m.", "Hazel's House")
-    event_ranks = {1: e1, 2: e2, 3: e3}
+    o1 = Option("Arcade", "Play games!", "Party Pizazz Plaza", None, False, {"User1" : 1})
+    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", "Silly Sweet Shop", None, False, {"User1" : 2})
+    o3 = Option("Paintball", "Free tie-dye!", "Hazel's House", None, False, {"User1" : 3})
+    e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
+    #event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
     usersarr = []
 
@@ -398,37 +401,56 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_21.setGeometry(QtCore.QRect(560, 20, 61, 51))
         self.label_21.setObjectName("label_21")
 
-        # Generates each event and their ranked voting options in voting tab
-        # Each event gets a unique frame with its own label and ranked choice voting options
+        # Generates each event option and their ranked votes in voting tab
+        # Each option gets a unique frame with its own label and ranked choice votes
         # - Rebecca Ling
         count = 0
-        for x in self.event_ranks.values():
+        for x in self.e1.options:
 
             self.f = QtWidgets.QFrame(self.voting_tab)
-            self.f.setGeometry(QtCore.QRect(220, 80 + (60 * count), 721, 61))
+            self.f.setGeometry(QtCore.QRect(50, 80 + (60 * count), 721, 61))
             self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
             self.f.setFrameShadow(QtWidgets.QFrame.Raised)
             self.f.setObjectName("f" + str(count))
 
             self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(20, 20, 150, 13))
-            self.l.setObjectName("l" + str(count))
+            self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
+            self.l.setObjectName("n_label" + str(count))
             self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(130, 20, 250, 13))
+            self.l.setObjectName("a_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(230, 20, 250, 13))
+            self.l.setObjectName("l_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.location))
+
+            self.l = QtWidgets.QLabel(self.f)
+            self.l.setGeometry(QtCore.QRect(330, 20, 150, 13))
+            self.l.setObjectName("t_label" + str(count))
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.time))
 
             temp = 0
             i = 1
-            for y in self.event_ranks:
+            for y in self.e1.options:
                 self.r = VoteButton(self.f)
                 self.r.ev = x
                 self.r.value = i
-                self.r.setGeometry(QtCore.QRect(180 + (110 * temp), 20, 82, 17))
+                self.r.setGeometry(QtCore.QRect(430 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda checked, a=x, b=i: self.vote(a, b))
+                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
 
                 temp += 1
                 i += 1
             count += 1
+
+        self.propose_button = QtWidgets.QPushButton(self.voting_tab)
+        self.propose_button.setGeometry(QtCore.QRect(1000, 10, 100, 23))
+        self.propose_button.setObjectName("propose_button")
 
         self.submitVote = QtWidgets.QPushButton(self.voting_tab)
         self.submitVote.setGeometry(QtCore.QRect(990, 610, 90, 23)) # Updated vote button size for styling - Jakob
@@ -566,6 +588,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Voting
         self.label_21.setText(_translate("MainWindow", "Voting"))
         self.submitVote.setText(_translate("MainWindow", "Submit"))
+        self.propose_button.setText(_translate("MainWindow", "Propose Options"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.voting_tab), _translate("MainWindow", "Voting"))
 
         self.textBrowser_2.setHtml(_translate("MainWindow",
@@ -605,41 +628,83 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # After the winner is chosen, another popup appears stating which event won.
     # - Rebecca Ling
     def voteResults(self, MainWindow):
-
         submit_msg = QtWidgets.QMessageBox()
-        submit_msg.setWindowTitle("Submit Successful")
-        submit_msg.setText("Your vote has been submitted.")
         submit_msg.setIcon(QtWidgets.QMessageBox.Information)
 
-        top = float('inf')
-        standings = ""
-        winner = ""
-        for x, y in self.event_ranks.items():
-            if(x < top):
-                top = x
-                winner = y.description
-            standings += "\n"+str(x)+". "+y.description
-        submit_msg.setInformativeText(standings)
-        submit_msg.exec_()
-        winner_msg = QtWidgets.QMessageBox()
-        winner_msg.setWindowTitle("Voting Results")
-        winner_msg.setText(winner+" has won the masses.")
-        winner_msg.setIcon(QtWidgets.QMessageBox.Information)
-        winner_msg.exec_()
+        success = True
+        for i in range(1, len(self.e1.options)+1):
+            dup = 0
+            for x in self.e1.options:
+                if (x.votes["User1"] == i):
+                    dup += 1
+            if (dup > 1):
+                submit_msg.setWindowTitle("Submit Failed")
+                submit_msg.setText("You can only choose one rank for each option. Your vote has not been submitted.")
+                submit_msg.exec_()
+                success = False
+                break
+        if success:
+            submit_msg.setWindowTitle("Submit Successful")
+            submit_msg.setText("Your vote has been submitted.")
+
+            top = float('inf')
+            standings = ""
+            winner = self.e1.options[0]
+            set0 = QBarSet('User 1')
+            # names = []
+            # ranks = []
+
+            for x in self.e1.options:
+                if (x.votes["User1"] < top):
+                    top = x.votes["User1"]
+                    winner = x
+                standings += "\n" + str(x.votes["User1"]) + ". " + x.name
+                set0.append(x.votes["User1"])
+                # names.append(y.name)
+                # ranks.append(x)
+            winner.chosen = True
+            self.e1.status = True
+            submit_msg.setInformativeText(standings)
+            submit_msg.exec_()
+
+            usrs = ('User 1')
+            res = QBarSeries()
+            res.append(set0)
+            graph = QChart()
+            graph.addSeries(res)
+            graph.setTitle('Voting Results')
+            graph.setAnimationOptions(QChart.SeriesAnimations)
+            x_axis = QBarCategoryAxis()
+            x_axis.append(usrs)
+            y_axis = QValueAxis()
+            y_axis.setRange(1,3)
+            graph.addAxis(x_axis, Qt.AlignBottom)
+            graph.addAxis(y_axis, Qt.AlignLeft)
+            graph.legend().setVisible(True)
+            graph.legend().setAlignment(Qt.AlignBottom)
+
+            winner_msg = VoteRes()
+            widget.addWidget(winner_msg)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+
+            winner_msg.setWindowTitle("Voting Results")
+            winner_msg.chart_view.setChart(graph)
+            winner_msg.winner_label.setText(winner.name + " has won the masses.")
 
     # Finds the rank of a passed in event.
     # - Rebecca Ling
-    def key(self, k):
-        for x, y in self.event_ranks.items():
-            if (k == y):
-                return x
-        return "Error: event doesn't exist."
+    #def key(self, k):
+        #for x, y in self.event_ranks.items():
+            #if (k == y):
+                #return x
+        #return "Error: event doesn't exist."
 
     # Switches the rankings between different events based on the option the user picks.
     # - Rebecca Ling
     def vote(self, x, y):
-        swap = self.key(x)
-        self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
+        #swap = self.key(x)
+        #self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
+        x.votes["User1"] = y
 
     def gotologin(self):
         self.login_page = LogIn(self)
@@ -710,7 +775,18 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
             self.style_button.setText("Dark Mode")
 
+class VoteRes(QMainWindow):
+    def __init__(self):
+        super(VoteRes, self).__init__()
+        loadUi("voting.ui", self)
+        self.return_button.clicked.connect(self.return_voting)
 
+    def return_voting(self):
+        print("Return to Voting")
+        mwindow = MainWindow
+        widget.addWidget(mwindow)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+        
 class LogIn(QMainWindow):
     def __init__(self, parent):
         super(LogIn, self).__init__(parent)
