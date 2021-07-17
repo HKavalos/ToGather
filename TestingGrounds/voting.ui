@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>411</height>
+    <width>1068</width>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,49 +15,11 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="4" column="1" rowspan="4" colspan="2">
-     <widget class="QChartView" name="chart_view"/>
-    </item>
-    <item row="10" column="3">
-     <widget class="QPushButton" name="return_button">
-      <property name="text">
-       <string>Return</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="Line" name="line">
+    <item row="2" column="4">
+     <widget class="Line" name="line_3">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-     </widget>
-    </item>
-    <item row="8" column="0" rowspan="3" colspan="3">
-     <widget class="QFrame" name="winner_frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <widget class="QLabel" name="winner_label">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>5</y>
-         <width>321</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
      </widget>
     </item>
     <item row="0" column="2">
@@ -73,21 +35,53 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="3">
-     <widget class="QLabel" name="userList">
+    <item row="2" column="6" rowspan="6">
+     <widget class="QScrollArea" name="user_vote_scroll">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="vote_scroll_contents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>285</width>
+         <height>534</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="10" column="6">
+     <widget class="QPushButton" name="return_button">
+      <property name="text">
+       <string>Return</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="vote_res_title">
       <property name="font">
        <font>
         <pointsize>16</pointsize>
        </font>
       </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
       <property name="text">
-       <string>User List</string>
+       <string>Voting Results</string>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="Line" name="line_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="6">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -104,38 +98,93 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="vote_res_title">
+    <item row="0" column="6">
+     <widget class="QLabel" name="userList">
       <property name="font">
        <font>
         <pointsize>16</pointsize>
        </font>
       </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
       <property name="text">
-       <string>Voting Results</string>
+       <string>Users</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="2" column="1" colspan="2">
+    <item row="2" column="5" rowspan="6">
+     <widget class="QScrollArea" name="user_vote_scroll_2">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="vote_scroll_contents_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>285</width>
+         <height>534</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="2">
      <widget class="Line" name="line_2">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
-    <item row="2" column="3" rowspan="8">
-     <widget class="QScrollArea" name="user_vote_scroll">
-      <property name="widgetResizable">
-       <bool>true</bool>
+    <item row="0" column="5">
+     <widget class="QLabel" name="userList_2">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
       </property>
-      <widget class="QWidget" name="vote_scroll_contents">
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Standings</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" rowspan="6" colspan="4">
+     <widget class="QChartView" name="chart_view"/>
+    </item>
+    <item row="8" column="0" rowspan="3" colspan="6">
+     <widget class="QFrame" name="winner_frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QLabel" name="winner_label">
        <property name="geometry">
         <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>174</width>
-         <height>322</height>
+         <x>10</x>
+         <y>5</y>
+         <width>731</width>
+         <height>21</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
        </property>
       </widget>
      </widget>
