@@ -9,7 +9,7 @@
 
 import sys
 from togather_client import *
-from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
@@ -65,12 +65,6 @@ def main():
     if client.is_alive():
         client.exit()
     sys.exit(ret)
-
-
-class windowPopup(QDialog):
-    def __init__(self, name, parent=None):
-        super().__init__(parent)
-        self.name = name
         
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event and option data. Each event has its own option with a unique ranked choice value.
@@ -442,7 +436,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 self.r.setGeometry(QtCore.QRect(430 + (110 * temp), 20, 82, 17))
                 self.r.setObjectName("r{0}".format(i))
                 self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda checked, a=x, b=i: ui.vote(a, b))
+                self.r.clicked.connect(lambda checked, a=x, b=i: self.vote(a, b))
 
                 temp += 1
                 i += 1
@@ -683,9 +677,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             graph.legend().setVisible(True)
             graph.legend().setAlignment(Qt.AlignBottom)
 
-            winner_msg = VoteRes()
-            widget.addWidget(winner_msg)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+            winner_msg = VoteRes(self)
+            winner_msg.show()
 
             winner_msg.setWindowTitle("Voting Results")
             winner_msg.chart_view.setChart(graph)
@@ -776,17 +769,15 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.style_button.setText("Dark Mode")
 
 class VoteRes(QMainWindow):
-    def __init__(self):
-        super(VoteRes, self).__init__()
+    def __init__(self, parent):
+        super(VoteRes, self).__init__(parent)
+        self.parent = parent
         loadUi("voting.ui", self)
         self.return_button.clicked.connect(self.return_voting)
 
     def return_voting(self):
         print("Return to Voting")
-        mwindow = MainWindow
-        widget.addWidget(mwindow)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-        
+        self.close()
 class LogIn(QMainWindow):
     def __init__(self, parent):
         super(LogIn, self).__init__(parent)
