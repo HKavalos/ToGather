@@ -9,7 +9,7 @@
 
 import sys
 from togather_client import *
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
 from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
@@ -65,15 +65,20 @@ def main():
     if client.is_alive():
         client.exit()
     sys.exit(ret)
+
+
+class windowPopup(QDialog):
+    def __init__(self, name, parent=None):
+        super().__init__(parent)
+        self.name = name
         
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     # Dummy event and option data. Each event has its own option with a unique ranked choice value.
     # - Rebecca Ling
     o1 = Option("Arcade", "Play games!", "Party Pizazz Plaza", None, False, {"User1" : 1})
-    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", "Silly Sweet Shop", None, False, {"User1" : 2})
-    o3 = Option("Paintball", "Free tie-dye!", "Hazel's House", None, False, {"User1" : 3})
+    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", "Silly Sweet Shop", None, False, {"User1" : 1})
+    o3 = Option("Paintball", "Free tie-dye!", "Hazel's House", None, False, {"User1" : 1})
     e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
-    #event_ranks = {1: e1, 2: e2, 3: e3}
     circlearr = []
     usersarr = []
 
@@ -394,53 +399,41 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_21 = QtWidgets.QLabel(self.voting_tab)
         self.label_21.setGeometry(QtCore.QRect(560, 20, 61, 51))
         self.label_21.setObjectName("label_21")
+        self.vote_scroll = QtWidgets.QScrollArea(self.voting_tab)
+        self.vote_scroll.setGeometry(QtCore.QRect(150, 70, 800, 250))
+        self.vote_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.vote_scroll.setObjectName("vote_scroll")
+        self.vote_scroll.setWidgetResizable(True)
+        self.vote_scroll_contents = QtWidgets.QWidget()
+        self.vote_scroll_contents.setGeometry(QtCore.QRect(100, 100, 200, 100))
+        self.vote_scroll_contents.setObjectName("vote_scroll_contents")
+        self.vote_grid = QtWidgets.QVBoxLayout(self.vote_scroll_contents)
+        self.vote_grid.setObjectName("vote_grid")
+        self.vote_scroll.setWidget(self.vote_scroll_contents)
 
         # Generates each event option and their ranked votes in voting tab
-        # Each option gets a unique frame with its own label and ranked choice votes
+        # Each option gets a unique frame with its own label and combo box
         # - Rebecca Ling
-        count = 0
+        count = 1
         for x in self.e1.options:
 
             self.f = QtWidgets.QFrame(self.voting_tab)
-            self.f.setGeometry(QtCore.QRect(50, 80 + (60 * count), 721, 61))
+            self.f.setGeometry(QtCore.QRect(100, 100, 721, 61))
             self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
             self.f.setFrameShadow(QtWidgets.QFrame.Raised)
             self.f.setObjectName("f" + str(count))
 
             self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
+            self.l.setGeometry(QtCore.QRect(10, -33, 150, 150))
             self.l.setObjectName("n_label" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.name))
+            content = "Name: "+x.name+"\nActivity: "+x.activity+"\nLocation: "+x.location+"\nTime: "+str(x.time)+"\n"
+            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", content))
 
-            self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(130, 20, 250, 13))
-            self.l.setObjectName("a_label" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.activity))
+            self.vote_choices = self.optionComboBox(self.f, x, count)
+            self.vote_scroll_contents.layout().addWidget(self.f)
 
-            self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(230, 20, 250, 13))
-            self.l.setObjectName("l_label" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.location))
-
-            self.l = QtWidgets.QLabel(self.f)
-            self.l.setGeometry(QtCore.QRect(330, 20, 150, 13))
-            self.l.setObjectName("t_label" + str(count))
-            self.l.setText(QtCore.QCoreApplication.translate("MainWindow", x.time))
-
-            temp = 0
-            i = 1
-            for y in self.e1.options:
-                self.r = VoteButton(self.f)
-                self.r.ev = x
-                self.r.value = i
-                self.r.setGeometry(QtCore.QRect(430 + (110 * temp), 20, 82, 17))
-                self.r.setObjectName("r{0}".format(i))
-                self.r.setText(QtCore.QCoreApplication.translate("MainWindow", "Choice {0}".format(i)))
-                self.r.clicked.connect(lambda checked, a=x, b=i: self.vote(a, b))
-
-                temp += 1
-                i += 1
             count += 1
+
 
         self.propose_button = QtWidgets.QPushButton(self.voting_tab)
         self.propose_button.setGeometry(QtCore.QRect(1000, 10, 100, 23))
@@ -582,7 +575,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Voting
         self.label_21.setText(_translate("MainWindow", "Voting"))
         self.submitVote.setText(_translate("MainWindow", "Submit"))
-        self.propose_button.setText(_translate("MainWindow", "Propose Options"))
+        self.propose_button.setText(_translate("MainWindow", "Options"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.voting_tab), _translate("MainWindow", "Voting"))
 
         self.textBrowser_2.setHtml(_translate("MainWindow",
@@ -645,8 +638,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             standings = ""
             winner = self.e1.options[0]
             set0 = QBarSet('User 1')
-            # names = []
-            # ranks = []
 
             for x in self.e1.options:
                 if (x.votes["User1"] < top):
@@ -654,8 +645,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                     winner = x
                 standings += "\n" + str(x.votes["User1"]) + ". " + x.name
                 set0.append(x.votes["User1"])
-                # names.append(y.name)
-                # ranks.append(x)
+
             winner.chosen = True
             self.e1.status = True
             submit_msg.setInformativeText(standings)
@@ -671,33 +661,34 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             x_axis = QBarCategoryAxis()
             x_axis.append(usrs)
             y_axis = QValueAxis()
-            y_axis.setRange(1,3)
             graph.addAxis(x_axis, Qt.AlignBottom)
             graph.addAxis(y_axis, Qt.AlignLeft)
+            res.attachAxis(y_axis)
             graph.legend().setVisible(True)
             graph.legend().setAlignment(Qt.AlignBottom)
 
-            winner_msg = VoteRes(self)
-            winner_msg.show()
+            self.winner_msg = VoteRes(self)
+            self.winner_msg.setWindowTitle("Voting Results")
+            self.winner_msg.chart_view.setChart(graph)
+            self.winner_msg.winner_label.setText(winner.name + " has won the masses.")
+            self.winner_msg.show()
 
-            winner_msg.setWindowTitle("Voting Results")
-            winner_msg.chart_view.setChart(graph)
-            winner_msg.winner_label.setText(winner.name + " has won the masses.")
 
-    # Finds the rank of a passed in event.
+    def optionComboBox(self, f, x, r):
+
+        cb = QtWidgets.QComboBox(f)
+        cb.setGeometry(650, 5, 120, 60)
+        cb.setObjectName("dropdown" + str(r))
+        for i in range(1, len(self.e1.options) + 1):
+            cb.addItem("Choice {0}".format(i))
+        cb.currentIndexChanged.connect(lambda checked, a=x, b=cb: self.vote(a, b))
+
+        return cb
+
+    # Changes the rankings of different events based on the option the user picks.
     # - Rebecca Ling
-    #def key(self, k):
-        #for x, y in self.event_ranks.items():
-            #if (k == y):
-                #return x
-        #return "Error: event doesn't exist."
-
-    # Switches the rankings between different events based on the option the user picks.
-    # - Rebecca Ling
-    def vote(self, x, y):
-        #swap = self.key(x)
-        #self.event_ranks[y], self.event_ranks[swap] = self.event_ranks[swap], self.event_ranks[y]
-        x.votes["User1"] = y
+    def vote(self, x, cb):
+        x.votes["User1"] = cb.currentIndex()+1
 
     def gotologin(self):
         self.login_page = LogIn(self)
@@ -778,6 +769,7 @@ class VoteRes(QMainWindow):
     def return_voting(self):
         print("Return to Voting")
         self.close()
+        
 class LogIn(QMainWindow):
     def __init__(self, parent):
         super(LogIn, self).__init__(parent)
@@ -975,8 +967,6 @@ class NewEvent(QMainWindow):
         self.parent.scrollAreaWidgetContents.layout().addWidget(app)
 
         self.close()
-
-
 
 
 

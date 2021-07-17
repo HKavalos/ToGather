@@ -8,6 +8,22 @@ class User:
         self._groups = groups
         self._constraints = constraints
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            if self.password == other.password:
+                if self.constraints == other.constraints:
+                    if self.groups == other.groups:
+                        return True
+        return False
+
+    def __ne__(self, other):
+        if self.name == other.name:
+            if self.password == other.password:
+                if self.constraints == other.constraints:
+                    if self.groups == other.groups:
+                        return False
+        return True
+
     @property
     def name(self):
         return self._name
