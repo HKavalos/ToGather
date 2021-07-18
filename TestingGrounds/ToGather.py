@@ -484,6 +484,90 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        # Events + Circles Merger
+        self.merger_tab = QtWidgets.QWidget()
+        self.merger_tab.setObjectName("merger_tab")
+        self.mainTab.addTab(self.merger_tab, "")
+        self.merger_group_name = QtWidgets.QLabel(self.merger_tab)
+        self.merger_group_name.setGeometry(QtCore.QRect(10, 50, 281, 61))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.merger_group_name.setFont(font)
+        self.merger_group_name.setObjectName("merger_group_name")
+        self.merger_event_scroll = QtWidgets.QScrollArea(self.merger_tab)
+        self.merger_event_scroll.setGeometry(QtCore.QRect(10, 145, 801, 471))
+        self.merger_event_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.merger_event_scroll.setWidgetResizable(True)
+        self.merger_event_scroll.setObjectName("merger_event_scroll")
+        self.merger_event_scroll.setStyleSheet("border: 1px solid black;")
+        self.merger_scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.merger_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 799, 469))
+        self.merger_scrollAreaWidgetContents.setObjectName("merger_scrollAreaWidgetContents")
+        self.gridLayout_5 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.merger_event_scroll.setWidget(self.merger_scrollAreaWidgetContents)
+        self.merger_member_scroll = QtWidgets.QScrollArea(self.merger_tab)
+        self.merger_member_scroll.setGeometry(QtCore.QRect(1020, 145, 241, 471))
+        self.merger_member_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.merger_member_scroll.setWidgetResizable(True)
+        self.merger_member_scroll.setObjectName("merger_member_scroll")
+        self.merger_member_scroll.setStyleSheet("border: 1px solid black;")
+        self.merger_scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.merger_scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 239, 469))
+        self.merger_scrollAreaWidgetContents_2.setObjectName("merger_scrollAreaWidgetContents_2")
+        self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.merger_member_scroll.setWidget(self.merger_scrollAreaWidgetContents_2)
+        self.merger_add_event_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_event_button.setGeometry(QtCore.QRect(380, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_event_button.setFont(font)
+        self.merger_add_event_button.setObjectName("merger_add_event_button")
+        self.merger_add_event_button.clicked.connect(self.gotoaddevent)
+        self.merger_switch_group_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_switch_group_button.setGeometry(QtCore.QRect(520, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_switch_group_button.setFont(font)
+        self.merger_switch_group_button.setObjectName("merger_switch_group_button")
+        self.merger_switch_group_button.clicked.connect(self.gotoyourcircles)
+        self.merger_add_group_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_group_button.setGeometry(QtCore.QRect(660, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_group_button.setFont(font)
+        self.merger_add_group_button.setObjectName("merger_add_group_button")
+        self.merger_add_group_button.clicked.connect(self.gotocreate)
+        self.merger_add_member_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_member_button.setGeometry(QtCore.QRect(1125, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_member_button.setFont(font)
+        self.merger_add_member_button.setObjectName("merger_add_member_button")
+        self.merger_add_member_button.clicked.connect(self.gotoadd)
+        self.merger_event_header = QtWidgets.QLabel(self.merger_tab)
+        self.merger_event_header.setGeometry(QtCore.QRect(20, 120, 61, 20))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.merger_event_header.setFont(font)
+        self.merger_event_header.setObjectName("merger_event_header")
+        self.merger_member_header = QtWidgets.QLabel(self.merger_tab)
+        self.merger_member_header.setGeometry(QtCore.QRect(1030, 120, 71, 20))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.merger_member_header.setFont(font)
+        self.merger_member_header.setObjectName("merger_member_header")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.merger_menubar = QtWidgets.QMenuBar(MainWindow)
+        self.merger_menubar.setGeometry(QtCore.QRect(0, 0, 1280, 26))
+        self.merger_menubar.setObjectName("merger_menubar")
+        MainWindow.setMenuBar(self.merger_menubar)
+        self.merger_statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.merger_statusbar.setObjectName("merger_statusbar")
+        MainWindow.setStatusBar(self.merger_statusbar)
+
+        # Establishing Initial Settings
         self.retranslateUi(MainWindow)
         self.mainTab.setCurrentIndex(0)
         self.home_votes_widget.setCurrentIndex(1)
@@ -616,6 +700,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Messages
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
 
+        # Events + Circles Merger
+        self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Merged"))
+        self.merger_group_name.setText(_translate("MainWindow", "Group Name"))
+        self.merger_add_event_button.setText(_translate("MainWindow", "Add Event"))
+        self.merger_switch_group_button.setText(_translate("MainWindow", "Switch Group"))
+        self.merger_add_group_button.setText(_translate("MainWindow", "Add Group"))
+        self.merger_add_member_button.setText(_translate("MainWindow", "Add Member"))
+        self.merger_event_header.setText(_translate("MainWindow", "Events:"))
+        self.merger_member_header.setText(_translate("MainWindow", "Members:"))
+
     # Determines which event won among the submitted results.
     # A notification popup informs the user that they successfully submitted their vote.
     # After the winner is chosen, another popup appears stating which event won.
@@ -723,6 +817,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def gotooptions(self):
         self.customoptions = OptionSettings(self)
         self.customoptions.show()
+
+    def gotoyourcircles(self, event):
+        self.yourcircles = YourCircles(self)
+        self.yourcircles.adjustSize()
+        self.yourcircles.show()
 
     def update_group(self, new_group):
         self.circle_name.setText("Circle Name: " + new_group.calendar)
@@ -1016,10 +1115,16 @@ class NewEvent(QMainWindow):
         frames.name_label.setText("Name: " + self.name_entry.text())
         frames.date_label.setText("Date: " + self.date_entry.text())
         frames.place_label.setText("Place: " + self.place_entry.text())
-        self.parent.scrollAreaWidgetContents.layout().addWidget(app)
+        # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
+        self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
         self.close()
 
+class YourCircles(QMainWindow):
+    def __init__(self, parent):
+        super(YourCircles, self).__init__(parent)
+        self.parent = parent
+        loadUi("yourcircles.ui", self)
 
 
 if __name__ == "__main__":
