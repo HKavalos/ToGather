@@ -1021,20 +1021,38 @@ class NewEvent(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        print("Added Event")
-        new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
-        Data.add_event(new_event)
-        print(Data.get_events(new_event.name).name)
+        if not Data.get_groups(self.circle_entry.text()):
+            print("Circle does not exist!")
+        else:
+            if len(Data.get_groups()) != 0:
+                self.memwidget = loadUi("member.ui")
+                valid = True
+                currentgroup = Data.get_groups(self.circle_entry.text())
+                eventarray = currentgroup.events
+                if self.circle_entry.text() in eventarray:
+                    print("Event already in group!")
+                else:
+                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
+                    Data.add_event(new_event)
+                    print(Data.get_events(new_event.name).name)
 
-        app = QtWidgets.QFrame()
-        frames = eventwidget.Ui_Form()
-        frames.setupUi(app)
-        frames.name_label.setText("Name: " + self.name_entry.text())
-        frames.date_label.setText("Date: " + self.date_entry.text())
-        frames.place_label.setText("Place: " + self.place_entry.text())
-        # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
-        self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
+                    app = QtWidgets.QFrame()
+                    frames = eventwidget.Ui_Form()
+                    frames.setupUi(app)
+                    frames.name_label.setText("Name: " + self.name_entry.text())
+                    frames.date_label.setText("Date: " + self.date_entry.text())
+                    frames.place_label.setText("Place: " + self.place_entry.text())
+                    # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
+                    self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
+                    eventarray.append(new_event)
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray))
+                    print("Added New Event")
+
+
+            else:
+                print("No current circles!")
+        
         self.close()
 
 class YourCircles(QMainWindow):
