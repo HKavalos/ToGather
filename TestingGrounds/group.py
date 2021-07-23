@@ -1,10 +1,11 @@
 class Group:
     "the group class contains a list of users, a list of events and a calendar"
-    def __init__(self, name, calendar="", users=[], events=[]):
+    def __init__(self, name, calendar="", users=[], events=[], messages=[]):
         self._name = name
         self._calendar = calendar
         self._users = users
         self._events = events
+        self._messages = messages
 
     @property
     def calendar(self):
@@ -37,4 +38,12 @@ class Group:
     @events.setter
     def events(self, events):
         self._events = events
+
+    @property
+    def messages(self):
+        return self._messages
+
+    @messages.setter
+    def messages(self, messages):
+        self._messages = messages
 
