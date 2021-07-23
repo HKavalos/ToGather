@@ -10,6 +10,7 @@ from event import Event
 from group import Group
 from _calendar import GroupCalendar
 from option import Option
+from message import Message
 
 
 # TODO: Use CamelCase for class names
@@ -49,6 +50,7 @@ class Data(threading.local):
             cursor.execute('''CREATE TABLE `groups` (`name` TEXT, `group` BLOB)''')
             cursor.execute('''CREATE TABLE `calendars` (`name` TEXT, `calendar` BLOB)''')
             cursor.execute('''CREATE TABLE `options` (`name` TEXT, `option` BLOB)''')
+            cursor.execute('''CREATE TABLE `messages` (`name` TEXT, `message` BLOB)''')
             db_connection.commit()
             db_connection.close()
         except Exception as e:
@@ -538,6 +540,89 @@ class Data(threading.local):
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
 
+# Adds an object to database if it doesn't exist.
+    @staticmethod
+    def add_message(message):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_messages(message.name) is None:
+                cursor.execute("INSERT INTO `messages` VALUES (?, ?)", (message.name, pickle.dumps(message)))
+                db_connection.commit()
+                sender = Client.Send(pickle.dumps(message))
+                sender.start()
+            db_connection.close()
+        except Exception as e:
+            print("# Can't have duplicate name.")
+            print(e.with_traceback())  # Can't have duplicate name.
+
+    # Updates message by replacing it with passed class object
+    @staticmethod
+    def update_message(message):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_messages(message.name) is None:
+                print("Does not exist")
+            # Only perform update if new object is different from current object.
+            elif message != Data.get_messages(message.name):
+                cursor.execute("UPDATE `messages` SET message = ? WHERE name = ?",(pickle.dumps(message), message.name))
+                db_connection.commit()
+                #sender = Client.Send(pickle.dumps(Data.get_messages(message.name)), 5)
+                #sender.start()
+            db_connection.close()
+        except:
+            pass  # Can't have duplicate name.
+
+    # Deletes message based on primary key. Parameter is not a full message object.
+    @staticmethod
+    def delete_message(message):
+        try:
+            db_connection = sqlite3.connect(Data().DB_FILENAME)
+            cursor = db_connection.cursor()
+            if Data.get_messages(message.name).name == message.name:
+                cursor.execute("DELETE FROM `messages` WHERE name = ?", (message.name,))
+                db_connection.commit()
+                sender = Client.Send(pickle.dumps(message), 5)
+                sender.start()
+            db_connection.close()
+        except Exception as e:  # Fails when object doesn't exist because it won't have name attribute for comparison.
+            pass
+
+    # Returns Message object if parameter is given, otherwise returns list of all messages
+    # Returns None if nothing is found.
+    @staticmethod
+    def get_messages(name=None):
+        try:
+            if name is None:
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `message` FROM `messages`")
+                messages = cursor.fetchall()  # fetchall() returns a list of rows returned from executed SQL query
+                db_connection.commit()
+                db_connection.close()
+
+                # Unpickle each object into new list to return.
+                unpickled_messages = []
+                for message in messages:
+                    # Attributes for each row returned by fetchall() are accessed through a tuple.
+                    # We are only selecting for one attribute (the pickled object), so we access with user[0]
+                    unpickled_messages.append(pickle.loads(message[0]))
+                return unpickled_messages
+
+            else:
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `message` FROM `messages` WHERE `name`=?", (name,))  # Parameter must be tuple
+                message = cursor.fetchone()  # Returns None if nothing found, otherwise one object in a tuple.
+                db_connection.commit()
+                db_connection.close()
+                # TODO: This if statement is not working correctly.  Handled with exception for now
+                if message is not None:
+                    message = pickle.loads(message[0])  # Get object out of tuple and pickle before returning.
+                return message
+        except Exception as e:
+            return None
 
 class Receive(threading.Thread):
     """
@@ -723,10 +808,17 @@ class Client(threading.Thread):
                         print(option.name, option.activity, option.time, option.chosen, option.votes)
 
                 elif selection == "69":
-                    Data.add_option(Option("Bibidibobodiboo", "yikes"))
-                    print(Data.get_options("Bibidibobodiboo"))
-                    Data.delete_option("Bibidibobodiboo")
-                    print(Data.get_options("Bibidibobodiboo"))
+                    #(self, name, delivery, sender="", group=""):
+                    Data.add_message(Message("group1first", "oh hai there", "hazel", "group1"))
+                    temp = Data.get_messages("group1first")
+                    print(temp.name, temp.delivery, temp.sender, temp.group)
+                    temp = Message(temp.name, "nawbro2", temp.sender, temp.group)
+                    Data.update_message(temp)
+                    temp = Data.get_messages(temp.name)
+                    print(temp.name, temp.delivery, temp.sender, temp.group)
+                    Data.delete_message(temp)
+                    temp = Data.get_messages(temp.name)
+                    print(temp)
 
                 selection = input("\nEnter selection:")
 
