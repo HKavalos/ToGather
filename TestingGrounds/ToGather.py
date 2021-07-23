@@ -28,6 +28,7 @@ import groupwidget
 import votingwidget
 import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
+from message import Message
 
 def main():
     global app
@@ -1013,7 +1014,7 @@ class AddMember(QMainWindow):
                     print("User already in group!")
                 else:
                     userarray.append(self.name_entry.text())
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
                     #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
                     print("Added New Member")
 
@@ -1080,7 +1081,7 @@ class NewEvent(QMainWindow):
                     self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
                     eventarray.append(new_event)
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
                     print("Added New Event")
 
 
