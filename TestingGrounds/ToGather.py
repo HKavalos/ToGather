@@ -595,8 +595,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.newevent.show()
 
     def gotovoting(self, e, c):
-        self.voting = VotingPoll(self, e, c)
-        self.voting.show()
+        if e.status == False:
+            self.voting = VotingPoll(self, e, c)
+            self.voting.show()
+        else:
+            vote_msg = QtWidgets.QMessageBox()
+            vote_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            vote_msg.setWindowTitle("Voting Finished")
+            vote_msg.setText("The voting has already finished for this event.")
+            vote_msg.exec_()
+
 
     def gotooptions(self, e):
         self.customoptions = OptionSettings(self, e)
@@ -809,6 +817,8 @@ class VotingPoll(QMainWindow):
             self.cbs.append(self.vote_choices)
             self.vote_scroll_contents.layout().addWidget(self.f)
 
+            x.votes[self.user] = 1
+
             count += 1
 
     def optionComboBox(self, f, e, x):
@@ -899,6 +909,17 @@ class VotingPoll(QMainWindow):
             self.winner_msg.setWindowTitle("Voting Results")
             self.winner_msg.chart_view.setChart(graph)
             self.winner_msg.winner_label.setText(winner.name + " has won the masses.")
+            #for y in sorted(averages.values()):
+                #self.f = QtWidgets.QFrame(self.winner_msg)
+                #self.f.setGeometry(QtCore.QRect(100, 100, 100, 100))
+                #self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                #self.f.setFrameShadow(QtWidgets.QFrame.Raised)
+
+                #self.l = QtWidgets.QLabel(self.f)
+                #self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
+                #self.l.setText(QtCore.QCoreApplication.translate("MainWindow", ""+str(y)+". "+str(y)+""))
+
+                #self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.f)
             self.winner_msg.show()
 
 class LoadingScreen(QMainWindow):
