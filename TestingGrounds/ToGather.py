@@ -638,6 +638,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def change_theme(self):
         if self.style_button.text() == "Dark Mode":
             apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
+            pixmap = QtGui.QPixmap("Dark_Logo.png")
+            self.home_image.setPixmap(pixmap)
+            self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
             apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
