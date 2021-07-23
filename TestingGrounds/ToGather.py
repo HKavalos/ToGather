@@ -1064,7 +1064,7 @@ class NewEvent(QMainWindow):
                 if self.circle_entry.text() in eventarray:
                     print("Event already in group!")
                 else:
-                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [])
+                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), self.circle_entry.text(),[])
                     Data.add_event(new_event)
                     print(Data.get_events(new_event.name).name)
 

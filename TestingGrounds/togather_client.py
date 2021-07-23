@@ -679,11 +679,11 @@ class Client(threading.Thread):
                         print(user.name, user.constraints, user.groups)
 
                 if selection == "3":  # Add different events for testing
-                    Data.add_event(Event("Event1", "Description1", ["Option1", "Option2"]))
+                    Data.add_event(Event("Event1", "Description1", "no group", ["Option1", "Option2"]))
                 elif selection == "33":
-                    Data.add_event(Event("Event2", "Description2", ["Option11", "Option22"]))
+                    Data.add_event(Event("Event2", "Description2", "no group2", ["Option11", "Option22"]))
                 elif selection == "333":
-                    Data.add_event(Event("Event3", "Description3", ["Option111", "Option222"]))
+                    Data.add_event(Event("Event3", "Description3", "no group3", ["Option111", "Option222"]))
 
                 elif selection == "4":  # Print events from local database
                     for event in Data().get_events():
