@@ -457,18 +457,15 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
+
             if Data.get_options(option.name) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                temp = pickle.dumps(option)
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("UPDATE `options` SET option = ? WHERE name = ?",
-                               (pickle.dumps(option), option.name))
+                pass
+            elif option != Data.get_options(option.name):
+                cursor.execute("UPDATE `options` SET `option` = ? WHERE name = ?", (pickle.dumps(option), option.name))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(Data.get_options(option.name)), 4)
+                sender.start()
+
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -513,16 +510,15 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_options(option) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
+
+            if Data.get_options(option.name) is None:
+                pass
             else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("DELETE FROM `options` WHERE name = ?", (option,))
+                cursor.execute("DELETE FROM `options` WHERE name = ?", (option.name,))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(option), 5)
+                sender.start()
+
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -667,7 +663,12 @@ class Receive(threading.Thread):
                                 else:
                                     Data.add_calendar(unpickled_message)
                             elif type(unpickled_message) is Option:
-                                Data.add_option(unpickled_message)
+                                if msg_type == 4:
+                                    Data.update_option(unpickled_message)
+                                elif msg_type == 5:
+                                    Data.delete_option(unpickled_message)
+                                else:
+                                    Data.add_option(unpickled_message)
                         except pickle.PickleError as e:
                             # Must be a database file we need to load.
                             # TODO: Check if received file is actually db.db
@@ -704,6 +705,9 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
+
+            print("-10. Delete option.")
+            print("-1010. Update option.\n")
 
             print("-88. Delete calendar.")
             print("-88. Update calendar.\n")
@@ -751,6 +755,11 @@ class Client(threading.Thread):
             # If there are other clients connected, they should receive what is sent with their receive thread.
             selection = input("\nEnter selection:")
             while selection != "exit()":
+                
+                if selection == "-1010":
+                    Data.delete_option(Option("Option1", "", "", votes=[]))
+                if selection == "-10":
+                    Data.update_option(Option("Option1", "newActivity1", "newlocation", votes=["newVote1", "newVote2"]))
 
                 if selection == "-88":
                     Data.delete_calendar(GroupCalendar("Calendar1", ["Event1", "Event2"]))
@@ -824,7 +833,7 @@ class Client(threading.Thread):
                         print(calendar.name, calendar.events)
 
                 if selection == "9":  # Add different options for testing
-                    Data.add_option(Option("Option1", "Activity1", ["Vote1", "Vote2"]))
+                    Data.add_option(Option("Option1", "Activity1", "location", votes=["Vote1", "Vote2"]))
                 elif selection == "99":
                     Data.add_option(Option("Option2", "Activity2", ["Vote11", "Vote22"]))
                 elif selection == "999":

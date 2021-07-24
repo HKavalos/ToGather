@@ -15,6 +15,26 @@ class Option:
         self._chosen = chosen
         self._votes = votes
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            if self.activity == other.activity:
+                if self.location == other.location:
+                    if self.time == other.time:
+                        if self.chosen == other.chosen:
+                            if self.votes == other.votes:
+                                return True
+        return False
+
+    def __ne__(self, other):
+        if self.name == other.name:
+            if self.activity == other.activity:
+                if self.location == other.location:
+                    if self.time == other.time:
+                        if self.chosen == other.chosen:
+                            if self.votes == other.votes:
+                                return False
+        return True
+
     @property
     def name(self):
         return self._name

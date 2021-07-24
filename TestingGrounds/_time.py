@@ -7,6 +7,18 @@ class Time:
         self._date = date
         self._hour = hour
 
+    def __eq__(self, other):
+        if self.date == other.date:
+            if self.hour == other.hour:
+                return True
+        return False
+
+    def __ne__(self, other):
+        if self.date == other.date:
+            if self.hour == other.hour:
+                return False
+        return True
+
     @property
     def date(self):
         return self._date
