@@ -6,6 +6,22 @@ class Group:
         self._users = users
         self._events = events
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            if self.calendar == other.calendar:
+                if self.users == other.users:
+                    if self.events == other.events:
+                        return True
+        return False
+
+    def __ne__(self, other):
+        if self.name == other.name:
+            if self.calendar == other.calendar:
+                if self.users == other.users:
+                    if self.events == other.events:
+                        return False
+        return True
+
     @property
     def calendar(self):
         return self._calendar

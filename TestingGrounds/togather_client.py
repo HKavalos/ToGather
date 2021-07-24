@@ -278,17 +278,15 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
+
             if Data.get_groups(group.name) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                temp = pickle.dumps(group)
-                # cursor.execute('UPDATE users SET user= tempy')
+                pass
+            elif group != Data.get_groups(group.name):
                 cursor.execute("UPDATE `groups` SET `group` = ? WHERE name = ?", (pickle.dumps(group), group.name))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(Data.get_groups(group.name)), 4)
+                sender.start()
+
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -299,16 +297,15 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_groups(group) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
+
+            if Data.get_groups(group.name) is None:
+                pass
             else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("DELETE FROM `groups` WHERE name = ?", (group,))
+                cursor.execute("DELETE FROM `groups` WHERE name = ?", (group.name,))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(group), 5)
+                sender.start()
+
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -574,7 +571,12 @@ class Receive(threading.Thread):
                                 else:
                                     Data.add_event(unpickled_message)
                             elif type(unpickled_message) is Group:
-                                Data.add_group(unpickled_message)
+                                if msg_type == 4:
+                                    Data.update_group(unpickled_message)
+                                elif msg_type == 5:
+                                    Data.delete_group(unpickled_message)
+                                else:
+                                    Data.add_group(unpickled_message)
                             elif type(unpickled_message) is GroupCalendar:
                                 Data.add_calendar(unpickled_message)
                             elif type(unpickled_message) is Option:
@@ -615,11 +617,15 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
-            print("-44. Delete user.")
-            print("-4. Update user.")
+
+            print("-66. Delete group.")
+            print("-6. Update group.\n")
+
+            print("-44. Delete event.")
+            print("-4. Update event.\n")
 
             print("-22. Delete user.")
-            print("-2. Update user.")
+            print("-2. Update user.\n")
             print("-1. Request database.")
             print("0. Reset database.\n")
 
@@ -656,9 +662,13 @@ class Client(threading.Thread):
             selection = input("\nEnter selection:")
             while selection != "exit()":
 
+                if selection == "-66":
+                    Data.delete_group(Group("Group1", "", ["", ""], ["", ""]))
+                if selection == "-6":
+                    Data.update_group(Group("Group1", "newCalendar1", ["newUser1", "newUser2"], ["newEvent1", "newEvent2"]))
+
                 if selection == "-44":
                     Data.delete_event(Event(name="Event1", description="", options=["", ""]))
-
                 if selection == "-4":
                     Data.update_event(Event(name="Event1", description="new Description1", options=["new Option1", "new Option2"], status=False))
 
