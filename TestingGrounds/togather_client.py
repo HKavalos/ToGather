@@ -194,16 +194,13 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_events(event) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
+            if Data.get_events(event.name) is None:
+                pass
             else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                # cursor.execute('UPDATE users SET user= tempy')
-                cursor.execute("DELETE FROM `events` WHERE name = ?", (event,))
+                cursor.execute("DELETE FROM `events` WHERE name = ?", (event.name,))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(event), 5)
+                sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -215,16 +212,12 @@ class Data(threading.local):
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
             if Data.get_events(event.name) is None:
-                # ('UPDATE stuffToPlot SET value = 99 WHERE value = 3')
-                print("Does not exist")
-            else:
-                # cursor.execute("INSERT INTO `users` VALUES (?, ?)", (user.name, pickle.dumps(user)))
-                temp = pickle.dumps(event)
-                # cursor.execute('UPDATE users SET user= tempy')
+                pass
+            elif event != Data.get_events(event.name):
                 cursor.execute("UPDATE `events` SET event = ? WHERE name = ?", (pickle.dumps(event), event.name))
                 db_connection.commit()
-                # sender = Client.Send(pickle.dumps(user))
-                # sender.start()
+                sender = Client.Send(pickle.dumps(Data.get_events(event.name)), 4)
+                sender.start()
             db_connection.close()
         except Exception as e:
             print(e.with_traceback())  # Can't have duplicate name.
@@ -574,7 +567,12 @@ class Receive(threading.Thread):
                                 else:
                                     Data.add_user(unpickled_message)
                             elif type(unpickled_message) is Event:
-                                Data.add_event(unpickled_message)
+                                if msg_type == 4:
+                                    Data.update_event(unpickled_message)
+                                elif msg_type == 5:
+                                    Data.delete_event(unpickled_message)
+                                else:
+                                    Data.add_event(unpickled_message)
                             elif type(unpickled_message) is Group:
                                 Data.add_group(unpickled_message)
                             elif type(unpickled_message) is GroupCalendar:
@@ -617,6 +615,9 @@ class Client(threading.Thread):
 
             print("Connected to server: %s:%d\n" % self._address)
             print("Menu:")
+            print("-44. Delete user.")
+            print("-4. Update user.")
+
             print("-22. Delete user.")
             print("-2. Update user.")
             print("-1. Request database.")
@@ -655,6 +656,12 @@ class Client(threading.Thread):
             selection = input("\nEnter selection:")
             while selection != "exit()":
 
+                if selection == "-44":
+                    Data.delete_event(Event(name="Event1", description="", options=["", ""]))
+
+                if selection == "-4":
+                    Data.update_event(Event(name="Event1", description="new Description1", options=["new Option1", "new Option2"], status=False))
+
                 if selection == "-22":
                     Data.delete_user(User(name="User1"))
 
@@ -679,7 +686,7 @@ class Client(threading.Thread):
                         print(user.name, user.constraints, user.groups)
 
                 if selection == "3":  # Add different events for testing
-                    Data.add_event(Event("Event1", "Description1", ["Option1", "Option2"]))
+                    Data.add_event(Event(name="Event1", description="Description1", options=["Option1", "Option2"], status=True))
                 elif selection == "33":
                     Data.add_event(Event("Event2", "Description2", ["Option11", "Option22"]))
                 elif selection == "333":
