@@ -599,10 +599,25 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         groupobj = Data.get_groups(group)
         groupobj.users.remove(name)
         Data.update_group(Group(groupobj.name, groupobj.calendar, groupobj.users, groupobj.events, groupobj.messages))
-        self.update_group(groupobj)
         user = Data.get_users(name)
         user.groups.remove(group)
         Data.update_user(user)
+        if name == self.current_user.name:
+            user = Data.get_users(name)
+            if len(user.groups) == 0:
+                layout = self.merger_scrollAreaWidgetContents.layout()
+                layout2 = self.merger_scrollAreaWidgetContents_2.layout()
+                for i in reversed(range(layout.count())):
+                    layout.itemAt(i).widget().setParent(None)
+                for i in reversed(range(layout2.count())):
+                    layout2.itemAt(i).widget().setParent(None)
+                self.merger_group_name.setText("")
+            else:
+                self.update_group(Data.get_groups(user.groups[0]))
+        else:
+            self.update_group(groupobj)
+        if len(groupobj.users) == 0:
+            Data.delete_group(Data.get_groups(group))
 
     def gotoaddevent(self):
         self.newevent = NewEvent(self)
@@ -844,7 +859,14 @@ class SignUp(QMainWindow):
 
                 # Update the current_user variable stored in MainWindow
                 self.window.current_user = user
-
+                if len(Data.get_users(user.name).groups) == 0:
+                    layout = self.window.merger_scrollAreaWidgetContents.layout()
+                    layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
+                    for i in reversed(range(layout.count())):
+                        layout.itemAt(i).widget().setParent(None)
+                    for i in reversed(range(layout2.count())):
+                        layout2.itemAt(i).widget().setParent(None)
+                    self.window.merger_group_name.setText("")
                 # TODO: Create a method to update all UI objects that use current user.
                 # Update UI elements that relate to current user.
                 #self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
