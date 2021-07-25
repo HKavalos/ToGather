@@ -50,7 +50,7 @@ class Data(threading.local):
             cursor.execute('''CREATE TABLE `groups` (`name` TEXT, `group` BLOB)''')
             cursor.execute('''CREATE TABLE `calendars` (`name` TEXT, `calendar` BLOB)''')
             cursor.execute('''CREATE TABLE `options` (`name` TEXT, `option` BLOB)''')
-            cursor.execute('''CREATE TABLE `messages` (`name` TEXT, `message` BLOB)''')
+            cursor.execute('''CREATE TABLE `messages` (`name` TEXT, `group` TEXT, `message` BLOB)''')
             db_connection.commit()
             db_connection.close()
         except Exception as e:
@@ -529,8 +529,8 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_messages(message.name) is None:
-                cursor.execute("INSERT INTO `messages` VALUES (?, ?)", (message.name, pickle.dumps(message)))
+            if Data.get_messages(message.name, message.group) is None:
+                cursor.execute("INSERT INTO `messages` VALUES (?, ?, ?)", (message.name, message.group, pickle.dumps(message)))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(message))
                 sender.start()
@@ -548,8 +548,8 @@ class Data(threading.local):
             if Data.get_messages(message.name) is None:
                 print("Does not exist")
             # Only perform update if new object is different from current object.
-            elif message != Data.get_messages(message.name):
-                cursor.execute("UPDATE `messages` SET message = ? WHERE name = ?",(pickle.dumps(message), message.name))
+            elif message != Data.get_messages(message.name, message.group):
+                cursor.execute("UPDATE `messages` SET message = ? WHERE `name` = ? AND `group` = ?", (pickle.dumps(message), message.name, message.group))
                 db_connection.commit()
                 #sender = Client.Send(pickle.dumps(Data.get_messages(message.name)), 5)
                 #sender.start()
@@ -563,8 +563,8 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_messages(message.name).name == message.name:
-                cursor.execute("DELETE FROM `messages` WHERE name = ?", (message.name,))
+            if Data.get_messages(message.name, message.group) is not None:
+                cursor.execute("DELETE FROM `messages` WHERE `name` = ? AND `group` = ?", (message.name, message.group))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(message), 5)
                 sender.start()
@@ -575,9 +575,9 @@ class Data(threading.local):
     # Returns Message object if parameter is given, otherwise returns list of all messages
     # Returns None if nothing is found.
     @staticmethod
-    def get_messages(name=None):
-        try:
-            if name is None:
+    def get_messages(name=None, group=None):
+        #try:
+            if name is None and group is None:
                 db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
                 cursor.execute("SELECT `message` FROM `messages`")
@@ -593,10 +593,26 @@ class Data(threading.local):
                     unpickled_messages.append(pickle.loads(message[0]))
                 return unpickled_messages
 
+            elif name is None and group is not None:
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `message` FROM `messages` WHERE `group` = ?", (group,))
+                messages = cursor.fetchall()  # fetchall() returns a list of rows returned from executed SQL query
+                db_connection.commit()
+                db_connection.close()
+
+                # Unpickle each object into new list to return.
+                unpickled_messages = []
+                for message in messages:
+                    # Attributes for each row returned by fetchall() are accessed through a tuple.
+                    # We are only selecting for one attribute (the pickled object), so we access with user[0]
+                    unpickled_messages.append(pickle.loads(message[0]))
+                return unpickled_messages
+
             else:
                 db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
-                cursor.execute("SELECT `message` FROM `messages` WHERE `name`=?", (name,))  # Parameter must be tuple
+                cursor.execute("SELECT `message` FROM `messages` WHERE `name`=? AND `group` = ?", (name, group))  # Parameter must be tuple
                 message = cursor.fetchone()  # Returns None if nothing found, otherwise one object in a tuple.
                 db_connection.commit()
                 db_connection.close()
@@ -604,8 +620,8 @@ class Data(threading.local):
                 if message is not None:
                     message = pickle.loads(message[0])  # Get object out of tuple and pickle before returning.
                 return message
-        except Exception as e:
-            return None
+        #except Exception as e:
+           # return None
 
 class Receive(threading.Thread):
     """
@@ -845,16 +861,20 @@ class Client(threading.Thread):
 
                 elif selection == "69":
                     #(self, name, delivery, sender="", group=""):
-                    Data.add_message(Message("group1first", "oh hai there", "hazel", "group1"))
-                    temp = Data.get_messages("group1first")
-                    print(temp.name, temp.delivery, temp.sender, temp.group)
-                    temp = Message(temp.name, "nawbro2", temp.sender, temp.group)
-                    Data.update_message(temp)
-                    temp = Data.get_messages(temp.name)
-                    print(temp.name, temp.delivery, temp.sender, temp.group)
-                    Data.delete_message(temp)
-                    temp = Data.get_messages(temp.name)
-                    print(temp)
+                    # Data.add_message(Message("message5", "Hi rebecca I hate you", "Hazel", "RebeccaHaters"))
+                    # Data.add_message(Message("message4", "Rebecca I love you", "Hazel", "RebeccaLovers"))
+                    # Data.add_message(Message("message6", "Why do you say that", "Rebecca", "RebeccaHaters"))
+                    # Data.add_message(Message("message5", "Well I hate you Hazel", "Rebecca", "RebeccaLovers"))
+                    # Data.add_message(Message("message4", "Rainbows rainbows", "Hazel", "TheGays"))
+                    # Data.add_message(Message("message7", "Because . . . I actually love you", "Hazel", "RebeccaHaters"))
+                    # Data.add_message(Message("message8", "Awwwww, well I don't", "Rebecca", "RebeccaHaters"))
+                    # Data.add_message(Message("message5", "Ew", "Rebecca", "TheGays"))
+                    # Data.add_message(Message("message6", "I love you anyways", "Hazel", "RebeccaLovers"))
+                    # Data.add_message(Message("message6", "Get Away from me", "Rebecca", "TheGays"))
+
+                    Data.delete_message(Message("message5", "Hi rebecca I hate you", "Hazel", "RebeccaHaters"))
+                    for message in Data().get_messages(None, "TheGays"):
+                        print(message.name, message.delivery, message.sender, message.group)
 
                 selection = input("\nEnter selection:")
 
