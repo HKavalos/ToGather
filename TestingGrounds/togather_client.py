@@ -178,7 +178,7 @@ class Data(threading.local):
     # Adds an object to database if it doesn't exist.
     @staticmethod
     def add_event(event):
-        try:
+        #try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
             if Data.get_events(event.name, event.group) is None:
@@ -187,8 +187,8 @@ class Data(threading.local):
                 sender = Client.Send(pickle.dumps(event))
                 sender.start()
             db_connection.close()
-        except Exception as e:
-            print(e.with_traceback())  # Can't have duplicate name.
+        #except Exception as e:
+            #print(e.with_traceback())  # Can't have duplicate name.
 
     # deletes event based on primary key.
     @staticmethod

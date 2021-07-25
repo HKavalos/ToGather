@@ -28,9 +28,6 @@ class Ui_Form(object):
         self.date_label = QtWidgets.QLabel(Form)
         self.date_label.setObjectName("date_label")
         self.verticalLayout.addWidget(self.date_label)
-        self.circle_label = QtWidgets.QLabel(Form)
-        self.circle_label.setObjectName("circle_label")
-        self.verticalLayout.addWidget(self.circle_label)
         self.vote_go_button = QtWidgets.QPushButton(Form)
         self.vote_go_button.setObjectName("vote_go_button")
         self.verticalLayout.addWidget(self.vote_go_button)
@@ -46,7 +43,6 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.name_label.setText(_translate("Form", "Name:"))
         self.date_label.setText(_translate("Form", "Date:"))
-        self.circle_label.setText(_translate("Form", "Place:"))
         self.vote_go_button.setText(_translate("Form", "Vote"))
         self.op_go_button.setText(_translate("Form", "Options"))
 

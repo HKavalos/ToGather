@@ -82,6 +82,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def setupUi(self, MainWindow):
         self.current_user = None
+        self.current_group = None
 
         # Main
         MainWindow.setWindowTitle("ToGather")
@@ -218,7 +219,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.merger_scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.merger_scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 239, 469))
         self.merger_scrollAreaWidgetContents_2.setObjectName("merger_scrollAreaWidgetContents_2")
-        self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
+        self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents_2)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.merger_member_scroll.setWidget(self.merger_scrollAreaWidgetContents_2)
         self.merger_add_event_button = QtWidgets.QPushButton(self.merger_tab)
@@ -594,10 +595,14 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.addmember.adjustSize()
         self.addmember.show()
 
-    def gotoremove(self):
-        self.removemember = RemoveMember(self)
-        self.removemember.adjustSize()
-        self.removemember.show()
+    def removeMember(self, group, name):
+        groupobj = Data.get_groups(group)
+        groupobj.users.remove(name)
+        Data.update_group(Group(groupobj.name, groupobj.calendar, groupobj.users, groupobj.events, groupobj.messages))
+        self.update_group(groupobj)
+        user = Data.get_users(name)
+        user.groups.remove(group)
+        Data.update_user(user)
 
     def gotoaddevent(self):
         self.newevent = NewEvent(self)
@@ -627,8 +632,31 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.yourcircles.show()
 
     def update_group(self, new_group):
-        self.circle_name.setText("Circle Name: " + new_group.calendar)
-        # self.groups.append(new_group)
+        self.current_group = new_group.name
+        layout = self.merger_scrollAreaWidgetContents.layout()
+        layout2 = self.merger_scrollAreaWidgetContents_2.layout()
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
+        for i in reversed(range(layout2.count())):
+            layout2.itemAt(i).widget().setParent(None)
+        self.merger_group_name.setText(new_group.name)
+        loadUi("newevent.ui")
+        for event in Data.get_events(None, new_group.name):
+            app = QtWidgets.QFrame()
+            frames = eventwidget.Ui_Form()
+            frames.setupUi(app)
+            frames.name_label.setText("Name: " + event.name)
+            frames.date_label.setText("Date: " + event.description)
+            frames.vote_go_button.clicked.connect(
+                lambda checked, a=event, b=new_group: self.gotovoting(a, b))
+            frames.op_go_button.clicked.connect(lambda checked, a=event: self.gotooptions(a))
+            layout.addWidget(app)
+        for member in Data.get_groups(self.current_group).users:
+            self.memwidget = loadUi("member.ui")
+            self.memwidget.removeButton.clicked.connect(
+                partial(self.removeMember,new_group.name, member))
+            self.memwidget.memberName.setText(member)
+            self.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
         # print(len(self.groups))
 
     def add_member_group(self, new_user, the_group):
@@ -739,6 +767,16 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
+                if len(Data.get_users(user.name).groups) == 0:
+                    layout = self.window.merger_scrollAreaWidgetContents.layout()
+                    layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
+                    for i in reversed(range(layout.count())):
+                        layout.itemAt(i).widget().setParent(None)
+                    for i in reversed(range(layout2.count())):
+                        layout2.itemAt(i).widget().setParent(None)
+                    self.window.merger_group_name.setText("")
+                else:
+                    self.window.update_group(Data.get_groups(user.groups[0]))
                 # TODO: Create a method to update other UI objects that use current user.
                 #self.parent.user_settings_name.setText(self.parent.current_user.name)
                 self.window.centralwidget.setCurrentIndex(1)
@@ -852,20 +890,20 @@ class GroupCreate(QMainWindow):
             frames = groupwidget.Ui_Form()
             frames.setupUi(f)
             frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
-            memberarr = []
+            memberarr = [self.parent.current_user.name]
             eventarr = []
             grouptuple = Group(self.group_name_entry.text(), "", memberarr, eventarr)
             self.parent.circlearr.append(grouptuple)
             Data.add_group(grouptuple)
             user = Data.get_users(self.parent.current_user.name)
-            user.groups.append(grouptuple)
+            user.groups.append(grouptuple.name)
             Data.update_user(user)
             #bellow is not needed but kept incase for styling
             #grouplist = user.groups
             #grouplist.append(grouptuple)
             self.parent.current_user = Data.get_users(user.name)
-            self.parent.merger_scrollAreaWidgetContents.layout().addWidget(f)
-            self.parent.merger_group_name.setText(self.group_name_entry.text())
+            #self.parent.merger_scrollAreaWidgetContents.layout().addWidget(f)
+            self.parent.update_group(grouptuple)
             self.close()
 
 class VotingPoll(QMainWindow):
@@ -1095,14 +1133,20 @@ class AddMember(QMainWindow):
                 #groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
                 self.memwidget = loadUi("member.ui")
                 valid = True
-                currentgroup = Data.get_groups(self.group_name_entry.text())
+                currentgroup = Data.get_groups(self.parent.current_group)
                 userarray = currentgroup.users
                 if self.name_entry.text() in userarray:
                     print("User already in group!")
                 else:
+                    member = Data.get_users(self.name_entry.text())
+                    grouparray = member.groups
+                    grouparray.append(currentgroup.name)
+                    Data.update_user(User(member.name, member.password, member.constraints, grouparray))
                     userarray.append(self.name_entry.text())
                     Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
-                    #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
+                    self.memwidget.removeButton.clicked.connect(lambda: self.parent.removeMember(currentgroup.name, self.name_entry.text()))
+                    self.memwidget.memberName.setText(self.name_entry.text())
+                    self.parent.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
                     print("Added New Member")
 
 
@@ -1110,25 +1154,6 @@ class AddMember(QMainWindow):
                 print("No current circles!")
         self.close()
 
-    def removeMember(self, index, name):
-        memindex = [x[0] for x in self.parent.circlearr[index][2]].index(name)
-        self.parent.circlearr[index][2][memindex][1].close()
-        del self.parent.circlearr[index][2][memindex]
-
-class RemoveMember(QMainWindow):
-    def __init__(self, parent):
-        super(RemoveMember, self).__init__(parent)
-        self.parent = parent
-        #with importlib_resources.path(bin, "removemember.ui") as p:
-        #    path = p
-        loadUi("removemember.ui", self)
-        self.submission_button.clicked.connect(self.submit)
-
-    def submit(self):
-        groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
-        print("Removed Member")
-        self.parent.circlearr[groupindex][1].label.setText("Member 1")
-        self.close()
 
 
 class NewEvent(QMainWindow):
@@ -1141,39 +1166,36 @@ class NewEvent(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        if not Data.get_groups(self.circle_entry.text()):
-            print("Circle does not exist!")
-        else:
-            if len(Data.get_groups()) != 0:
-                self.memwidget = loadUi("member.ui")
-                valid = True
-                currentgroup = Data.get_groups(self.circle_entry.text())
-                eventarray = currentgroup.events
-                if self.circle_entry.text() in eventarray:
-                    print("Event already in group!")
-                else:
-                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), self.circle_entry.text(),[])
-                    Data.add_event(new_event)
-                    print(Data.get_events(new_event.name).name)
-
-                    app = QtWidgets.QFrame()
-                    frames = eventwidget.Ui_Form()
-                    frames.setupUi(app)
-                    frames.name_label.setText("Name: " + self.name_entry.text())
-                    frames.date_label.setText("Date: " + self.date_entry.text())
-                    frames.circle_label.setText("Circle: " + self.circle_entry.text())
-                    frames.vote_go_button.clicked.connect(lambda checked, a=new_event, b=currentgroup: self.parent.gotovoting(a,b))
-                    frames.op_go_button.clicked.connect(lambda checked, a=new_event: self.parent.gotooptions(a))
-                    # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
-                    self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
-
-                    eventarray.append(new_event)
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
-                    print("Added New Event")
-
-
+        if len(Data.get_groups()) != 0:
+            self.memwidget = loadUi("member.ui")
+            valid = True
+            currentgroup = self.parent.current_group
+            eventarray = Data.get_events(None, currentgroup)
+            if Data.get_groups(currentgroup) in eventarray:
+                print("Event already in group!")
             else:
-                print("No current circles!")
+                new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [], currentgroup)
+                Data.add_event(new_event)
+                print(Data.get_events(new_event.name, new_event.group))
+
+                app = QtWidgets.QFrame()
+                frames = eventwidget.Ui_Form()
+                frames.setupUi(app)
+                frames.name_label.setText("Name: " + self.name_entry.text())
+                frames.date_label.setText("Date: " + self.date_entry.text())
+                frames.vote_go_button.clicked.connect(lambda checked, a=new_event, b=currentgroup: self.parent.gotovoting(a,b))
+                frames.op_go_button.clicked.connect(lambda checked, a=new_event: self.parent.gotooptions(a))
+                # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
+                self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
+
+                eventarray.append(new_event)
+                currentgroup = Data.get_groups(currentgroup)
+                Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
+                print("Added New Event")
+
+
+        else:
+            print("No current circles!")
         
         self.close()
 
@@ -1184,14 +1206,14 @@ class YourCircles(QMainWindow):
         loadUi("yourcircles.ui", self)
         for groups in Data.get_users(self.parent.current_user.name).groups:
             self.groupbutton = QtWidgets.QPushButton()
-            self.groupbutton.setText(groups.name)
+            self.groupbutton.setText(groups)
             font = QtGui.QFont()
             font.setPointSize(18)
             self.groupbutton.setFont(font)
-            self.groupbutton.clicked.connect(partial(self.updateGroup, groups))
+            self.groupbutton.clicked.connect(partial(self.updateGroup, Data.get_groups(groups)))
             self.circlesDisplay.layout().addWidget(self.groupbutton)
     def updateGroup(self, i):
-        self.parent.merger_group_name.setText(i.name)
+        self.parent.update_group(i)
         self.close()
 
 
