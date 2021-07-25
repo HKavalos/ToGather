@@ -1057,6 +1057,7 @@ class LoadingScreen(QMainWindow):
         self.parent = parent
         self.setFixedSize(200, 200)
         self.anim_label = QtWidgets.QLabel(self)
+        self.anim_label.setGeometry(QtCore.QRect(0, 0, 200, 200))
         self.movie = QMovie("loading.gif")
         self.anim_label.setMovie(self.movie)
 
