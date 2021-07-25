@@ -5,6 +5,18 @@ class GroupCalendar:
         self._events = events
         self._name = name
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            if self.events == other.events:
+                return True
+        return False
+
+    def __ne__(self, other):
+        if self.name == other.name:
+            if self.events == other.events:
+                return False
+        return True
+
     @property
     def name(self):
         return self._name

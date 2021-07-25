@@ -16,6 +16,7 @@ from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.uic import loadUi
+from PyQt5.QtGui import QMovie
 from group import Group
 from user import User
 from event import Event
@@ -27,6 +28,7 @@ import groupwidget
 import votingwidget
 import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
+from message import Message
 
 def main():
     global app
@@ -76,14 +78,6 @@ class windowPopup(QDialog):
         self.name = name
         
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
-    # Dummy event and option data. Each event has its own option with a unique ranked choice value.
-    # - Rebecca Ling
-    o1 = Option("Arcade", "Play games!", "Party Pizazz Plaza", None, False, {"User1" : 1})
-    o2 = Option("Donut Taste Testing", "You never know what you're gonna get!", "Silly Sweet Shop", None, False, {"User1" : 1})
-    o3 = Option("Paintball", "Free tie-dye!", "Hazel's House", None, False, {"User1" : 1})
-
-    e1 = Event("Super Cool Fun Day!", "Let's have lots of endless funny fun!", [o1,o2,o3], False)
-    cbs = []
     circlearr = []
     usersarr = []
 
@@ -189,33 +183,88 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # self.checkBox_6.setObjectName("checkBox_6")
         self.mainTab.addTab(self.user_settings_tab, "")
 
-        # Events
-        self.events_tab = QtWidgets.QWidget()
-        self.events_tab.setObjectName("events_tab")
-        self.calendarWidget = QtWidgets.QCalendarWidget(self.events_tab)
-        self.calendarWidget.setGeometry(QtCore.QRect(10, 180, 441, 371))
-        self.calendarWidget.setVerticalHeaderFormat(QtWidgets.QCalendarWidget.NoVerticalHeader)
-        self.calendarWidget.setObjectName("calendarWidget")
-        self.upcoming_events_title = QtWidgets.QLabel(self.events_tab)
-        self.upcoming_events_title.setGeometry(QtCore.QRect(160, 70, 111, 21))
-        self.upcoming_events_title.setObjectName("upcoming_events_title")
-        self.add_event = QtWidgets.QPushButton(self.events_tab)
-        self.add_event.setGeometry(QtCore.QRect(1078, 50, 114, 24))
-        self.add_event.setObjectName("add_event")
-        self.add_event.clicked.connect(self.gotoaddevent)
-        self.scrollArea = QtWidgets.QScrollArea(self.events_tab)
-        self.scrollArea.setGeometry(QtCore.QRect(750, 110, 400, 500))
-        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 300, 100))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.gridLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
-        self.mainTab.addTab(self.events_tab, "")
+        # Events + Circles Merger
+        self.merger_tab = QtWidgets.QWidget()
+        self.merger_tab.setObjectName("merger_tab")
+        self.mainTab.addTab(self.merger_tab, "")
+        self.merger_group_name = QtWidgets.QLabel(self.merger_tab)
+        self.merger_group_name.setGeometry(QtCore.QRect(10, 50, 281, 61))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        self.merger_group_name.setFont(font)
+        self.merger_group_name.setObjectName("merger_group_name")
+        self.merger_event_scroll = QtWidgets.QScrollArea(self.merger_tab)
+        self.merger_event_scroll.setGeometry(QtCore.QRect(10, 145, 801, 471))
+        self.merger_event_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.merger_event_scroll.setWidgetResizable(True)
+        self.merger_event_scroll.setObjectName("merger_event_scroll")
+        self.merger_event_scroll.setStyleSheet("border: 1px solid black;")
+        self.merger_scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.merger_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 799, 469))
+        self.merger_scrollAreaWidgetContents.setObjectName("merger_scrollAreaWidgetContents")
+        self.gridLayout_5 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.merger_event_scroll.setWidget(self.merger_scrollAreaWidgetContents)
+        self.merger_member_scroll = QtWidgets.QScrollArea(self.merger_tab)
+        self.merger_member_scroll.setGeometry(QtCore.QRect(1020, 145, 241, 471))
+        self.merger_member_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.merger_member_scroll.setWidgetResizable(True)
+        self.merger_member_scroll.setObjectName("merger_member_scroll")
+        self.merger_member_scroll.setStyleSheet("border: 1px solid black;")
+        self.merger_scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.merger_scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 239, 469))
+        self.merger_scrollAreaWidgetContents_2.setObjectName("merger_scrollAreaWidgetContents_2")
+        self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.merger_member_scroll.setWidget(self.merger_scrollAreaWidgetContents_2)
+        self.merger_add_event_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_event_button.setGeometry(QtCore.QRect(380, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_event_button.setFont(font)
+        self.merger_add_event_button.setObjectName("merger_add_event_button")
+        self.merger_add_event_button.clicked.connect(self.gotoaddevent)
+        self.merger_switch_group_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_switch_group_button.setGeometry(QtCore.QRect(520, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_switch_group_button.setFont(font)
+        self.merger_switch_group_button.setObjectName("merger_switch_group_button")
+        self.merger_switch_group_button.clicked.connect(self.gotoyourcircles)
+        self.merger_add_group_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_group_button.setGeometry(QtCore.QRect(660, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_group_button.setFont(font)
+        self.merger_add_group_button.setObjectName("merger_add_group_button")
+        self.merger_add_group_button.clicked.connect(self.gotocreate)
+        self.merger_add_member_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_add_member_button.setGeometry(QtCore.QRect(1125, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_add_member_button.setFont(font)
+        self.merger_add_member_button.setObjectName("merger_add_member_button")
+        self.merger_add_member_button.clicked.connect(self.gotoadd)
+        self.merger_event_header = QtWidgets.QLabel(self.merger_tab)
+        self.merger_event_header.setGeometry(QtCore.QRect(20, 120, 61, 20))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.merger_event_header.setFont(font)
+        self.merger_event_header.setObjectName("merger_event_header")
+        self.merger_member_header = QtWidgets.QLabel(self.merger_tab)
+        self.merger_member_header.setGeometry(QtCore.QRect(1030, 120, 71, 20))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.merger_member_header.setFont(font)
+        self.merger_member_header.setObjectName("merger_member_header")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.merger_menubar = QtWidgets.QMenuBar(MainWindow)
+        self.merger_menubar.setGeometry(QtCore.QRect(0, 0, 1280, 26))
+        self.merger_menubar.setObjectName("merger_menubar")
+        MainWindow.setMenuBar(self.merger_menubar)
+        self.merger_statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.merger_statusbar.setObjectName("merger_statusbar")
+        MainWindow.setStatusBar(self.merger_statusbar)
 
         # Schedule
         self.schedule_tab = QtWidgets.QWidget()
@@ -369,90 +418,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_27.setGeometry(QtCore.QRect(30, 60, 79, 16))
         self.label_27.setObjectName("label_27")
 
-        # Circles
-        self.circles_tab = QtWidgets.QWidget()
-        self.circles_tab.setObjectName("circles_tab")
-
-        self.circle_title = QtWidgets.QLabel(self.circles_tab)
-        self.circle_title.setGeometry(QtCore.QRect(600, 40, 151, 16))
-        self.circle_title.setObjectName("circle_title")
-        self.add_group = QtWidgets.QPushButton(self.circles_tab)
-        self.add_group.setGeometry(QtCore.QRect(800, 270, 130, 36))
-        self.add_group.setObjectName("add_group")
-        self.add_group.clicked.connect(self.gotocreate)
-        self.pushButton_6 = QtWidgets.QPushButton(self.circles_tab)
-        self.pushButton_6.setGeometry(QtCore.QRect(800, 320, 130, 36))
-        self.pushButton_6.setObjectName("pushButton_6")
-        self.pushButton_6.clicked.connect(self.gotoadd)
-        self.scrollArea2 = QtWidgets.QScrollArea(self.circles_tab)
-        self.scrollArea2.setGeometry(QtCore.QRect(350, 140, 400, 500))
-        self.scrollArea2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.scrollArea2.setObjectName("scrollArea")
-        self.scrollArea2.setWidgetResizable(True)
-        self.scrollArea2WidgetContents = QtWidgets.QWidget()
-        self.scrollArea2WidgetContents.setGeometry(QtCore.QRect(0, 0, 300, 100))
-        self.scrollArea2WidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.gridLayout_4 = QtWidgets.QVBoxLayout(self.scrollArea2WidgetContents)
-        self.gridLayout_4.setObjectName("gridLayout_3")
-        self.scrollArea2.setWidget(self.scrollArea2WidgetContents)
-
-        self.mainTab.addTab(self.circles_tab, "")
-
-        # Voting
-        self.voting_tab = QtWidgets.QWidget()
-        self.voting_tab.setObjectName("voting_tab")
-        self.label_21 = QtWidgets.QLabel(self.voting_tab)
-        self.label_21.setGeometry(QtCore.QRect(560, 20, 61, 51))
-        self.label_21.setObjectName("label_21")
-        self.vote_scroll = QtWidgets.QScrollArea(self.voting_tab)
-        self.vote_scroll.setGeometry(QtCore.QRect(150, 70, 800, 250))
-        self.vote_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.vote_scroll.setObjectName("vote_scroll")
-        self.vote_scroll.setWidgetResizable(True)
-        self.vote_scroll_contents = QtWidgets.QWidget()
-        self.vote_scroll_contents.setGeometry(QtCore.QRect(0, 0, 300, 300))
-        self.vote_scroll_contents.setObjectName("vote_scroll_contents")
-        self.vote_grid = QtWidgets.QVBoxLayout(self.vote_scroll_contents)
-        self.vote_grid.setObjectName("vote_grid")
-        self.vote_scroll.setWidget(self.vote_scroll_contents)
-
-        # Generates each event option and their ranked votes in voting tab
-        # Each option gets a unique frame with its own label and combo box
-        # - Rebecca Ling
-        count = 1
-        for x in self.e1.options:
-
-            self.f = QtWidgets.QFrame(self.voting_tab)
-            self.f.setGeometry(QtCore.QRect(100, 100, 721, 61))
-            self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
-            self.f.setFrameShadow(QtWidgets.QFrame.Raised)
-            self.f.setObjectName("f" + str(count))
-
-            self.frames = votingwidget.Ui_Form()
-            self.frames.setupUi(self.f)
-
-            content = "Name: "+x.name+"\nActivity: "+x.activity+"\nLocation: "+x.location+"\nTime: "+str(x.time)+"\n"
-            self.frames.option_info.setText(content)
-
-            self.vote_choices = self.optionComboBox(self.f, x)
-            self.cbs.append(self.vote_choices)
-            self.vote_scroll_contents.layout().addWidget(self.f)
-
-            count += 1
-
-
-
-        self.propose_button = QtWidgets.QPushButton(self.voting_tab)
-        self.propose_button.setGeometry(QtCore.QRect(1000, 10, 100, 23))
-        self.propose_button.setObjectName("propose_button")
-        self.propose_button.clicked.connect(self.gotooptions)
-
-        self.submitVote = QtWidgets.QPushButton(self.voting_tab)
-        self.submitVote.setGeometry(QtCore.QRect(990, 610, 90, 23)) # Updated vote button size for styling - Jakob
-        self.submitVote.setObjectName("submitVote")
-        self.submitVote.clicked.connect(self.voteResults)
-        self.mainTab.addTab(self.voting_tab, "")
-
         # Messages
         self.messages_tab = QtWidgets.QWidget()
         self.messages_tab.setObjectName("messages_tab")
@@ -486,89 +451,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        # Events + Circles Merger
-        self.merger_tab = QtWidgets.QWidget()
-        self.merger_tab.setObjectName("merger_tab")
-        self.mainTab.addTab(self.merger_tab, "")
-        self.merger_group_name = QtWidgets.QLabel(self.merger_tab)
-        self.merger_group_name.setGeometry(QtCore.QRect(10, 50, 281, 61))
-        font = QtGui.QFont()
-        font.setPointSize(24)
-        self.merger_group_name.setFont(font)
-        self.merger_group_name.setObjectName("merger_group_name")
-        self.merger_event_scroll = QtWidgets.QScrollArea(self.merger_tab)
-        self.merger_event_scroll.setGeometry(QtCore.QRect(10, 145, 801, 471))
-        self.merger_event_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.merger_event_scroll.setWidgetResizable(True)
-        self.merger_event_scroll.setObjectName("merger_event_scroll")
-        self.merger_event_scroll.setStyleSheet("border: 1px solid black;")
-        self.merger_scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.merger_scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 799, 469))
-        self.merger_scrollAreaWidgetContents.setObjectName("merger_scrollAreaWidgetContents")
-        self.gridLayout_5 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
-        self.gridLayout_5.setObjectName("gridLayout_5")
-        self.merger_event_scroll.setWidget(self.merger_scrollAreaWidgetContents)
-        self.merger_member_scroll = QtWidgets.QScrollArea(self.merger_tab)
-        self.merger_member_scroll.setGeometry(QtCore.QRect(1020, 145, 241, 471))
-        self.merger_member_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.merger_member_scroll.setWidgetResizable(True)
-        self.merger_member_scroll.setObjectName("merger_member_scroll")
-        self.merger_member_scroll.setStyleSheet("border: 1px solid black;")
-        self.merger_scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.merger_scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 239, 469))
-        self.merger_scrollAreaWidgetContents_2.setObjectName("merger_scrollAreaWidgetContents_2")
-        self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents)
-        self.gridLayout_6.setObjectName("gridLayout_6")
-        self.merger_member_scroll.setWidget(self.merger_scrollAreaWidgetContents_2)
-        self.merger_add_event_button = QtWidgets.QPushButton(self.merger_tab)
-        self.merger_add_event_button.setGeometry(QtCore.QRect(380, 90, 132, 40))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.merger_add_event_button.setFont(font)
-        self.merger_add_event_button.setObjectName("merger_add_event_button")
-        self.merger_add_event_button.clicked.connect(self.gotoaddevent)
-        self.merger_switch_group_button = QtWidgets.QPushButton(self.merger_tab)
-        self.merger_switch_group_button.setGeometry(QtCore.QRect(520, 90, 132, 40))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.merger_switch_group_button.setFont(font)
-        self.merger_switch_group_button.setObjectName("merger_switch_group_button")
-        self.merger_switch_group_button.clicked.connect(self.gotoyourcircles)
-        self.merger_add_group_button = QtWidgets.QPushButton(self.merger_tab)
-        self.merger_add_group_button.setGeometry(QtCore.QRect(660, 90, 132, 40))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.merger_add_group_button.setFont(font)
-        self.merger_add_group_button.setObjectName("merger_add_group_button")
-        self.merger_add_group_button.clicked.connect(self.gotocreate)
-        self.merger_add_member_button = QtWidgets.QPushButton(self.merger_tab)
-        self.merger_add_member_button.setGeometry(QtCore.QRect(1125, 90, 132, 40))
-        font = QtGui.QFont()
-        font.setPointSize(8)
-        self.merger_add_member_button.setFont(font)
-        self.merger_add_member_button.setObjectName("merger_add_member_button")
-        self.merger_add_member_button.clicked.connect(self.gotoadd)
-        self.merger_event_header = QtWidgets.QLabel(self.merger_tab)
-        self.merger_event_header.setGeometry(QtCore.QRect(20, 120, 61, 20))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.merger_event_header.setFont(font)
-        self.merger_event_header.setObjectName("merger_event_header")
-        self.merger_member_header = QtWidgets.QLabel(self.merger_tab)
-        self.merger_member_header.setGeometry(QtCore.QRect(1030, 120, 71, 20))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.merger_member_header.setFont(font)
-        self.merger_member_header.setObjectName("merger_member_header")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.merger_menubar = QtWidgets.QMenuBar(MainWindow)
-        self.merger_menubar.setGeometry(QtCore.QRect(0, 0, 1280, 26))
-        self.merger_menubar.setObjectName("merger_menubar")
-        MainWindow.setMenuBar(self.merger_menubar)
-        self.merger_statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.merger_statusbar.setObjectName("merger_statusbar")
-        MainWindow.setStatusBar(self.merger_statusbar)
-
         # Establishing Initial Settings
         self.retranslateUi(MainWindow)
         self.mainTab.setCurrentIndex(0)
@@ -579,7 +461,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Welcome Page"))
-
 
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
@@ -623,10 +504,15 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # self.checkBox_6.setText(_translate("MainWindow", "CheckBox"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
 
-        # Events
-        self.upcoming_events_title.setText(_translate("MainWindow", "Upcoming Events"))
-        self.mainTab.setTabText(self.mainTab.indexOf(self.events_tab), _translate("MainWindow", "Events"))
-        self.add_event.setText(_translate("MainWindow", "Add Event"))
+        # Events + Circles Merger
+        self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Circles"))
+        self.merger_group_name.setText(_translate("MainWindow", "Group Name"))
+        self.merger_add_event_button.setText(_translate("MainWindow", "Add Event"))
+        self.merger_switch_group_button.setText(_translate("MainWindow", "Switch Group"))
+        self.merger_add_group_button.setText(_translate("MainWindow", "Add Group"))
+        self.merger_add_member_button.setText(_translate("MainWindow", "Add Member"))
+        self.merger_event_header.setText(_translate("MainWindow", "Events:"))
+        self.merger_member_header.setText(_translate("MainWindow", "Members:"))
 
         # Schedule
         self.label_6.setText(_translate("MainWindow", "Sunday"))
@@ -651,24 +537,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.label_26.setText(_translate("MainWindow", "to"))
         self.label_27.setText(_translate("MainWindow", "Not Available"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
-
-        # Circles
-        self.circle_title.setText(_translate("MainWindow", "Circles"))
-        # self.circle_name.setText(_translate("MainWindow", "Circle Name"))
-        self.add_group.setText(_translate("MainWindow", "Add Circle"))
-        self.pushButton_6.setText(_translate("MainWindow", "Add Member"))
-        # self.label_16.setText(_translate("MainWindow", "Username"))
-        # self.label_17.setText(_translate("MainWindow", "Username"))
-        # self.label_18.setText(_translate("MainWindow", "Username"))
-        # self.label_19.setText(_translate("MainWindow", "Username"))
-        # self.label_20.setText(_translate("MainWindow", "Username"))
-        self.mainTab.setTabText(self.mainTab.indexOf(self.circles_tab), _translate("MainWindow", "Circles"))
-
-        # Voting
-        self.label_21.setText(_translate("MainWindow", "Voting"))
-        self.submitVote.setText(_translate("MainWindow", "Submit"))
-        self.propose_button.setText(_translate("MainWindow", "Options"))
-        self.mainTab.setTabText(self.mainTab.indexOf(self.voting_tab), _translate("MainWindow", "Voting"))
 
         self.textBrowser_2.setHtml(_translate("MainWindow",
                                               "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -702,95 +570,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Messages
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
 
-        # Events + Circles Merger
-        self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Merged"))
-        self.merger_group_name.setText(_translate("MainWindow", "Group Name"))
-        self.merger_add_event_button.setText(_translate("MainWindow", "Add Event"))
-        self.merger_switch_group_button.setText(_translate("MainWindow", "Switch Group"))
-        self.merger_add_group_button.setText(_translate("MainWindow", "Add Group"))
-        self.merger_add_member_button.setText(_translate("MainWindow", "Add Member"))
-        self.merger_event_header.setText(_translate("MainWindow", "Events:"))
-        self.merger_member_header.setText(_translate("MainWindow", "Members:"))
-
-    # Determines which event won among the submitted results.
-    # A notification popup informs the user that they successfully submitted their vote.
-    # After the winner is chosen, another popup appears stating which event won.
-    # - Rebecca Ling
-    def voteResults(self, MainWindow):
-        submit_msg = QtWidgets.QMessageBox()
-        submit_msg.setIcon(QtWidgets.QMessageBox.Information)
-
-        success = True
-        for i in range(1, len(self.e1.options)+1):
-            dup = 0
-            for x in self.e1.options:
-                if (x.votes["User1"] == i):
-                    dup += 1
-            if (dup > 1):
-                submit_msg.setWindowTitle("Submit Failed")
-                submit_msg.setText("You can only choose one rank for each option. Your vote has not been submitted.")
-                submit_msg.exec_()
-                success = False
-                break
-        if success:
-            submit_msg.setWindowTitle("Submit Successful")
-            submit_msg.setText("Your vote has been submitted.")
-
-            top = float('inf')
-            standings = ""
-            winner = self.e1.options[0]
-            set0 = QBarSet('User 1')
-
-            for x in self.e1.options:
-                if (x.votes["User1"] < top):
-                    top = x.votes["User1"]
-                    winner = x
-                standings += "\n" + str(x.votes["User1"]) + ". " + x.name
-                set0.append(x.votes["User1"])
-
-            winner.chosen = True
-            self.e1.status = True
-            submit_msg.setInformativeText(standings)
-            submit_msg.exec_()
-
-            usrs = ('User 1')
-            res = QBarSeries()
-            res.append(set0)
-            graph = QChart()
-            graph.addSeries(res)
-            graph.setTitle('Voting Results')
-            graph.setAnimationOptions(QChart.SeriesAnimations)
-            x_axis = QBarCategoryAxis()
-            x_axis.append(usrs)
-            y_axis = QValueAxis()
-            graph.addAxis(x_axis, Qt.AlignBottom)
-            graph.addAxis(y_axis, Qt.AlignLeft)
-            res.attachAxis(y_axis)
-            graph.legend().setVisible(True)
-            graph.legend().setAlignment(Qt.AlignBottom)
-
-            self.winner_msg = VoteRes(self)
-            self.winner_msg.setWindowTitle("Voting Results")
-            self.winner_msg.chart_view.setChart(graph)
-            self.winner_msg.winner_label.setText(winner.name + " has won the masses.")
-            self.winner_msg.show()
-
-
-    def optionComboBox(self, f, x):
-
-        cb = QtWidgets.QComboBox(f)
-        cb.setGeometry(650, 5, 120, 60)
-        for i in range(1, len(self.e1.options) + 1):
-            cb.addItem("Choice {0}".format(i))
-        cb.currentIndexChanged.connect(lambda checked, a=x, b=cb: self.vote(a, b))
-
-        return cb
-
-    # Changes the rankings of different events based on the option the user picks.
-    # - Rebecca Ling
-    def vote(self, x, cb):
-        x.votes["User1"] = cb.currentIndex()+1
-
     def gotologin(self):
         self.login_page = LogIn(self)
         self.login_page.adjustSize()
@@ -816,9 +595,22 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.newevent.adjustSize()
         self.newevent.show()
 
-    def gotooptions(self):
-        self.customoptions = OptionSettings(self)
+    def gotovoting(self, e, c):
+        if e.status == False:
+            self.voting = VotingPoll(self, e, c)
+            self.voting.show()
+        else:
+            vote_msg = QtWidgets.QMessageBox()
+            vote_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            vote_msg.setWindowTitle("Voting Finished")
+            vote_msg.setText("The voting has already finished for this event.")
+            vote_msg.exec_()
+
+
+    def gotooptions(self, e):
+        self.customoptions = OptionSettings(self, e)
         self.customoptions.show()
+
 
     def gotoyourcircles(self, event):
         self.yourcircles = YourCircles(self)
@@ -835,23 +627,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         print(new_user)
         print(the_group)
 
-
-        # print(len(self.groups))
-
-        # for x in self.groups:
-        #     print(x.name)
-        #     if x.name == the_group:
-        #         print("Setting things up")
-        #         new_user.groups.append(x)
-        #         x.users.append(new_user)
-        #
-        #         for y in x.users:
-        #             new_name = new_name + str(x.name) + " "
-        #
-        #         break
-        # else:
-        #     print("Group not found")
-
         if new_name != "":
             self.label_16.setText(new_name)
 
@@ -864,6 +639,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     def change_theme(self):
         if self.style_button.text() == "Dark Mode":
             apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
+            pixmap = QtGui.QPixmap("Dark_Logo.png")
+            self.home_image.setPixmap(pixmap)
+            self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
             apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
@@ -873,7 +651,7 @@ class VoteRes(QMainWindow):
     def __init__(self, parent):
         super(VoteRes, self).__init__(parent)
         self.parent = parent
-        loadUi("voting.ui", self)
+        loadUi("voting_res.ui", self)
         self.return_button.clicked.connect(self.return_voting)
 
     def return_voting(self):
@@ -993,57 +771,221 @@ class GroupCreate(QMainWindow):
             self.parent.circlearr.append(grouptuple)
             Data.add_group(grouptuple)
             user = Data.get_users(self.parent.current_user.name)
-            grouplist = user.groups
-            grouplist.append(grouptuple)
-            Data.update_user(User(user.name, user.password, user.constraints, grouplist))
+            user.groups.append(grouptuple)
+            Data.update_user(user)
+            #bellow is not needed but kept incase for styling
+            #grouplist = user.groups
+            #grouplist.append(grouptuple)
             self.parent.current_user = Data.get_users(user.name)
-            self.parent.scrollArea2WidgetContents.layout().addWidget(f)
+            self.parent.merger_scrollAreaWidgetContents.layout().addWidget(f)
             self.parent.merger_group_name.setText(self.group_name_entry.text())
             self.close()
 
-class OptionSettings(QMainWindow):
+class VotingPoll(QMainWindow):
+    def __init__(self, parent, e, c):
+        super(VotingPoll, self).__init__(parent)
+        self.parent = parent
+        self.cbs = []
+        self.user = self.parent.current_user.name
+        self.counter = 0
+
+        loadUi("voting.ui", self)
+        self.vote_scroll = QtWidgets.QScrollArea(self)
+        self.vote_scroll.setGeometry(QtCore.QRect(150, 70, 800, 250))
+        self.vote_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.vote_scroll.setObjectName("vote_scroll")
+        self.vote_scroll.setWidgetResizable(True)
+        self.vote_scroll_contents = QtWidgets.QWidget()
+        self.vote_scroll_contents.setGeometry(QtCore.QRect(0, 0, 300, 300))
+        self.vote_grid = QtWidgets.QVBoxLayout(self.vote_scroll_contents)
+        self.vote_grid.setObjectName("vote_grid")
+        self.vote_scroll.setWidget(self.vote_scroll_contents)
+        self.submitVote.clicked.connect(lambda checked, a=e, b=c: self.submit(e,c))
+
+        count = 1
+        for x in e.options:
+
+            self.f = QtWidgets.QFrame(self)
+            self.f.setGeometry(QtCore.QRect(100, 100, 721, 61))
+            self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
+            self.f.setFrameShadow(QtWidgets.QFrame.Raised)
+            self.f.setObjectName("f" + str(count))
+
+            self.frames = votingwidget.Ui_Form()
+            self.frames.setupUi(self.f)
+
+            content = "Name: "+x.name+"\nActivity: "+x.activity+"\nLocation: "+x.location+"\nTime: "+str(x.time)+"\n"
+            self.frames.option_info.setText(content)
+
+            self.vote_choices = self.optionComboBox(self.f, e, x)
+            self.cbs.append(self.vote_choices)
+            self.vote_scroll_contents.layout().addWidget(self.f)
+
+            x.votes[self.user] = 1
+
+            count += 1
+
+    def optionComboBox(self, f, e, x):
+
+        cb = QtWidgets.QComboBox(f)
+        cb.setGeometry(650, 5, 120, 60)
+        for i in range(1, len(e.options) + 1):
+            cb.addItem("Choice {0}".format(i))
+        cb.currentIndexChanged.connect(lambda checked, a=x, b=cb: self.vote(a, b))
+
+        return cb
+
+    def vote(self, x, cb):
+        x.votes[self.user] = cb.currentIndex()+1
+
+    def submit(self, e, c):
+        submit_msg = QtWidgets.QMessageBox()
+        submit_msg.setIcon(QtWidgets.QMessageBox.Information)
+
+        success = True
+
+        if(len(e.options) == 0):
+            submit_msg.setWindowTitle("Submit Failed")
+            submit_msg.setText("No options have been added to the event. Your vote has not been submitted.")
+            submit_msg.exec_()
+            success = False
+
+        for i in range(1, len(e.options)+1):
+            dup = 0
+            for x in e.options:
+                if (x.votes[self.user] == i):
+                    dup += 1
+            if (dup > 1):
+                submit_msg.setWindowTitle("Submit Failed")
+                submit_msg.setText("You can only choose one rank for each option. Your vote has not been submitted.")
+                submit_msg.exec_()
+                success = False
+                break
+
+        if success:
+            submit_msg.setWindowTitle("Submit Successful")
+            submit_msg.setText("Your vote has been submitted.")
+            submit_msg.exec_()
+            self.counter += 1
+
+            loading = LoadingScreen(self.parent)
+            while(self.counter != len(c.users)):
+                loading.startAnim()
+            loading.stopAnim()
+            top = float('inf')
+            averages = {}
+            choices = []
+            winner = e.options[0]
+            set0 = QBarSet('Averages')
+
+            for x in e.options:
+                avg = 0
+                for y in x.votes.values():
+                    avg += y
+                avg = avg/len(c.users)
+                averages[x] = avg
+                choices.append(x.name)
+            for x in averages:
+                if (averages[x] < top):
+                    top = averages[x]
+                    winner = x
+                set0.append(averages[x])
+
+            winner.chosen = True
+            e.status = True
+
+            res = QBarSeries()
+            res.append(set0)
+            graph = QChart()
+            graph.addSeries(res)
+            graph.setTitle('Voting Results')
+            graph.setAnimationOptions(QChart.SeriesAnimations)
+            x_axis = QBarCategoryAxis()
+            x_axis.append(choices)
+            y_axis = QValueAxis()
+            graph.addAxis(x_axis, Qt.AlignBottom)
+            graph.addAxis(y_axis, Qt.AlignLeft)
+            res.attachAxis(y_axis)
+            graph.legend().setVisible(True)
+            graph.legend().setAlignment(Qt.AlignBottom)
+
+            self.winner_msg = VoteRes(self)
+            self.winner_msg.setWindowTitle("Voting Results")
+            self.winner_msg.chart_view.setChart(graph)
+            self.winner_msg.winner_label.setText(winner.name + " has won the masses.")
+            #for y in sorted(averages.values()):
+                #self.f = QtWidgets.QFrame(self.winner_msg)
+                #self.f.setGeometry(QtCore.QRect(100, 100, 100, 100))
+                #self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
+                #self.f.setFrameShadow(QtWidgets.QFrame.Raised)
+
+                #self.l = QtWidgets.QLabel(self.f)
+                #self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
+                #self.l.setText(QtCore.QCoreApplication.translate("MainWindow", ""+str(y)+". "+str(y)+""))
+
+                #self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.f)
+            self.winner_msg.show()
+
+class LoadingScreen(QMainWindow):
     def __init__(self, parent):
+        super(LoadingScreen, self).__init__(parent)
+        self.parent = parent
+        self.setFixedSize(200, 200)
+        self.anim_label = QtWidgets.QLabel(self)
+        self.movie = QMovie("loading.gif")
+        self.anim_label.setMovie(self.movie)
+
+    def startAnim(self):
+        self.movie.start()
+        self.show()
+
+    def stopAnim(self):
+        self.movie.stop()
+        self.close()
+
+class OptionSettings(QMainWindow):
+    def __init__(self, parent, e):
         super(OptionSettings, self).__init__(parent)
         self.parent = parent
         loadUi("options.ui", self)
-        self.submit_option.clicked.connect(self.submit)
-        self.remove_option.clicked.connect(self.remove)
+        self.submit_option.clicked.connect(lambda checked, a=e: self.submit(e))
+        self.remove_option.clicked.connect(lambda checked, a=e: self.remove(e))
 
-    def submit(self):
-        o = Option(self.options_name.text(), self.options_activity.text(), self.options_location.text(), None, False, {"User1": 1})
-        self.parent.e1.options.append(o)
-        f = QtWidgets.QFrame()
-        frames = votingwidget.Ui_Form()
-        frames.setupUi(f)
-        f.setObjectName("option_frame_"+self.options_name.text())
-        choices = self.parent.optionComboBox(f, o)
-        for i in self.parent.cbs:
-            i.addItem("Choice {0}".format(len(self.parent.cbs)+1))
-        self.parent.cbs.append(choices)
-        content = "Name: " + self.options_name.text() + "\nActivity: " + self.options_activity.text() + "\nLocation: " + self.options_location.text() + "\nTime: " + str(None) + "\n"
-        frames.option_info.setText(content)
-        self.parent.vote_scroll_contents.layout().addWidget(f)
+    def submit(self, e):
+        o = Option(self.options_name.text(), self.options_activity.text(), self.options_location.text(), None, False, {})
+        e.options.append(o)
+        #f = QtWidgets.QFrame()
+        #frames = votingwidget.Ui_Form()
+        #frames.setupUi(f)
+        #f.setObjectName("option_frame_"+self.options_name.text())
+        #choices = self.voting_window.optionComboBox(f, o)
+        #for i in self.voting_window.cbs:
+            #i.addItem("Choice {0}".format(len(self.voting_window.cbs)+1))
+        #self.voting_window.cbs.append(choices)
+        #content = "Name: " + self.options_name.text() + "\nActivity: " + self.options_activity.text() + "\nLocation: " + self.options_location.text() + "\nTime: " + str(None) + "\n"
+        #frames.option_info.setText(content)
+        #self.voting_window.vote_scroll_contents.layout().addWidget(f)
 
         self.close()
 
-    def remove(self):
+    def remove(self, e):
         count = 0
-        found = False
-        for i in self.parent.e1.options:
+        #found = False
+        for i in e.options:
             if i.name == self.options_del_name.text():
-                self.parent.e1.options.remove(i)
-                found = True
+                e.options.remove(i)
+                #found = True
+                print("Removed!")
                 break
             count += 1
-        if found == True:
-            self.parent.cbs.remove(self.parent.cbs[count])
-            for j in self.parent.cbs:
-                j.removeItem(len(self.parent.cbs))
-            temp = self.parent.vote_scroll_contents.findChild(QtWidgets.QFrame, "option_frame_"+self.options_del_name.text())
-            self.parent.vote_scroll_contents.layout().removeWidget(temp)
-            self.close()
-        else:
-            print("Not found!")
+        #if found == True:
+            #self.voting_window.cbs.remove(self.voting_window.cbs[count])
+            #for j in self.voting_window.cbs:
+                #j.removeItem(len(self.voting_window.cbs))
+            #temp = self.voting_window.vote_scroll_contents.findChild(QtWidgets.QFrame, "option_frame_"+self.options_del_name.text())
+            #self.voting_window.vote_scroll_contents.layout().removeWidget(temp)
+            #self.close()
+        self.close()
 
 class AddMember(QMainWindow):
     def __init__(self, parent):
@@ -1072,7 +1014,7 @@ class AddMember(QMainWindow):
                     print("User already in group!")
                 else:
                     userarray.append(self.name_entry.text())
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
                     #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
                     print("Added New Member")
 
@@ -1112,7 +1054,6 @@ class NewEvent(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-
         if not Data.get_groups(self.circle_entry.text()):
             print("Circle does not exist!")
         else:
@@ -1124,7 +1065,7 @@ class NewEvent(QMainWindow):
                 if self.circle_entry.text() in eventarray:
                     print("Event already in group!")
                 else:
-                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), str(self.place_entry.text()))
+                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), self.circle_entry.text(),[])
                     Data.add_event(new_event)
                     print(Data.get_events(new_event.name).name)
 
@@ -1133,18 +1074,20 @@ class NewEvent(QMainWindow):
                     frames.setupUi(app)
                     frames.name_label.setText("Name: " + self.name_entry.text())
                     frames.date_label.setText("Date: " + self.date_entry.text())
-                    frames.place_label.setText("Place: " + self.place_entry.text())
+                    frames.circle_label.setText("Circle: " + self.circle_entry.text())
+                    frames.vote_go_button.clicked.connect(lambda checked, a=new_event, b=currentgroup: self.parent.gotovoting(a,b))
+                    frames.op_go_button.clicked.connect(lambda checked, a=new_event: self.parent.gotooptions(a))
                     # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
                     self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
                     eventarray.append(new_event)
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
                     print("Added New Event")
 
 
             else:
                 print("No current circles!")
-
+        
         self.close()
 
 class YourCircles(QMainWindow):

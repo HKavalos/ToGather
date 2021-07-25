@@ -4,8 +4,8 @@
     <list default="true" id="97680915-0827-4997-81d8-a4165655a4fb" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/ToGather.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/ToGather.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/groupwidget.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/groupwidget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/groupwidget.ui" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/groupwidget.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +36,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/widget testing/votingwidget.py" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">

@@ -1,8 +1,17 @@
 class Message:
-    def __init__(self, delivery, sender="", receiver=""):
+    def __init__(self, name, delivery, sender="", group=""):
+        self._name = name
         self._delivery = delivery
         self._sender = sender
-        self._receiver = receiver
+        self._group = group
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
 
     @property
     def delivery(self):
@@ -21,9 +30,9 @@ class Message:
         self._sender = sender
 
     @property
-    def receiver(self):
-        return self._receiver
+    def group(self):
+        return self._group
 
-    @receiver.setter
-    def receiver(self, receiver):
-        self._receiver = receiver
+    @group.setter
+    def group(self, group):
+        self._group = group

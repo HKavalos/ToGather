@@ -14,9 +14,9 @@ from bin.VoteButton import VoteButton
 class Ui_MainWindow(object):
     # Dummy event data. Each event has its own ranked choice value.
     # - Rebecca Ling
-    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza")
-    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop")
-    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House")
+    e1 = Event("Arcade", "12:00 p.m.", "Party Pizazz Plaza", "Yolo club")
+    e2 = Event("Donut Taste Testing", "1:00 p.m.", "Silly Sweet Shop", "DOGO")
+    e3 = Event("Paintball", "12:00 p.m.", "Hazel's House"), "No doggo"
     event_ranks = {1: e1, 2: e2, 3: e3}
     def setupUi(self, MainWindow):
 
