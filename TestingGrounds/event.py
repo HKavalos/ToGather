@@ -51,7 +51,7 @@ class Event:
 
     @property
     def group(self):
-        return self._name
+        return self._group
 
     @group.setter
     def group(self, group):
