@@ -28,7 +28,6 @@ import groupwidget
 import votingwidget
 import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
-from message import Message
 
 def main():
     global app
@@ -79,22 +78,25 @@ class windowPopup(QDialog):
         
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     circlearr = []
-    usersarr = []
 
     def setupUi(self, MainWindow):
-        self.current_user = User
+        self.current_user = None
 
         # Main
         MainWindow.setWindowTitle("ToGather")
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 720)
         MainWindow.show()
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget = QtWidgets.QStackedWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.mainTab = QtWidgets.QTabWidget(self.centralwidget)
         self.mainTab.setGeometry(QtCore.QRect(0, 0, 1280, 720))
         self.mainTab.setAutoFillBackground(True)
         self.mainTab.setObjectName("mainTab")
+
+        self.splashWindow = SplashScreen(MainWindow, self)
+        self.centralwidget.addWidget(self.splashWindow)
+        self.centralwidget.addWidget(self.mainTab)
 
         # Home
         self.home_tab = QtWidgets.QWidget()
@@ -123,65 +125,66 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_upcoming_events = QtWidgets.QTextBrowser(self.home_tab)
         self.home_upcoming_events.setGeometry(QtCore.QRect(730, 350, 351, 251))
         self.home_upcoming_events.setObjectName("home_upcoming_events")
-        self.home_login = QtWidgets.QPushButton(self.home_tab)
-        self.home_login.setGeometry(QtCore.QRect(904, 20, 100, 30))
-        self.home_login.setObjectName("home_login")
-        self.home_login.clicked.connect(self.gotologin)
+        #self.home_login = QtWidgets.QPushButton(self.home_tab)
+        #self.home_login.setGeometry(QtCore.QRect(904, 20, 100, 30))
+        #self.home_login.setObjectName("home_login")
+        #self.home_login.clicked.connect(self.gotologin)
         self.home_logout = QtWidgets.QPushButton(self.home_tab)
         self.home_logout.setGeometry(QtCore.QRect(1010, 20, 100, 30))
         self.home_logout.setObjectName("home_logout")
+        self.home_logout.clicked.connect(self.gotosplash)
         self.home_new_messages = QtWidgets.QLabel(self.home_tab)
         self.home_new_messages.setGeometry(QtCore.QRect(30, 30, 141, 16))
         self.home_new_messages.setObjectName("home_new_messages")
+        self.background_style = QtWidgets.QLabel(self.home_tab)
+        self.background_style.setGeometry(QtCore.QRect(30, 510, 101, 16))
+        self.background_style.setObjectName("background_style")
+        self.style_button = QtWidgets.QPushButton(self.home_tab)
+        self.style_button.setGeometry(QtCore.QRect(30, 550, 118, 34))
+        self.style_button.setObjectName("style_button")
+        self.style_button.clicked.connect(self.change_theme)
         self.home_image = QtWidgets.QLabel(self.home_tab)
         self.home_image.setGeometry(QtCore.QRect(460, 0, 301, 161))
         self.home_image.setObjectName("home_image")
         self.mainTab.addTab(self.home_tab, "")
 
         # User Settings
-        self.user_settings_tab = QtWidgets.QWidget()
-        self.user_settings_tab.setObjectName("user_settings_tab")
-        self.user_settings_name = QtWidgets.QLabel(self.user_settings_tab)
-        self.user_settings_name.setGeometry(QtCore.QRect(120, 30, 131, 31))
-        self.user_settings_name.setObjectName("user_settings_name")
-        self.user_settings_profile_pic = QtWidgets.QGraphicsView(self.user_settings_tab)
-        self.user_settings_profile_pic.setGeometry(QtCore.QRect(20, 10, 71, 71))
-        self.user_settings_profile_pic.setObjectName("user_settings_profile_pic")
-        self.notification_settings = QtWidgets.QLabel(self.user_settings_tab)
-        self.notification_settings.setGeometry(QtCore.QRect(70, 210, 124, 21))
-        self.notification_settings.setObjectName("notification_settings")
-        self.checkBox = QtWidgets.QCheckBox(self.user_settings_tab)
-        self.checkBox.setGeometry(QtCore.QRect(80, 250, 70, 17))
-        self.checkBox.setObjectName("checkBox")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.user_settings_tab)
-        self.checkBox_2.setGeometry(QtCore.QRect(80, 280, 70, 17))
-        self.checkBox_2.setObjectName("checkBox_2")
+        #self.user_settings_tab = QtWidgets.QWidget()
+        #self.user_settings_tab.setObjectName("user_settings_tab")
+        #self.user_settings_name = QtWidgets.QLabel(self.user_settings_tab)
+        #self.user_settings_name.setGeometry(QtCore.QRect(120, 30, 131, 31))
+        #self.user_settings_name.setObjectName("user_settings_name")
+        #self.user_settings_profile_pic = QtWidgets.QGraphicsView(self.user_settings_tab)
+        #self.user_settings_profile_pic.setGeometry(QtCore.QRect(20, 10, 71, 71))
+        #self.user_settings_profile_pic.setObjectName("user_settings_profile_pic")
+        #self.notification_settings = QtWidgets.QLabel(self.user_settings_tab)
+        #self.notification_settings.setGeometry(QtCore.QRect(70, 210, 124, 21))
+        #self.notification_settings.setObjectName("notification_settings")
+        #self.checkBox = QtWidgets.QCheckBox(self.user_settings_tab)
+        #self.checkBox.setGeometry(QtCore.QRect(80, 250, 70, 17))
+        #self.checkBox.setObjectName("checkBox")
+        #self.checkBox_2 = QtWidgets.QCheckBox(self.user_settings_tab)
+        #self.checkBox_2.setGeometry(QtCore.QRect(80, 280, 70, 17))
+        #self.checkBox_2.setObjectName("checkBox_2")
         # self.checkBox_3 = QtWidgets.QCheckBox(self.user_settings_tab)
         # self.checkBox_3.setGeometry(QtCore.QRect(80, 310, 70, 17))
         # self.checkBox_3.setObjectName("checkBox_3")
-        self.privacy_settings = QtWidgets.QLabel(self.user_settings_tab)
-        self.privacy_settings.setGeometry(QtCore.QRect(450, 210, 101, 16))
-        self.privacy_settings.setObjectName("privacy_settings")
-        self.checkBox_4 = QtWidgets.QCheckBox(self.user_settings_tab)
-        self.checkBox_4.setGeometry(QtCore.QRect(450, 250, 70, 17))
-        self.checkBox_4.setObjectName("checkBox_4")
-        self.checkBox_5 = QtWidgets.QCheckBox(self.user_settings_tab)
-        self.checkBox_5.setGeometry(QtCore.QRect(450, 280, 70, 17))
-        self.checkBox_5.setObjectName("checkBox_5")
-        self.submit_settings = QtWidgets.QPushButton(self.user_settings_tab)
-        self.submit_settings.setGeometry(QtCore.QRect(450, 310, 118, 34))
-        self.submit_settings.setObjectName("submit_settings")
-        self.background_style = QtWidgets.QLabel(self.user_settings_tab)
-        self.background_style.setGeometry(QtCore.QRect(830, 210, 101, 16))
-        self.background_style.setObjectName("background_style")
-        self.style_button = QtWidgets.QPushButton(self.user_settings_tab)
-        self.style_button.setGeometry(QtCore.QRect(830, 310, 118, 34))
-        self.style_button.setObjectName("style_button")
-        self.style_button.clicked.connect(self.change_theme)
+        #self.privacy_settings = QtWidgets.QLabel(self.user_settings_tab)
+        #self.privacy_settings.setGeometry(QtCore.QRect(450, 210, 101, 16))
+        #self.privacy_settings.setObjectName("privacy_settings")
+        #self.checkBox_4 = QtWidgets.QCheckBox(self.user_settings_tab)
+        #self.checkBox_4.setGeometry(QtCore.QRect(450, 250, 70, 17))
+        #self.checkBox_4.setObjectName("checkBox_4")
+        #self.checkBox_5 = QtWidgets.QCheckBox(self.user_settings_tab)
+        #self.checkBox_5.setGeometry(QtCore.QRect(450, 280, 70, 17))
+        #self.checkBox_5.setObjectName("checkBox_5")
+        #self.submit_settings = QtWidgets.QPushButton(self.user_settings_tab)
+        #self.submit_settings.setGeometry(QtCore.QRect(450, 310, 118, 34))
+        #self.submit_settings.setObjectName("submit_settings")
         # self.checkBox_6 = QtWidgets.QCheckBox(self.user_settings_tab)
         # self.checkBox_6.setGeometry(QtCore.QRect(450, 310, 70, 17))
         # self.checkBox_6.setObjectName("checkBox_6")
-        self.mainTab.addTab(self.user_settings_tab, "")
+        #self.mainTab.addTab(self.user_settings_tab, "")
 
         # Events + Circles Merger
         self.merger_tab = QtWidgets.QWidget()
@@ -457,6 +460,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.home_votes_widget.setCurrentIndex(1)
         # self.stackedWidget_3.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.centralwidget.setCurrentIndex(0)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -477,7 +481,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                                                      "p, li { white-space: pre-wrap; }\n"
                                                      "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                      "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">Upcoming Events</span></p></body></html>"))
-        self.home_login.setText(_translate("MainWindow", "Log In"))
+        #self.home_login.setText(_translate("MainWindow", "Log In"))
         self.home_logout.setText(_translate("MainWindow", "Log Out "))
         self.home_new_messages.setText(_translate("MainWindow", "x New Messages"))
         self.home_image.setText(_translate("MainWindow",
@@ -490,19 +494,19 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.mainTab.setTabText(self.mainTab.indexOf(self.home_tab), _translate("MainWindow", "Home"))
 
         # User Settings
-        self.user_settings_name.setText(_translate("MainWindow", "Name"))
-        self.notification_settings.setText(_translate("MainWindow", "Notification Settings"))
-        self.checkBox.setText(_translate("MainWindow", "On"))
-        self.checkBox_2.setText(_translate("MainWindow", "Off"))
+        #self.user_settings_name.setText(_translate("MainWindow", "Name"))
+        #self.notification_settings.setText(_translate("MainWindow", "Notification Settings"))
+        #self.checkBox.setText(_translate("MainWindow", "On"))
+        #self.checkBox_2.setText(_translate("MainWindow", "Off"))
         # self.checkBox_3.setText(_translate("MainWindow", "CheckBox"))
-        self.privacy_settings.setText(_translate("MainWindow", "Privacy Settings"))
-        self.checkBox_4.setText(_translate("MainWindow", "Public"))
-        self.checkBox_5.setText(_translate("MainWindow", "Private"))
-        self.submit_settings.setText(_translate("MainWindow", "Submit \n Settings")) # does the \n cause issues?
+        #self.privacy_settings.setText(_translate("MainWindow", "Privacy Settings"))
+        #self.checkBox_4.setText(_translate("MainWindow", "Public"))
+        #self.checkBox_5.setText(_translate("MainWindow", "Private"))
+        #self.submit_settings.setText(_translate("MainWindow", "Submit \n Settings")) # does the \n cause issues?
         self.background_style.setText(_translate("MainWindow", "Style Settings"))
         self.style_button.setText(_translate("MainWindow", "Dark Mode"))
         # self.checkBox_6.setText(_translate("MainWindow", "CheckBox"))
-        self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
+        #self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
 
         # Events + Circles Merger
         self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Circles"))
@@ -569,6 +573,10 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
         # Messages
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
+
+    def gotosplash(self):
+        self.current_user = None
+        self.centralwidget.setCurrentIndex(0)
 
     def gotologin(self):
         self.login_page = LogIn(self)
@@ -640,12 +648,57 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         if self.style_button.text() == "Dark Mode":
             apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
             pixmap = QtGui.QPixmap("Dark_Logo.png")
+            self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
             self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
             apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
+            pixmap = QtGui.QPixmap("Logo.png")
+            self.splashWindow.splash_image.setPixmap(pixmap)
+            self.home_image.setPixmap(pixmap)
+            self.home_image.setScaledContents(True)
             self.style_button.setText("Dark Mode")
+
+class SplashScreen(QMainWindow):
+    def __init__(self, parent, window):
+        super(SplashScreen, self).__init__(parent)
+        self.parent = parent
+        self.window = window
+        self.setWindowTitle("ToGather")
+        self.setObjectName("SplashWindow")
+
+        _translate = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_translate("SplashWindow", "Welcome!"))
+
+        self.splash_image = QtWidgets.QLabel(self)
+        self.splash_image.setGeometry(QtCore.QRect(300, 0, 641, 312))
+        self.splash_image.setObjectName("splash_image")
+        pixmap = QtGui.QPixmap("Logo.png")
+        self.splash_image.setPixmap(pixmap)
+        self.splash_image.setScaledContents(True)
+
+        self.splash_login = QtWidgets.QPushButton(self)
+        self.splash_login.setGeometry(QtCore.QRect(360, 300, 500, 50))
+        self.splash_login.setObjectName("splash_login")
+        self.splash_login.clicked.connect(self.login)
+        self.splash_login.setText(_translate("MainWindow", "Log In"))
+
+        self.splash_signup = QtWidgets.QPushButton(self)
+        self.splash_signup.setGeometry(QtCore.QRect(360, 350, 500, 50))
+        self.splash_signup.setObjectName("splash_signup")
+        self.splash_signup.clicked.connect(self.signup)
+        self.splash_signup.setText(_translate("MainWindow", "Sign Up"))
+
+    def login(self):
+        self.login_page = LogIn(self, self.window)
+        self.login_page.adjustSize()
+        self.login_page.show()
+
+    def signup(self):
+        self.signup_page = SignUp(self, self.window)
+        self.signup_page.adjustSize()
+        self.signup_page.show()
 
 class VoteRes(QMainWindow):
     def __init__(self, parent):
@@ -659,9 +712,10 @@ class VoteRes(QMainWindow):
         self.close()
         
 class LogIn(QMainWindow):
-    def __init__(self, parent):
+    def __init__(self, parent, window):
         super(LogIn, self).__init__(parent)
         self.parent = parent
+        self.window = window
         #with importlib_resources.path(bin, "login.ui") as p:
         #    path = p
         loadUi("login.ui", self)
@@ -669,7 +723,6 @@ class LogIn(QMainWindow):
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
 
-    # TODO: Show errors in UI.
     # Method that runs when login button is pressed.
     def login_acc(self):
         # Check if username exists.
@@ -678,15 +731,29 @@ class LogIn(QMainWindow):
             user = Data.get_users(self.login_username_entry.text())
             if user.password == self.login_password_entry.text():
                 # Update the current_user variable stored in MainWindow
-                print("Login successful")
-                self.parent.current_user = user
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setWindowTitle("Login Success")
+                msg.setText("You have successfully logged in as "+user.name)
+                msg.exec_()
+
+                self.window.current_user = user
                 # TODO: Create a method to update other UI objects that use current user.
-                self.parent.user_settings_name.setText(self.parent.current_user.name)
+                #self.parent.user_settings_name.setText(self.parent.current_user.name)
+                self.window.centralwidget.setCurrentIndex(1)
                 self.close()
             else:
-                print("Incorrect password.")
+                err_msg = QtWidgets.QMessageBox()
+                err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+                err_msg.setWindowTitle("Login Failed")
+                err_msg.setText("Incorrect password. Please try again.")
+                err_msg.exec_()
         else:
-            print("Username doesn't exist.")
+            err_msg = QtWidgets.QMessageBox()
+            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            err_msg.setWindowTitle("Login Failed")
+            err_msg.setText("Username does not exist. Please retype the username or sign up a new account.")
+            err_msg.exec_()
 
 
         #valid = [x for x, y in enumerate(self.parent.usersarr) if y[0] == self.login_username_entry.text() and y[1] == self.login_password_entry.text()]
@@ -698,7 +765,7 @@ class LogIn(QMainWindow):
 
     def nav(self):
         print("To Signup!")
-        self.signup_window = SignUp(self)
+        self.signup_window = SignUp(self, self.window)
         self.setWindowTitle("Sign Up")
         self.signup_window.adjustSize()
         self.signup_window.show()
@@ -706,9 +773,10 @@ class LogIn(QMainWindow):
 
 
 class SignUp(QMainWindow):
-    def __init__(self, parent):
+    def __init__(self, parent, window):
         super(SignUp, self).__init__(parent)
         self.parent = parent
+        self.window = window
         #with importlib_resources.path(bin, "signup.ui") as p:
         #    path = p
         loadUi(("signup.ui"), self)
@@ -718,12 +786,16 @@ class SignUp(QMainWindow):
 
     def submit(self):
         if (self.signup_username_entry.text() == "" or self.signup_password_entry.text() == "" or self.signup_c_password_entry.text() == ""):
-            print("Please enter all required information")
+            err_msg = QtWidgets.QMessageBox()
+            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            err_msg.setWindowTitle("Signup Failed")
+            err_msg.setText("Please enter info into all empty fields.")
+            err_msg.exec_()
         elif self.signup_password_entry.text() == self.signup_c_password_entry.text():
 
             # Add user to local array for testing.
-            userpair = (self.signup_username_entry.text(), self.signup_password_entry.text())
-            self.parent.parent.usersarr.append(userpair)
+            #userpair = (self.signup_username_entry.text(), self.signup_password_entry.text())
+            #self.parent.usersarr.append(userpair)
 
             # Make sure username doesn't already exist.
             if not Data.get_users(self.signup_username_entry.text()):
@@ -732,19 +804,33 @@ class SignUp(QMainWindow):
                 Data.add_user(user)
 
                 # Update the current_user variable stored in MainWindow
-                self.parent.current_user = user
+                self.window.current_user = user
 
                 # TODO: Create a method to update all UI objects that use current user.
                 # Update UI elements that relate to current user.
-                self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
+                #self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
 
                 # TODO: Window doesn't close for some reason. Go to user settings page after signing up?
-                print("Submitted")
+                err_msg = QtWidgets.QMessageBox()
+                err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+                err_msg.setWindowTitle("Signup Success")
+                err_msg.setText("Your new account has been successfully created. Welcome "+user.name)
+                err_msg.exec_()
+
+                self.window.centralwidget.setCurrentIndex(1)
                 self.close()
             else:
-                print("Username already exists.")
+                err_msg = QtWidgets.QMessageBox()
+                err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+                err_msg.setWindowTitle("Signup Failed")
+                err_msg.setText("Username already exists. Please try a new username.")
+                err_msg.exec_()
         else:
-            print("Passwords do not match!")
+            err_msg = QtWidgets.QMessageBox()
+            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            err_msg.setWindowTitle("Signup Failed")
+            err_msg.setText("Passwords do not match. Please retype the passwords.")
+            err_msg.exec_()
 
 
 class GroupCreate(QMainWindow):
@@ -1014,7 +1100,7 @@ class AddMember(QMainWindow):
                     print("User already in group!")
                 else:
                     userarray.append(self.name_entry.text())
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events))
                     #self.memwidget.removeButton.clicked.connect(lambda: self.removeMember(groupindex, new_user))
                     print("Added New Member")
 
@@ -1065,7 +1151,7 @@ class NewEvent(QMainWindow):
                 if self.circle_entry.text() in eventarray:
                     print("Event already in group!")
                 else:
-                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), self.circle_entry.text(),[])
+                    new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [])
                     Data.add_event(new_event)
                     print(Data.get_events(new_event.name).name)
 
@@ -1081,7 +1167,7 @@ class NewEvent(QMainWindow):
                     self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
                     eventarray.append(new_event)
-                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray))
                     print("Added New Event")
 
 
