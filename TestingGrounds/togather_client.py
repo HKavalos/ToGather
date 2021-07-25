@@ -46,7 +46,7 @@ class Data(threading.local):
             cursor = db_connection.cursor()
             # Wrapping identifiers in `` prevents conflicts with SQLite keywords i.e. GROUP
             cursor.execute('''CREATE TABLE `users` (`name` TEXT, `user` BLOB)''')
-            cursor.execute('''CREATE TABLE `events` (`name` TEXT, `event` BLOB)''')
+            cursor.execute('''CREATE TABLE `events` (`name` TEXT, `group` TEXT, `event` BLOB)''')
             cursor.execute('''CREATE TABLE `groups` (`name` TEXT, `group` BLOB)''')
             cursor.execute('''CREATE TABLE `calendars` (`name` TEXT, `calendar` BLOB)''')
             cursor.execute('''CREATE TABLE `options` (`name` TEXT, `option` BLOB)''')
@@ -181,8 +181,8 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_events(event.name) is None:
-                cursor.execute("INSERT INTO `events` VALUES (?, ?)", (event.name, pickle.dumps(event)))
+            if Data.get_events(event.name, event.group) is None:
+                cursor.execute("INSERT INTO `events` VALUES (?, ?, ?)", (event.name, event.group, pickle.dumps(event)))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(event))
                 sender.start()
@@ -196,10 +196,10 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_events(event.name) is None:
+            if Data.get_events(event.name, event.group) is None:
                 pass
             else:
-                cursor.execute("DELETE FROM `events` WHERE name = ?", (event.name,))
+                cursor.execute("DELETE FROM `events` WHERE `name` = ?", (event.name, event.group))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(event), 5)
                 sender.start()
@@ -213,10 +213,10 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            if Data.get_events(event.name) is None:
+            if Data.get_events(event.name, event.group) is None:
                 pass
-            elif event != Data.get_events(event.name):
-                cursor.execute("UPDATE `events` SET event = ? WHERE name = ?", (pickle.dumps(event), event.name))
+            elif event != Data.get_events(event.name, event.group):
+                cursor.execute("UPDATE `events` SET event = ? WHERE `name` = ? and `group` = ?", (pickle.dumps(event), event.name, event.group))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(Data.get_events(event.name)), 4)
                 sender.start()
@@ -227,9 +227,9 @@ class Data(threading.local):
     # Returns User object if parameter is given, otherwise returns list of all events
     # Returns None if nothing is found.
     @staticmethod
-    def get_events(name=None):
+    def get_events(name=None, group=None):
         try:
-            if name is None:
+            if name is None and group is None:
                 db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
                 cursor.execute("SELECT `event` FROM `events`")
@@ -245,10 +245,26 @@ class Data(threading.local):
                     unpickled_events.append(pickle.loads(event[0]))
                 return unpickled_events
 
+            elif name is None and group is not None:
+                db_connection = sqlite3.connect(Data().DB_FILENAME)
+                cursor = db_connection.cursor()
+                cursor.execute("SELECT `event` FROM `events` WHERE `group` = ?" ,(group,))
+                events = cursor.fetchall()  # fetchall() returns a list of rows returned from executed SQL query
+                db_connection.commit()
+                db_connection.close()
+
+                # Unpickle each object into new list to return.
+                unpickled_events = []
+                for event in events:
+                    # Attributes for each row returned by fetchall() are accessed through a tuple.
+                    # We are only selecting for one attribute (the pickled object), so we access with event[0]
+                    unpickled_events.append(pickle.loads(event[0]))
+                return unpickled_events
+
             else:
                 db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
-                cursor.execute("SELECT `event` FROM `events` WHERE `name`=?", (name,))  # Parameter must be tuple
+                cursor.execute("SELECT `event` FROM `events` WHERE `name`=? and `group`=?", (name,group))  # Parameter must be tuple
                 event = cursor.fetchone()  # Returns None if nothing found, otherwise one object in a tuple.
                 db_connection.commit()
                 db_connection.close()
@@ -860,21 +876,17 @@ class Client(threading.Thread):
                         print(option.name, option.activity, option.time, option.chosen, option.votes)
 
                 elif selection == "69":
-                    #(self, name, delivery, sender="", group=""):
-                    # Data.add_message(Message("message5", "Hi rebecca I hate you", "Hazel", "RebeccaHaters"))
-                    # Data.add_message(Message("message4", "Rebecca I love you", "Hazel", "RebeccaLovers"))
-                    # Data.add_message(Message("message6", "Why do you say that", "Rebecca", "RebeccaHaters"))
-                    # Data.add_message(Message("message5", "Well I hate you Hazel", "Rebecca", "RebeccaLovers"))
-                    # Data.add_message(Message("message4", "Rainbows rainbows", "Hazel", "TheGays"))
-                    # Data.add_message(Message("message7", "Because . . . I actually love you", "Hazel", "RebeccaHaters"))
-                    # Data.add_message(Message("message8", "Awwwww, well I don't", "Rebecca", "RebeccaHaters"))
-                    # Data.add_message(Message("message5", "Ew", "Rebecca", "TheGays"))
-                    # Data.add_message(Message("message6", "I love you anyways", "Hazel", "RebeccaLovers"))
-                    # Data.add_message(Message("message6", "Get Away from me", "Rebecca", "TheGays"))
-
-                    Data.delete_message(Message("message5", "Hi rebecca I hate you", "Hazel", "RebeccaHaters"))
-                    for message in Data().get_messages(None, "TheGays"):
-                        print(message.name, message.delivery, message.sender, message.group)
+                    #name, description, options=[], group="", status=False:
+                    Data.add_event(Event("Event1", "description1", "options1", "group1"))
+                    Data.add_event(Event("Event1", "description1", "options1", "group2"))
+                    Data.add_event(Event("Event2", "description1", "options1", "group1"))
+                    Data.add_event(Event("Event1", "description1", "options1", "group3"))
+                    Data.add_event(Event("Event2", "description1", "options1", "group3"))
+                    Data.add_event(Event("Event3", "description1", "options1", "group1"))
+                    Data.add_event(Event("Event3", "description1", "options1", "group2"))
+                    #Data.delete_message(Message("message5", "Hi rebecca I hate you", "Hazel", "RebeccaHaters"))
+                    for event in Data().get_events(None, "group1"):
+                        print(event.name, event.description, event.options, event.group)
 
                 selection = input("\nEnter selection:")
 
