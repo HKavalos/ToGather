@@ -750,6 +750,30 @@ class VoteRes(QMainWindow):
         self.parent = parent
         loadUi("voting_res.ui", self)
         self.return_button.clicked.connect(self.return_voting)
+        
+        self.user_vote_scroll = QtWidgets.QScrollArea(self)
+        self.user_vote_scroll.setGeometry(QtCore.QRect(771, 49, 287, 536))
+        self.user_vote_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.user_vote_scroll.setObjectName("user_vote_scroll")
+        self.user_vote_scroll.setWidgetResizable(True)
+        self.vote_scroll_contents = QtWidgets.QWidget()
+        self.vote_scroll_contents.setGeometry(QtCore.QRect(0, 0, 285, 534))
+
+        self.user_vote_scroll_2 = QtWidgets.QScrollArea(self)
+        self.user_vote_scroll_2.setGeometry(QtCore.QRect(479, 49, 287, 536))
+        self.user_vote_scroll_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.user_vote_scroll_2.setObjectName("user_vote_scroll")
+        self.user_vote_scroll_2.setWidgetResizable(True)
+        self.vote_scroll_contents_2 = QtWidgets.QWidget()
+        self.vote_scroll_contents_2.setGeometry(QtCore.QRect(0, 0, 285, 534))
+
+        self.vote_grid = QtWidgets.QVBoxLayout(self.vote_scroll_contents)
+        self.vote_grid.setObjectName("vote_grid")
+        self.user_vote_scroll.setWidget(self.vote_scroll_contents)
+
+        self.vote_grid_2 = QtWidgets.QVBoxLayout(self.vote_scroll_contents_2)
+        self.vote_grid_2.setObjectName("vote_grid_2")
+        self.user_vote_scroll_2.setWidget(self.vote_scroll_contents_2)
 
     def return_voting(self):
         print("Return to Voting")
@@ -1015,14 +1039,14 @@ class VotingPoll(QMainWindow):
             submit_msg.exec_()
             self.counter += 1
 
-            loading = LoadingScreen(self.parent)
+            self.loading = LoadingScreen(self.parent)
             while(self.counter != len(c.users)):
-                loading.startAnim()
-            loading.stopAnim()
+                self.loading.startAnim()
+            self.loading.stopAnim()
             top = float('inf')
             averages = {}
             choices = []
-            winner = e.options[0]
+            winner = ""
             set0 = QBarSet('Averages')
 
             for x in e.options:
@@ -1030,7 +1054,7 @@ class VotingPoll(QMainWindow):
                 for y in x.votes.values():
                     avg += y
                 avg = avg/len(c.users)
-                averages[x] = avg
+                averages[x.name] = avg
                 choices.append(x.name)
             for x in averages:
                 if (averages[x] < top):
@@ -1038,7 +1062,7 @@ class VotingPoll(QMainWindow):
                     winner = x
                 set0.append(averages[x])
 
-            winner.chosen = True
+            #winner.chosen = True
             e.status = True
 
             res = QBarSeries()
@@ -1059,18 +1083,15 @@ class VotingPoll(QMainWindow):
             self.winner_msg = VoteRes(self)
             self.winner_msg.setWindowTitle("Voting Results")
             self.winner_msg.chart_view.setChart(graph)
-            self.winner_msg.winner_label.setText(winner.name + " has won the masses.")
-            #for y in sorted(averages.values()):
-                #self.f = QtWidgets.QFrame(self.winner_msg)
-                #self.f.setGeometry(QtCore.QRect(100, 100, 100, 100))
-                #self.f.setFrameShape(QtWidgets.QFrame.StyledPanel)
-                #self.f.setFrameShadow(QtWidgets.QFrame.Raised)
-
-                #self.l = QtWidgets.QLabel(self.f)
-                #self.l.setGeometry(QtCore.QRect(0, 20, 150, 13))
-                #self.l.setText(QtCore.QCoreApplication.translate("MainWindow", ""+str(y)+". "+str(y)+""))
-
-                #self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.f)
+            self.winner_msg.winner_label.setText(winner + " has won the masses.")
+            for x, y in sorted(averages.items()):
+                self.mem = loadUi("voting_res_list.ui")
+                self.mem.vote_res_label.setText("Average Rank: "+str(y)+" | Option: "+x+"")
+                self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
+            for x in c.users:
+                self.mem = loadUi("voting_res_list.ui")
+                self.mem.vote_res_label.setText(x)
+                self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
             self.winner_msg.show()
 
 class LoadingScreen(QMainWindow):
