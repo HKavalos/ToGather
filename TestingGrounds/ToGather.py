@@ -971,7 +971,7 @@ class VotingPoll(QMainWindow):
         self.vote_grid = QtWidgets.QVBoxLayout(self.vote_scroll_contents)
         self.vote_grid.setObjectName("vote_grid")
         self.vote_scroll.setWidget(self.vote_scroll_contents)
-        self.submitVote.clicked.connect(lambda checked, a=e, b=c: self.submit(e,c))
+        self.submitVote.clicked.connect(lambda checked, a=e, b=c: self.submit(a, b))
 
         count = 1
         for x in e.options:
@@ -1008,6 +1008,7 @@ class VotingPoll(QMainWindow):
 
     def vote(self, x, cb):
         x.votes[self.user] = cb.currentIndex()+1
+        Data.update_option(x)
 
     def submit(self, e, c):
         submit_msg = QtWidgets.QMessageBox()
@@ -1062,8 +1063,11 @@ class VotingPoll(QMainWindow):
                     winner = x
                 set0.append(averages[x])
 
-            #winner.chosen = True
+            o = Data.get_options(winner)
+            o.chosen = True
             e.status = True
+            Data.update_option(o)
+            Data.update_event(e)
 
             res = QBarSeries()
             res.append(set0)
@@ -1123,6 +1127,8 @@ class OptionSettings(QMainWindow):
     def submit(self, e):
         o = Option(self.options_name.text(), self.options_activity.text(), self.options_location.text(), None, False, {})
         e.options.append(o)
+        Data.update_event(e)
+        Data.add_option(o)
         #f = QtWidgets.QFrame()
         #frames = votingwidget.Ui_Form()
         #frames.setupUi(f)
@@ -1143,6 +1149,8 @@ class OptionSettings(QMainWindow):
         for i in e.options:
             if i.name == self.options_del_name.text():
                 e.options.remove(i)
+                Data.update_event(e)
+                Data.delete_option(i)
                 #found = True
                 print("Removed!")
                 break
