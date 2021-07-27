@@ -1041,7 +1041,8 @@ class VotingPoll(QMainWindow):
             self.counter += 1
 
             self.loading = LoadingScreen(self.parent)
-            while(self.counter != len(c.users)):
+            circle = Data.get_groups(c.name)
+            while(self.counter != len(circle.users)):
                 self.loading.startAnim()
             self.loading.stopAnim()
             top = float('inf')
@@ -1054,7 +1055,7 @@ class VotingPoll(QMainWindow):
                 avg = 0
                 for y in x.votes.values():
                     avg += y
-                avg = avg/len(c.users)
+                avg = avg/len(circle.users)
                 averages[x.name] = avg
                 choices.append(x.name)
             for x in averages:
@@ -1087,12 +1088,12 @@ class VotingPoll(QMainWindow):
             self.winner_msg = VoteRes(self)
             self.winner_msg.setWindowTitle("Voting Results")
             self.winner_msg.chart_view.setChart(graph)
-            self.winner_msg.winner_label.setText(winner + " has won the masses.")
+            self.winner_msg.winner_info.setText("Name: "+o.name+"  Activity: "+o.activity+"  Location: "+o.location+"  Time: "+str(o.time)+"")
             for x, y in sorted(averages.items()):
                 self.mem = loadUi("voting_res_list.ui")
                 self.mem.vote_res_label.setText("Average Rank: "+str(y)+" | Option: "+x+"")
                 self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
-            for x in c.users:
+            for x in circle.users:
                 self.mem = loadUi("voting_res_list.ui")
                 self.mem.vote_res_label.setText(x)
                 self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
