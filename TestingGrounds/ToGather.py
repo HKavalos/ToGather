@@ -36,7 +36,6 @@ from threading import Thread
 
 
 def main():
-    global app
     app = QtWidgets.QApplication(["ToGather"])
     MainWindow = QtWidgets.QMainWindow()
     apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
@@ -153,7 +152,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.style_button = QtWidgets.QPushButton(self.home_tab)
         self.style_button.setGeometry(QtCore.QRect(30, 550, 118, 34))
         self.style_button.setObjectName("style_button")
-        self.style_button.clicked.connect(self.change_theme)
+        self.style_button.clicked.connect(lambda checked, a=MainWindow: self.change_theme(a))
         self.home_image = QtWidgets.QLabel(self.home_tab)
         self.home_image.setGeometry(QtCore.QRect(460, 0, 301, 161))
         self.home_image.setObjectName("home_image")
@@ -697,16 +696,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.event_date.setText(event.description)  # time equals place??
         self.event_place.setText(event.options)
 
-    def change_theme(self):
+    def change_theme(self, parent):
         if self.style_button.text() == "Dark Mode":
-            apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
+            apply_stylesheet(parent, theme='dark_teal.xml', invert_secondary=False)
             pixmap = QtGui.QPixmap("Dark_Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
             self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
-            apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
+            apply_stylesheet(parent, theme='light_teal.xml', invert_secondary=True)
             pixmap = QtGui.QPixmap("Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
@@ -858,7 +857,6 @@ class LogIn(QMainWindow):
         self.signup_window.show()
         self.close()
 
-
 class SignUp(QMainWindow):
     def __init__(self, parent, window):
         super(SignUp, self).__init__(parent)
@@ -925,7 +923,6 @@ class SignUp(QMainWindow):
             err_msg.setWindowTitle("Signup Failed")
             err_msg.setText("Passwords do not match. Please retype the passwords.")
             err_msg.exec_()
-
 
 class GroupCreate(QMainWindow):
     def __init__(self, parent):
