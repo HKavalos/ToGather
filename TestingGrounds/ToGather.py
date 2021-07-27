@@ -953,9 +953,9 @@ class GroupCreate(QMainWindow):
             user = Data.get_users(self.parent.current_user.name)
             user.groups.append(grouptuple.name)
             Data.update_user(user)
-            #bellow is not needed but kept incase for styling
-            #grouplist = user.groups
-            #grouplist.append(grouptuple)
+            # bellow is not needed but kept incase for styling
+            # grouplist = user.groups
+            # grouplist.append(grouptuple)
             self.parent.current_user = Data.get_users(user.name)
             #self.parent.merger_scrollAreaWidgetContents.layout().addWidget(f)
             self.parent.update_group(grouptuple)

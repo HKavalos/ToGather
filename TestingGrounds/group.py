@@ -1,9 +1,10 @@
 class Group:
     "the group class contains a list of users, a list of events and a calendar"
-    def __init__(self, name, calendar="", users=[], events=[], messages=[]):
+    def __init__(self, name, calendar="", users=None, events=[], messages=[]):
         self._name = name
         self._calendar = calendar
-        self._users = users
+        if users is None:
+            self._users = []
         self._events = events
         self._messages = messages
 

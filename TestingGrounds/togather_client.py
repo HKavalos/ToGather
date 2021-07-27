@@ -11,10 +11,7 @@ from group import Group
 from _calendar import GroupCalendar
 from option import Option
 from message import Message
-
-
-# TODO: Use CamelCase for class names
-
+from _time import Time
 
 # TODO: Implementing compression on blobs may be needed if object sizes become large.
 # TODO: Remove traceback from exception handlers before release. Useful for testing right now.  Logging instead?
@@ -22,8 +19,6 @@ from message import Message
 # TODO: Specify object type/name in message header so we don't have to unpickle in Receiver thread.
 # TODO: Pass info from header to generic methods that interact with database, instead of separate methods for each type. 
 #       For easier maintenance, the different classes for adding objects could be combined into a single class.
-# TODO: Create methods for cases where the local database is recieveing an update to information
-# TODO: Exists function
 
 class Data(threading.local):
     """
@@ -57,6 +52,7 @@ class Data(threading.local):
             print(e)
 
     # Deletes database file. Useful if corrupted.
+    # TODO: Should this reset all database for all clients?
     @staticmethod
     def db_reset():
         try:
@@ -829,7 +825,10 @@ class Client(threading.Thread):
 
                 elif selection == "2":  # Print users from local database
                     for user in Data().get_users():
-                        print(user.name, user.constraints, user.groups)
+                        print(user.name, user.groups)
+                        print('Constraints: ')
+                        for time in user.constraints:
+                            print(time)
 
                 if selection == "3":  # Add different events for testing
                     Data.add_event(Event(name="Event1", description="Description1", options=["Option1", "Option2"], status=True))
@@ -874,6 +873,128 @@ class Client(threading.Thread):
                 elif selection == "10":  # Print options from local database
                     for option in Data().get_options():
                         print(option.name, option.activity, option.time, option.chosen, option.votes)
+
+                elif selection == "000":
+                    # Create a group
+                    group = Group("test_group", "Calendar1")
+                    Data.add_group(group)
+
+                    # Create a user
+                    user1 = User(name="test_user1", password="test")
+                    # Add constraints to user.
+                    user1.constraints.append(Time(date="01/01/2021", start=7, end=13))
+                    user1.constraints.append(Time(date="01/01/2021", start=15, end=16))
+                    # Add user to db.
+                    Data.add_user(user1)
+                    # Add user to group.
+                    user1.groups.append("test_group")
+                    Data.update_user(user1)
+                    group = Data.get_groups("test_group")
+                    group.users.append(user1.name)
+                    Data.update_group(group)
+
+                    # Create a user
+                    user2 = User(name="test_user2", password="test")
+                    # Add constraints to user.
+                    user2.constraints.append(Time(date="01/01/2021", start=8, end=14))
+                    user2.constraints.append(Time(date="01/01/2021", start=16, end=17))
+                    # Add user to db.
+                    Data.add_user(user2)
+                    # Add user to group.
+                    user2.groups.append("test_group")
+                    Data.update_user(user2)
+                    group = Data.get_groups("test_group")
+                    group.users.append(user2.name)
+                    Data.update_group(group)
+
+                    # Create a user
+                    user3 = User(name="test_user3", password="test")
+                    # Add constraints to user.
+                    user3.constraints.append(Time(date="01/01/2021", start=9, end=12))
+                    user3.constraints.append(Time(date="01/01/2021", start=14, end=15))
+                    # Add user to db.
+                    Data.add_user(user3)
+                    # Add user to group.
+                    user3.groups.append("test_group")
+                    Data.update_user(user3)
+                    group = Data.get_groups("test_group")
+                    group.users.append(user3.name)
+                    Data.update_group(group)
+
+                    # Create a user
+                    user4 = User(name="test_user4", password="test")
+                    # Add constraints to user.
+                    user4.constraints.append(Time(date="01/01/2021", start=9, end=10))
+                    user4.constraints.append(Time(date="01/01/2021", start=7, end=12))
+                    # Add user to db.
+                    Data.add_user(user4)
+                    # Add user to group.
+                    user4.groups.append("test_group")
+                    Data.update_user(user4)
+                    group = Data.get_groups("test_group")
+                    group.users.append(user4.name)
+                    Data.update_group(group)
+
+
+                    # Get constraints for all users in a group
+                    group = Data.get_groups("test_group")
+                    current_constraints = []
+                    for user in group.users:
+                        user = Data.get_users(user)
+                        for constraint in user.constraints:
+                            current_constraints.append(constraint)
+
+                    # Sort intervals by starting time.
+                    # TODO: Faster sorting algorithm.
+                    for i in range(1, len(current_constraints)):
+                        constraint = current_constraints[i]
+                        position = i
+
+                        while position > 0 and current_constraints[position-1].interval[0] > constraint.interval[0]:
+                            current_constraints[position] = current_constraints[position - 1]
+                            position = position - 1
+
+                        current_constraints[position] = constraint
+
+                    # The actual schedule matching algorithm I was messing with.
+                    # Match holds a condensed list of time intervals that overlap (merged)
+                    # Overlap is supposed to hold a list of all overlaps, so we could say the interval that has the most
+                        # overlaps is the best option because it works for the most users.
+                    # Something is wonky with how the database is being updated right now, so it's not really working.
+
+                    # Print sample data. Should be all constraints from every user in current group.
+                    for constraint in current_constraints:
+                        print(constraint)
+
+                    match = []
+                    overlap = []
+                    for constraint in current_constraints:
+                        if len(match) == 0:
+                            match.append(constraint.interval)
+                        else:
+                            if match[len(match) - 1][1] >= constraint.interval[0]:
+
+                                if match[len(match) - 1][1] <= constraint.interval[1]:
+                                    if constraint.interval[0] != match[len(match) - 1][1]:
+                                        overlap.append([constraint.interval[0], match[len(match) - 1][1]])
+                                elif match[len(match) - 1][1] > constraint.interval[1]:
+                                    overlap.append([constraint.interval[0], constraint.interval[1]])
+
+                                match[len(match) - 1][1] = constraint.interval[1]
+
+                            else:
+                                match.append(constraint.interval)
+
+                    """  Not finished
+                    overlap = []
+                    for i in range(1, len(current_constraints) - 1):
+                        if current_constraints[i].interval[0] < current_constraints[i - 1].interval[1]:
+
+                            overlap.append()
+                    """
+
+                    print(match)
+                    print(overlap)
 
                 elif selection == "69":
                     #name, description, options=[], group="", status=False:
