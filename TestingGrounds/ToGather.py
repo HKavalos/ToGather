@@ -1133,9 +1133,12 @@ class LoadingWorker(QObject):
         self.loading = l
 
     def run(self):
-        circle = Data.get_groups(self.c)
-        while (len(Data.get_events(self.e.name, self.c).submitted) != len(circle.users)):
-            time.sleep(5)
+        circle = Data.get_groups(self.c).users
+        ev = Data.get_events(self.e.name, self.c).submitted
+        while (len(ev) != len(circle)):
+            ev = Data.get_events(self.e.name, self.c).submitted
+            print("fuckme")
+        print("fuckon")
         self.loading.stopAnim()
         self.finished.emit()
 
