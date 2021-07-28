@@ -13,6 +13,7 @@ from functools import partial
 from togather_client import *
 from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
 from PyQt5.Qt import Qt
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.uic import loadUi
@@ -671,7 +672,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             frames.name_label.setText("Name: " + event.name)
             frames.date_label.setText("Date: " + event.description)
             frames.vote_go_button.clicked.connect(
-                lambda checked, a=event, b=new_group: self.gotovoting(a, b))
+                lambda checked, a=event, b=new_group.name: self.gotovoting(a, b))
             frames.op_go_button.clicked.connect(lambda checked, a=event: self.gotooptions(a))
             layout.addWidget(app)
         for member in Data.get_groups(self.current_group).users:
@@ -1014,7 +1015,6 @@ class VotingPoll(QMainWindow):
 
     def vote(self, x, cb):
         x.votes[self.user] = cb.currentIndex()+1
-        Data.update_option(x)
 
     def submit(self, e, c):
         submit_msg = QtWidgets.QMessageBox()
@@ -1044,66 +1044,100 @@ class VotingPoll(QMainWindow):
             submit_msg.setWindowTitle("Submit Successful")
             submit_msg.setText("Your vote has been submitted.")
             submit_msg.exec_()
-            self.counter += 1
-
-            self.loading = LoadingScreen(self.parent)
-            circle = Data.get_groups(c.name)
-            while(self.counter != len(circle.users)):
-                self.loading.startAnim()
-            self.loading.stopAnim()
-            top = float('inf')
-            averages = {}
-            choices = []
-            winner = ""
-            set0 = QBarSet('Averages')
 
             for x in e.options:
-                avg = 0
-                for y in x.votes.values():
-                    avg += y
-                avg = avg/len(circle.users)
-                averages[x.name] = avg
-                choices.append(x.name)
-            for x in averages:
-                if (averages[x] < top):
-                    top = averages[x]
-                    winner = x
-                set0.append(averages[x])
+                Data.update_option(x)
+            ev = Data.get_events(e.name, c)
+            ev.submitted[self.user] = True
 
-            o = Data.get_options(winner)
-            o.chosen = True
-            e.status = True
-            Data.update_option(o)
-            Data.update_event(e)
+            Data.update_event(Event(ev.name, ev.description, e.options, ev.group, ev.submitted, ev.status))
 
-            res = QBarSeries()
-            res.append(set0)
-            graph = QChart()
-            graph.addSeries(res)
-            graph.setTitle('Voting Results')
-            graph.setAnimationOptions(QChart.SeriesAnimations)
-            x_axis = QBarCategoryAxis()
-            x_axis.append(choices)
-            y_axis = QValueAxis()
-            graph.addAxis(x_axis, Qt.AlignBottom)
-            graph.addAxis(y_axis, Qt.AlignLeft)
-            res.attachAxis(y_axis)
-            graph.legend().setVisible(True)
-            graph.legend().setAlignment(Qt.AlignBottom)
+            self.loading = LoadingScreen(self.parent)
+            self.loading.startAnim()
+            self.thread = QThread()
+            self.worker = LoadingWorker(c, e, self.loading)
+            self.worker.moveToThread(self.thread)
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+            self.thread.start()
+            self.thread.finished.connect(lambda a=e, b=c: self.results(a, b))
 
-            self.winner_msg = VoteRes(self)
-            self.winner_msg.setWindowTitle("Voting Results")
-            self.winner_msg.chart_view.setChart(graph)
-            self.winner_msg.winner_info.setText("Name: "+o.name+"  Activity: "+o.activity+"  Location: "+o.location+"  Time: "+str(o.time)+"")
-            for x, y in sorted(averages.items()):
-                self.mem = loadUi("voting_res_list.ui")
-                self.mem.vote_res_label.setText("Average Rank: "+str(y)+" | Option: "+x+"")
-                self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
-            for x in circle.users:
-                self.mem = loadUi("voting_res_list.ui")
-                self.mem.vote_res_label.setText(x)
-                self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
-            self.winner_msg.show()
+    def results (self, e, c):
+        circle = Data.get_groups(c)
+
+        top = float('inf')
+        averages = {}
+        choices = []
+        winner = ""
+        set0 = QBarSet('Averages')
+
+        for x in e.options:
+            avg = 0
+            for y in x.votes.values():
+                avg += y
+            avg = avg / len(circle.users)
+            averages[x.name] = avg
+            choices.append(x.name)
+        for x in averages:
+            if (averages[x] < top):
+                top = averages[x]
+                winner = x
+            set0.append(averages[x])
+
+        o = Data.get_options(winner)
+        o.chosen = True
+        e.status = True
+        Data.update_option(o)
+        Data.update_event(e)
+
+        res = QBarSeries()
+        res.append(set0)
+        graph = QChart()
+        graph.addSeries(res)
+        graph.setTitle('Voting Results')
+        graph.setAnimationOptions(QChart.SeriesAnimations)
+        x_axis = QBarCategoryAxis()
+        x_axis.append(choices)
+        y_axis = QValueAxis()
+        graph.addAxis(x_axis, Qt.AlignBottom)
+        graph.addAxis(y_axis, Qt.AlignLeft)
+        res.attachAxis(y_axis)
+        graph.legend().setVisible(True)
+        graph.legend().setAlignment(Qt.AlignBottom)
+
+        self.winner_msg = VoteRes(self)
+        self.winner_msg.setWindowTitle("Voting Results")
+        self.winner_msg.chart_view.setChart(graph)
+        self.winner_msg.winner_info.setText(
+            "Name: " + o.name + "  Activity: " + o.activity + "  Location: " + o.location + "  Time: " + str(
+                o.time) + "")
+        for x, y in sorted(averages.items()):
+            self.mem = loadUi("voting_res_list.ui")
+            self.mem.vote_res_label.setText("Average Rank: " + str(y) + " | Option: " + x + "")
+            self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
+        for x in circle.users:
+            self.mem = loadUi("voting_res_list.ui")
+            self.mem.vote_res_label.setText(x)
+            self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
+        self.winner_msg.show()
+
+
+class LoadingWorker(QObject):
+    finished = pyqtSignal()
+    def __init__(self, c, e, l):
+        super(LoadingWorker, self).__init__()
+        self.c = c
+        self.e = e
+        self.loading = l
+
+    def run(self):
+        circle = Data.get_groups(self.c)
+        while (len(Data.get_events(self.e.name, self.c).submitted) != len(circle.users)):
+            time.sleep(5)
+        self.loading.stopAnim()
+        self.finished.emit()
 
 class LoadingScreen(QMainWindow):
     def __init__(self, parent):
@@ -1213,8 +1247,6 @@ class AddMember(QMainWindow):
                 print("No current circles!")
         self.close()
 
-
-
 class NewEvent(QMainWindow):
     def __init__(self, parent):
         super(NewEvent, self).__init__(parent)
@@ -1233,7 +1265,7 @@ class NewEvent(QMainWindow):
             if Data.get_groups(currentgroup) in eventarray:
                 print("Event already in group!")
             else:
-                new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [], currentgroup)
+                new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [], currentgroup, {})
                 Data.add_event(new_event)
                 print(Data.get_events(new_event.name, new_event.group))
 
