@@ -145,6 +145,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Home
         self.home_tab = QtWidgets.QWidget()
         self.home_tab.setObjectName("home_tab")
+        self.h_usr_label = QtWidgets.QLabel(self.home_tab)
+        self.h_usr_label.setGeometry(QtCore.QRect(30, 600, 500, 50))
+        self.h_usr_label.setObjectName("h_usr_label")
         self.home_votes_widget = QtWidgets.QTabWidget(self.home_tab)
         self.home_votes_widget.setGeometry(QtCore.QRect(40, 170, 320, 341))
         self.home_votes_widget.setObjectName("home_votes_widget")
@@ -240,6 +243,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         font.setPointSize(24)
         self.merger_group_name.setFont(font)
         self.merger_group_name.setObjectName("merger_group_name")
+        self.c_usr_label = QtWidgets.QLabel(self.merger_tab)
+        self.c_usr_label.setGeometry(QtCore.QRect(10, 610, 500, 50))
+        self.c_usr_label.setObjectName("c_usr_label")
         self.merger_event_scroll = QtWidgets.QScrollArea(self.merger_tab)
         self.merger_event_scroll.setGeometry(QtCore.QRect(10, 145, 801, 471))
         self.merger_event_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
@@ -476,6 +482,10 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.messages_tab = QtWidgets.QWidget()
         self.messages_tab.setObjectName("messages_tab")
 
+        self.m_usr_label = QtWidgets.QLabel(self.messages_tab)
+        self.m_usr_label.setGeometry(QtCore.QRect(1180, 605, 500, 50))
+        self.m_usr_label.setObjectName("m_usr_label")
+
         self.scrollArea_3 = QtWidgets.QScrollArea(self.messages_tab)
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1079, 600))
@@ -680,13 +690,22 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             vote_msg = QtWidgets.QMessageBox()
             vote_msg.setIcon(QtWidgets.QMessageBox.Warning)
             vote_msg.setWindowTitle("Voting Finished")
-            vote_msg.setText("The voting has already finished for this event.")
+            vote_msg.setText("The voting has already finished for this event. Results are displayed.")
             vote_msg.exec_()
+            self.voting = VotingPoll(self, e, c)
+            self.voting.results(e, c)
 
 
     def gotooptions(self, e):
-        self.customoptions = OptionSettings(self, e)
-        self.customoptions.show()
+        if e.status == False:
+            self.customoptions = OptionSettings(self, e)
+            self.customoptions.show()
+        else:
+            vote_msg = QtWidgets.QMessageBox()
+            vote_msg.setIcon(QtWidgets.QMessageBox.Warning)
+            vote_msg.setWindowTitle("Voting Finished")
+            vote_msg.setText("The voting has already finished for this event. Options can not be changed.")
+            vote_msg.exec_()
 
 
     def gotoyourcircles(self, event):
@@ -874,7 +893,14 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
-                # self.window.current_group = None
+
+                self.window.current_group = None
+                
+                _translate = QtCore.QCoreApplication.translate
+                self.window.h_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                self.window.m_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                self.window.c_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
@@ -957,6 +983,10 @@ class SignUp(QMainWindow):
                 self.window.current_group = None
                 self.window.messageList.clear()
                 self.window.messageEdit.clear()
+                _translate = QtCore.QCoreApplication.translate
+                self.window.h_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                self.window.m_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                self.window.c_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
