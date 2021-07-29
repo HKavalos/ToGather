@@ -106,8 +106,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
     @QtCore.pyqtSlot()
     def update_ui(self):
 
-        self.current_user = None
-        self.current_group = None
+        #self.current_user = None
+        #self.current_group = None
+        self.update_group(Data.get_groups(self.current_group))
 
         print("Signal received by UI!")
         # TODO: You should be able to access and change UI elements here
@@ -1364,10 +1365,12 @@ class NewEvent(QMainWindow):
             self.memwidget = loadUi("member.ui")
             valid = True
             currentgroup = self.parent.current_group
-            eventarray = Data.get_events(None, currentgroup)
-            if Data.get_groups(currentgroup) in eventarray:
-                print("Event already in group!")
-            else:
+            group = Data.get_groups(currentgroup)
+            eventarray = group.events
+            for event in eventarray:
+                if event.name == self.name_entry.text():
+                    valid = False
+            if valid:
                 new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [], currentgroup, {})
                 Data.add_event(new_event)
                 print(Data.get_events(new_event.name, new_event.group))
