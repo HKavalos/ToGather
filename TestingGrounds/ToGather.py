@@ -120,7 +120,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for user in Data.get_users():
             title_string += user.name
             title_string += " "
-        self.MainWindow.setWindowTitle(title_string)
+        #self.MainWindow.setWindowTitle(title_string)
 
         # Reset Data.update_UI after UI is updated
         Data.update_UI = False
@@ -786,6 +786,7 @@ class UpdateMonitor(QtCore.QObject):
     @QtCore.pyqtSlot()
     def monitor_updates(self):
         while True:
+            time.sleep(1)
             if Data.update_UI:
                 self.update_signal.emit()
                 Data.update_UI = False  # Reset Data.update_UI
@@ -1450,7 +1451,6 @@ class Schedules(QMainWindow):
                 index = group.users.index(tuple)
         i=0
         for day in group.users[index][1]:
-            print(len(day))
             for interval in day:
                 self.interval = loadUi("interval.ui")
                 self.interval.startTime.setText(interval[0])
