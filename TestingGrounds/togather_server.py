@@ -38,7 +38,6 @@ class PythonHandler(BaseRequestHandler):
                 PythonHandler.broadcast(PythonHandler.data, self.request)
             if int.from_bytes(msg_type, "big") == 1:  # Broadcast db to requester only.
                 PythonHandler.send(PythonHandler.data, PythonHandler._db_requester)
-
             # Send db
             if int.from_bytes(msg_type, "big") == 2:
                 # TODO: Handle if second newest connection was caller
@@ -62,9 +61,10 @@ class PythonHandler(BaseRequestHandler):
         PythonHandler._connections.remove(self.request)
         self.request.close()
 
-    # Sends a message to all connected clients.
+    # Sends a message to all connected clients except for sender.
     @staticmethod  # Static method has access to static variable connections[]
     def broadcast(message, source):
+        print(message)
         source_exists = False
         for connection in PythonHandler._connections:
             if connection.getpeername() == source.getpeername():
@@ -76,6 +76,22 @@ class PythonHandler(BaseRequestHandler):
             for connection in PythonHandler._connections:
                 if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
                     connection.sendall(message)
+
+        # Send signal to clients to update UI
+        PythonHandler.update_ui()
+        # Prevent server from sending message again
+        PythonHandler.data = None
+
+    """ Sends update header to all clients.  Receive class in client will 
+        change boolean in Data class to signal that a UI update is needed. """
+    @staticmethod
+    def update_ui():
+        # Create update header with message size of 0
+        msg = bytes([0, 0, 0, 0, 6])
+
+        # Send header to all connected clients.
+        for connection in PythonHandler._connections:
+            connection.sendall(msg)
 
     # Sends a message to one client.
     @staticmethod  # Static method has access to static variable connections[]

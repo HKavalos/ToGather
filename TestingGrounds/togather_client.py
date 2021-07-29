@@ -37,6 +37,7 @@ class Data(threading.local):
     """
 
     DB_FILENAME = "db.db"  # Constant for database filename.
+    update_UI = False
 
     # Method to create tables if they don't already exist in file.
     @staticmethod
@@ -656,6 +657,13 @@ class Receive(threading.Thread):
                 length = int.from_bytes(self._sock.recv(4), "big")  # Get length of message from first 4 bytes
                 msg_type = int.from_bytes(self._sock.recv(1), "big")
                 msg = self._sock.recv(length)
+
+                # Detect update msg_type and set flag in Data class so UI can be updated.
+                if msg_type == 6:
+                    print("update header detected.")
+                    Data.update_UI = True
+                    msg = None
+
                 if msg:
                     try:  # Parse for string commands received from server.
                         cmd = msg.decode()
@@ -704,6 +712,7 @@ class Receive(threading.Thread):
                         except pickle.PickleError as e:
                             # Must be a database file we need to load.
                             # TODO: Check if received file is actually db.db
+                            # TODO: I don't know if we really need to do this.
                             try:
                                 print("Database file received.  Reloading.")
                                 Data.db_reload(msg)
