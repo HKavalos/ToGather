@@ -70,8 +70,8 @@ def main():
     # Only relevant if two clients are running from separate directories.
     Data.db_request()
 
-    thread = Thread(target=watch, args=())
-    thread.start()
+    #thread = Thread(target=watch, args=())
+    #thread.start()
 
     # Close client when UI is exited.
     ret = app.exec_()
@@ -1308,29 +1308,29 @@ class YourCircles(QMainWindow):
         self.parent.update_group(i)
         self.close()
 
-def watch():
-    DIRECTORY_TO_WATCH = "../"
-    observer = Observer()
-    event_handler = Handler()
-    observer.schedule(event_handler, DIRECTORY_TO_WATCH, recursive=True)
-    observer.start()
-
-    try:
-        while True:
-            time.sleep(0)
-    except:
-        observer.stop()
-        print("Error")
-
-    observer.join()
-
-
-class Handler(FileSystemEventHandler):
-
-    @staticmethod
-    def on_any_event(event):
-        if event.event_type == 'modified':
-            print("yay")
+# def watch():
+#     DIRECTORY_TO_WATCH = "../"
+#     observer = Observer()
+#     event_handler = Handler()
+#     observer.schedule(event_handler, DIRECTORY_TO_WATCH, recursive=True)
+#     observer.start()
+#
+#     try:
+#         while True:
+#             time.sleep(0)
+#     except:
+#         observer.stop()
+#         print("Error")
+#
+#     observer.join()
+#
+#
+# class Handler(FileSystemEventHandler):
+#
+#     @staticmethod
+#     def on_any_event(event):
+#         if event.event_type == 'modified':
+#             print("yay")
 
 
 if __name__ == "__main__":
