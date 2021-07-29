@@ -40,8 +40,7 @@ def main():
     app = QtWidgets.QApplication(["ToGather"])
     MainWindow = QtWidgets.QMainWindow()
     apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui = Ui_MainWindow(MainWindow)
     print()
 
     # Try to start server.
@@ -70,8 +69,8 @@ def main():
     # Only relevant if two clients are running from separate directories.
     Data.db_request()
 
-    #thread = Thread(target=watch, args=())
-    #thread.start()
+    # thread = Thread(target=watch, args=())
+    # thread.start()
 
     # Close client when UI is exited.
     ret = app.exec_()
@@ -80,18 +79,52 @@ def main():
     sys.exit(ret)
 
 
-
 class windowPopup(QDialog):
     def __init__(self, name, parent=None):
         super().__init__(parent)
         self.name = name
-        
+
+
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
+
     circlearr = []
 
-    def setupUi(self, MainWindow):
+    def __init__(self, MainWindow):
+        super().__init__()
+        self.update_needed_signal = QtCore.pyqtSignal()
+        self.update_monitor = UpdateMonitor()
+        self.update_thread = QtCore.QThread(self)
+        self.update_monitor.update_signal.connect(self.update_ui)
+        self.update_monitor.moveToThread(self.update_thread)
+        self.update_thread.started.connect(self.update_monitor.monitor_updates)
+        self.update_thread.start()
+
+        self.MainWindow = MainWindow
+        self.setupUi(self.MainWindow)
+
+    # Function that is called when update signal is received.
+    @QtCore.pyqtSlot()
+    def update_ui(self):
+
         self.current_user = None
         self.current_group = None
+
+        print("Signal received by UI!")
+        # TODO: You should be able to access and change UI elements here
+        # All UI elements would ideally reflect any changes to the database when the update signal is received.
+        # We may have to declare elements in __init__ to access them here? Or as class variables like circlearr above?
+
+        # Example of how UI could be updated.
+        title_string = ""
+        for user in Data.get_users():
+            title_string += user.name
+            title_string += " "
+        self.MainWindow.setWindowTitle(title_string)
+
+        # Reset Data.update_UI after UI is updated
+        Data.update_UI = False
+
+    def setupUi(self, MainWindow):
 
         # Main
         MainWindow.setWindowTitle("ToGather")
@@ -475,7 +508,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 631))
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
-        
+
         self.mainTab.addTab(self.messages_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -722,7 +755,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         if new_name != "":
             self.label_16.setText(new_name)
 
-
     def update_event(self, event):
         self.event_title.setText(event.name)
         self.event_date.setText(event.description)  # time equals place??
@@ -743,6 +775,21 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.home_image.setPixmap(pixmap)
             self.home_image.setScaledContents(True)
             self.style_button.setText("Dark Mode")
+
+
+class UpdateMonitor(QtCore.QObject):
+    update_signal = QtCore.pyqtSignal()
+
+    @QtCore.pyqtSlot()
+    def monitor_updates(self):
+        while True:
+            if Data.update_UI:
+                self.update_signal.emit()
+                Data.update_UI = False  # Reset Data.update_UI
+
+
+
+
 
 class SplashScreen(QMainWindow):
     def __init__(self, parent, window):
@@ -846,11 +893,14 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
+
                 self.window.current_group = None
+                
                 _translate = QtCore.QCoreApplication.translate
                 self.window.h_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
                 self.window.m_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
                 self.window.c_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
+                
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
@@ -895,6 +945,7 @@ class LogIn(QMainWindow):
         self.signup_window.adjustSize()
         self.signup_window.show()
         self.close()
+
 
 class SignUp(QMainWindow):
     def __init__(self, parent, window):
@@ -948,7 +999,6 @@ class SignUp(QMainWindow):
                 # Update UI elements that relate to current user.
                 #self.parent.parent.user_settings_name.setText(self.parent.current_user.name)
 
-                # TODO: Window doesn't close for some reason. Go to user settings page after signing up?
                 err_msg = QtWidgets.QMessageBox()
                 err_msg.setIcon(QtWidgets.QMessageBox.Warning)
                 err_msg.setWindowTitle("Signup Success")
@@ -969,6 +1019,7 @@ class SignUp(QMainWindow):
             err_msg.setWindowTitle("Signup Failed")
             err_msg.setText("Passwords do not match. Please retype the passwords.")
             err_msg.exec_()
+
 
 class GroupCreate(QMainWindow):
     def __init__(self, parent):
@@ -1003,6 +1054,7 @@ class GroupCreate(QMainWindow):
             #self.parent.merger_scrollAreaWidgetContents.layout().addWidget(f)
             self.parent.update_group(grouptuple)
             self.close()
+
 
 class VotingPoll(QMainWindow):
     def __init__(self, parent, e, c):
@@ -1293,6 +1345,7 @@ class AddMember(QMainWindow):
                 print("No current circles!")
         self.close()
 
+
 class NewEvent(QMainWindow):
     def __init__(self, parent):
         super(NewEvent, self).__init__(parent)
@@ -1349,6 +1402,7 @@ class YourCircles(QMainWindow):
             self.groupbutton.setFont(font)
             self.groupbutton.clicked.connect(partial(self.updateGroup, Data.get_groups(groups)))
             self.circlesDisplay.layout().addWidget(self.groupbutton)
+
     def updateGroup(self, i):
         self.parent.update_group(i)
         self.close()
