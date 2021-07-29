@@ -530,7 +530,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Welcome Page"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ToGather"))
 
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
