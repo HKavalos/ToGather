@@ -231,6 +231,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.gridLayout_6 = QtWidgets.QVBoxLayout(self.merger_scrollAreaWidgetContents_2)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.merger_member_scroll.setWidget(self.merger_scrollAreaWidgetContents_2)
+        self.merger_schedule_button = QtWidgets.QPushButton(self.merger_tab)
+        self.merger_schedule_button.setGeometry(QtCore.QRect(240, 90, 132, 40))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.merger_schedule_button.setFont(font)
+        self.merger_schedule_button.setObjectName("merger_schedule_button")
+        self.merger_schedule_button.clicked.connect(self.gotoschedules)
         self.merger_add_event_button = QtWidgets.QPushButton(self.merger_tab)
         self.merger_add_event_button.setGeometry(QtCore.QRect(380, 90, 132, 40))
         font = QtGui.QFont()
@@ -281,180 +288,184 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         MainWindow.setStatusBar(self.merger_statusbar)
 
         # Schedule
-        self.schedule_tab = QtWidgets.QWidget()
-        self.schedule_tab.setObjectName("schedule_tab")
-
-        self.frame = QtWidgets.QFrame(self.schedule_tab) # Sunday
-        self.frame.setGeometry(QtCore.QRect(10, 60, 141, 551))
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame.setObjectName("frame")
-        self.label_6 = QtWidgets.QLabel(self.frame) # Day
-        self.label_6.setGeometry(QtCore.QRect(40, 20, 51, 16))
-        self.label_6.setObjectName("label_6")
-        self.timeEdit = QtWidgets.QTimeEdit(self.frame)
-        self.timeEdit.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit.setObjectName("timeEdit")
-        self.label_7 = QtWidgets.QLabel(self.frame) # To
-        self.label_7.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_7.setObjectName("label_7")
-        self.timeEdit_2 = QtWidgets.QTimeEdit(self.frame)
-        self.timeEdit_2.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_2.setObjectName("timeEdit_2")
-        self.label_8 = QtWidgets.QLabel(self.frame) # Not Available
-        self.label_8.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_8.setObjectName("label_8")
-
-        self.frame_2 = QtWidgets.QFrame(self.schedule_tab) # Monday
-        self.frame_2.setGeometry(QtCore.QRect(160, 60, 141, 551))
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.label_9 = QtWidgets.QLabel(self.frame_2)
-        self.label_9.setGeometry(QtCore.QRect(40, 20, 51, 16))
-        self.label_9.setObjectName("label_9")
-        self.timeEdit_3 = QtWidgets.QTimeEdit(self.frame_2)
-        self.timeEdit_3.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_3.setObjectName("timeEdit_3")
-        self.label_10 = QtWidgets.QLabel(self.frame_2)
-        self.label_10.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_10.setObjectName("label_10")
-        self.timeEdit_4 = QtWidgets.QTimeEdit(self.frame_2)
-        self.timeEdit_4.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_4.setObjectName("timeEdit_4")
-        self.label_11 = QtWidgets.QLabel(self.frame_2)
-        self.label_11.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_11.setObjectName("label_11")
-
-        self.frame_33 = QtWidgets.QFrame(self.schedule_tab) # Tuesday
-        self.frame_33.setGeometry(QtCore.QRect(310, 60, 141, 551))
-        self.frame_33.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_33.setObjectName("frame_33")
-        self.label_12 = QtWidgets.QLabel(self.frame_33)
-        self.label_12.setGeometry(QtCore.QRect(40, 20, 51, 16))
-        self.label_12.setObjectName("label_12")
-        self.timeEdit_5 = QtWidgets.QTimeEdit(self.frame_33)
-        self.timeEdit_5.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_5.setObjectName("timeEdit_5")
-        self.label_13 = QtWidgets.QLabel(self.frame_33)
-        self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_13.setObjectName("label_13")
-        self.timeEdit_6 = QtWidgets.QTimeEdit(self.frame_33)
-        self.timeEdit_6.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_6.setObjectName("timeEdit_6")
-        self.label_14 = QtWidgets.QLabel(self.frame_33)
-        self.label_14.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_14.setObjectName("label_14")
-        self.mainTab.addTab(self.schedule_tab, "")
-
-        self.frame_21 = QtWidgets.QFrame(self.schedule_tab)  # Wednesday
-        self.frame_21.setGeometry(QtCore.QRect(460, 60, 141, 551))
-        self.frame_21.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_21.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_21.setObjectName("frame_21")
-        self.label_96 = QtWidgets.QLabel(self.frame_21)
-        self.label_96.setGeometry(QtCore.QRect(40, 20, 70, 16))
-        self.label_96.setObjectName("label_96")
-        self.timeEdit_27 = QtWidgets.QTimeEdit(self.frame_21)
-        self.timeEdit_27.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_27.setObjectName("timeEdit_27")
-        self.label_97 = QtWidgets.QLabel(self.frame_21)
-        self.label_97.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_97.setObjectName("label_97")
-        self.timeEdit_28 = QtWidgets.QTimeEdit(self.frame_21)
-        self.timeEdit_28.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_28.setObjectName("timeEdit_28")
-        self.label_98 = QtWidgets.QLabel(self.frame_21)
-        self.label_98.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_98.setObjectName("label_98")
-
-        self.frame_3 = QtWidgets.QFrame(self.schedule_tab)  # Thursday
-        self.frame_3.setGeometry(QtCore.QRect(610, 60, 141, 551))
-        self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_3.setObjectName("frame_3")
-        self.label_28 = QtWidgets.QLabel(self.frame_3)
-        self.label_28.setGeometry(QtCore.QRect(40, 20, 55, 16))
-        self.label_28.setObjectName("label_28")
-        self.timeEdit_7 = QtWidgets.QTimeEdit(self.frame_3)
-        self.timeEdit_7.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_7.setObjectName("timeEdit_7")
-        self.label_22 = QtWidgets.QLabel(self.frame_3)
-        self.label_22.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_22.setObjectName("label_22")
-        self.timeEdit_8 = QtWidgets.QTimeEdit(self.frame_3)
-        self.timeEdit_8.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_8.setObjectName("timeEdit_8")
-        self.label_23 = QtWidgets.QLabel(self.frame_3)
-        self.label_23.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_23.setObjectName("label_23")
-
-        self.frame_22 = QtWidgets.QFrame(self.schedule_tab)  # Friday
-        self.frame_22.setGeometry(QtCore.QRect(760, 60, 141, 551))
-        self.frame_22.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_22.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_22.setObjectName("frame_22")
-        self.label_29 = QtWidgets.QLabel(self.frame_22)
-        self.label_29.setGeometry(QtCore.QRect(40, 20, 51, 16))
-        self.label_29.setObjectName("label_29")
-        self.timeEdit_11 = QtWidgets.QTimeEdit(self.frame_22)
-        self.timeEdit_11.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_11.setObjectName("timeEdit_11")
-        self.label_13 = QtWidgets.QLabel(self.frame_22)
-        self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_13.setObjectName("label_13")
-        self.timeEdit_67 = QtWidgets.QTimeEdit(self.frame_22)
-        self.timeEdit_67.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_67.setObjectName("timeEdit_67")
-        self.label_32 = QtWidgets.QLabel(self.frame_22)
-        self.label_32.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_32.setObjectName("label_32")
-
-        self.frame_5 = QtWidgets.QFrame(self.schedule_tab)  # Saturday
-        self.frame_5.setGeometry(QtCore.QRect(910, 60, 141, 551))
-        self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_5.setObjectName("frame_5")
-        self.label_24 = QtWidgets.QLabel(self.frame_5)
-        self.label_24.setGeometry(QtCore.QRect(40, 20, 58, 16))
-        self.label_24.setObjectName("label_24")
-        self.timeEdit_9 = QtWidgets.QTimeEdit(self.frame_5)
-        self.timeEdit_9.setGeometry(QtCore.QRect(10, 80, 118, 31))
-        self.timeEdit_9.setObjectName("timeEdit_9")
-        self.label_26 = QtWidgets.QLabel(self.frame_5)
-        self.label_26.setGeometry(QtCore.QRect(50, 120, 47, 13))
-        self.label_26.setObjectName("label_26")
-        self.timeEdit_10 = QtWidgets.QTimeEdit(self.frame_5)
-        self.timeEdit_10.setGeometry(QtCore.QRect(10, 140, 118, 31))
-        self.timeEdit_10.setObjectName("timeEdit_10")
-        self.label_27 = QtWidgets.QLabel(self.frame_5)
-        self.label_27.setGeometry(QtCore.QRect(30, 60, 79, 16))
-        self.label_27.setObjectName("label_27")
+        # self.schedule_tab = QtWidgets.QWidget()
+        # self.schedule_tab.setObjectName("schedule_tab")
+        #
+        # self.frame = QtWidgets.QFrame(self.schedule_tab) # Sunday
+        # self.frame.setGeometry(QtCore.QRect(10, 60, 141, 551))
+        # self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame.setObjectName("frame")
+        # self.label_6 = QtWidgets.QLabel(self.frame) # Day
+        # self.label_6.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        # self.label_6.setObjectName("label_6")
+        # self.timeEdit = QtWidgets.QTimeEdit(self.frame)
+        # self.timeEdit.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit.setObjectName("timeEdit")
+        # self.label_7 = QtWidgets.QLabel(self.frame) # To
+        # self.label_7.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_7.setObjectName("label_7")
+        # self.timeEdit_2 = QtWidgets.QTimeEdit(self.frame)
+        # self.timeEdit_2.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_2.setObjectName("timeEdit_2")
+        # self.label_8 = QtWidgets.QLabel(self.frame) # Not Available
+        # self.label_8.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_8.setObjectName("label_8")
+        #
+        # self.frame_2 = QtWidgets.QFrame(self.schedule_tab) # Monday
+        # self.frame_2.setGeometry(QtCore.QRect(160, 60, 141, 551))
+        # self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_2.setObjectName("frame_2")
+        # self.label_9 = QtWidgets.QLabel(self.frame_2)
+        # self.label_9.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        # self.label_9.setObjectName("label_9")
+        # self.timeEdit_3 = QtWidgets.QTimeEdit(self.frame_2)
+        # self.timeEdit_3.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_3.setObjectName("timeEdit_3")
+        # self.label_10 = QtWidgets.QLabel(self.frame_2)
+        # self.label_10.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_10.setObjectName("label_10")
+        # self.timeEdit_4 = QtWidgets.QTimeEdit(self.frame_2)
+        # self.timeEdit_4.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_4.setObjectName("timeEdit_4")
+        # self.label_11 = QtWidgets.QLabel(self.frame_2)
+        # self.label_11.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_11.setObjectName("label_11")
+        #
+        # self.frame_33 = QtWidgets.QFrame(self.schedule_tab) # Tuesday
+        # self.frame_33.setGeometry(QtCore.QRect(310, 60, 141, 551))
+        # self.frame_33.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_33.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_33.setObjectName("frame_33")
+        # self.label_12 = QtWidgets.QLabel(self.frame_33)
+        # self.label_12.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        # self.label_12.setObjectName("label_12")
+        # self.timeEdit_5 = QtWidgets.QTimeEdit(self.frame_33)
+        # self.timeEdit_5.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_5.setObjectName("timeEdit_5")
+        # self.label_13 = QtWidgets.QLabel(self.frame_33)
+        # self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_13.setObjectName("label_13")
+        # self.timeEdit_6 = QtWidgets.QTimeEdit(self.frame_33)
+        # self.timeEdit_6.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_6.setObjectName("timeEdit_6")
+        # self.label_14 = QtWidgets.QLabel(self.frame_33)
+        # self.label_14.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_14.setObjectName("label_14")
+        # self.mainTab.addTab(self.schedule_tab, "")
+        #
+        # self.frame_21 = QtWidgets.QFrame(self.schedule_tab)  # Wednesday
+        # self.frame_21.setGeometry(QtCore.QRect(460, 60, 141, 551))
+        # self.frame_21.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_21.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_21.setObjectName("frame_21")
+        # self.label_96 = QtWidgets.QLabel(self.frame_21)
+        # self.label_96.setGeometry(QtCore.QRect(40, 20, 70, 16))
+        # self.label_96.setObjectName("label_96")
+        # self.timeEdit_27 = QtWidgets.QTimeEdit(self.frame_21)
+        # self.timeEdit_27.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_27.setObjectName("timeEdit_27")
+        # self.label_97 = QtWidgets.QLabel(self.frame_21)
+        # self.label_97.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_97.setObjectName("label_97")
+        # self.timeEdit_28 = QtWidgets.QTimeEdit(self.frame_21)
+        # self.timeEdit_28.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_28.setObjectName("timeEdit_28")
+        # self.label_98 = QtWidgets.QLabel(self.frame_21)
+        # self.label_98.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_98.setObjectName("label_98")
+        #
+        # self.frame_3 = QtWidgets.QFrame(self.schedule_tab)  # Thursday
+        # self.frame_3.setGeometry(QtCore.QRect(610, 60, 141, 551))
+        # self.frame_3.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_3.setObjectName("frame_3")
+        # self.label_28 = QtWidgets.QLabel(self.frame_3)
+        # self.label_28.setGeometry(QtCore.QRect(40, 20, 55, 16))
+        # self.label_28.setObjectName("label_28")
+        # self.timeEdit_7 = QtWidgets.QTimeEdit(self.frame_3)
+        # self.timeEdit_7.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_7.setObjectName("timeEdit_7")
+        # self.label_22 = QtWidgets.QLabel(self.frame_3)
+        # self.label_22.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_22.setObjectName("label_22")
+        # self.timeEdit_8 = QtWidgets.QTimeEdit(self.frame_3)
+        # self.timeEdit_8.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_8.setObjectName("timeEdit_8")
+        # self.label_23 = QtWidgets.QLabel(self.frame_3)
+        # self.label_23.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_23.setObjectName("label_23")
+        #
+        # self.frame_22 = QtWidgets.QFrame(self.schedule_tab)  # Friday
+        # self.frame_22.setGeometry(QtCore.QRect(760, 60, 141, 551))
+        # self.frame_22.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_22.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_22.setObjectName("frame_22")
+        # self.label_29 = QtWidgets.QLabel(self.frame_22)
+        # self.label_29.setGeometry(QtCore.QRect(40, 20, 51, 16))
+        # self.label_29.setObjectName("label_29")
+        # self.timeEdit_11 = QtWidgets.QTimeEdit(self.frame_22)
+        # self.timeEdit_11.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_11.setObjectName("timeEdit_11")
+        # self.label_13 = QtWidgets.QLabel(self.frame_22)
+        # self.label_13.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_13.setObjectName("label_13")
+        # self.timeEdit_67 = QtWidgets.QTimeEdit(self.frame_22)
+        # self.timeEdit_67.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_67.setObjectName("timeEdit_67")
+        # self.label_32 = QtWidgets.QLabel(self.frame_22)
+        # self.label_32.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_32.setObjectName("label_32")
+        #
+        # self.frame_5 = QtWidgets.QFrame(self.schedule_tab)  # Saturday
+        # self.frame_5.setGeometry(QtCore.QRect(910, 60, 141, 551))
+        # self.frame_5.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
+        # self.frame_5.setObjectName("frame_5")
+        # self.label_24 = QtWidgets.QLabel(self.frame_5)
+        # self.label_24.setGeometry(QtCore.QRect(40, 20, 58, 16))
+        # self.label_24.setObjectName("label_24")
+        # self.timeEdit_9 = QtWidgets.QTimeEdit(self.frame_5)
+        # self.timeEdit_9.setGeometry(QtCore.QRect(10, 80, 118, 31))
+        # self.timeEdit_9.setObjectName("timeEdit_9")
+        # self.label_26 = QtWidgets.QLabel(self.frame_5)
+        # self.label_26.setGeometry(QtCore.QRect(50, 120, 47, 13))
+        # self.label_26.setObjectName("label_26")
+        # self.timeEdit_10 = QtWidgets.QTimeEdit(self.frame_5)
+        # self.timeEdit_10.setGeometry(QtCore.QRect(10, 140, 118, 31))
+        # self.timeEdit_10.setObjectName("timeEdit_10")
+        # self.label_27 = QtWidgets.QLabel(self.frame_5)
+        # self.label_27.setGeometry(QtCore.QRect(30, 60, 79, 16))
+        # self.label_27.setObjectName("label_27")
 
         # Messages
         self.messages_tab = QtWidgets.QWidget()
         self.messages_tab.setObjectName("messages_tab")
+
         self.scrollArea_3 = QtWidgets.QScrollArea(self.messages_tab)
-        self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 481))
+        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1079, 600))
+        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+
+        self.messageEdit = QtWidgets.QTextEdit(self.messages_tab)
+        self.messageEdit.setGeometry(QtCore.QRect(20, 600, 950, 50))
+        self.messageEdit.setObjectName("messageEdit")
+
+        self.messageSend = QtWidgets.QPushButton(self.messages_tab)
+        self.messageSend.setGeometry(QtCore.QRect(990, 610, 150, 50))
+        self.messageSend.setObjectName("messageSend")
+
+        self.messageSend.clicked.connect(self.sendMessage)
+        self.messageList = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_3)
+        self.messageList.setGeometry(QtCore.QRect(0, 0, 1081, 550))
+        self.messageList.setObjectName("messageList")
+
+        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 631))
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
-        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1079, 479))
-        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
-        self.textBrowser_2 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_2.setGeometry(QtCore.QRect(0, 0, 1081, 121))
-        self.textBrowser_2.setObjectName("textBrowser_2")
-        self.textBrowser_3 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_3.setGeometry(QtCore.QRect(0, 360, 1081, 121))
-        self.textBrowser_3.setObjectName("textBrowser_3")
-        self.textBrowser_4 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_4.setGeometry(QtCore.QRect(0, 120, 1081, 121))
-        self.textBrowser_4.setObjectName("textBrowser_4")
-        self.textBrowser_5 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_5.setGeometry(QtCore.QRect(0, 240, 1081, 121))
-        self.textBrowser_5.setObjectName("textBrowser_5")
-        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        
         self.mainTab.addTab(self.messages_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -522,6 +533,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Events + Circles Merger
         self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Circles"))
         self.merger_group_name.setText(_translate("MainWindow", "Group Name"))
+        self.merger_schedule_button.setText(_translate("MainWindow", "Schedules"))
         self.merger_add_event_button.setText(_translate("MainWindow", "Add Event"))
         self.merger_switch_group_button.setText(_translate("MainWindow", "Switch Group"))
         self.merger_add_group_button.setText(_translate("MainWindow", "Add Group"))
@@ -530,63 +542,57 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.merger_member_header.setText(_translate("MainWindow", "Members:"))
 
         # Schedule
-        self.label_6.setText(_translate("MainWindow", "Sunday"))
-        self.label_7.setText(_translate("MainWindow", "to"))
-        self.label_8.setText(_translate("MainWindow", "Not Available"))
-        self.label_9.setText(_translate("MainWindow", "Monday"))
-        self.label_10.setText(_translate("MainWindow", "to"))
-        self.label_11.setText(_translate("MainWindow", "Not Available"))
-        self.label_12.setText(_translate("MainWindow", "Tuesday"))
-        self.label_13.setText(_translate("MainWindow", "to"))
-        self.label_14.setText(_translate("MainWindow", "Not Available"))
-        self.label_96.setText(_translate("MainWindow", "Wednesday"))
-        self.label_97.setText(_translate("MainWindow", "to"))
-        self.label_98.setText(_translate("MainWindow", "Not Available"))
-        self.label_28.setText(_translate("MainWindow", "Thursday"))
-        self.label_22.setText(_translate("MainWindow", "to"))
-        self.label_23.setText(_translate("MainWindow", "Not Available"))
-        self.label_29.setText(_translate("MainWindow", "Friday"))
-        self.label_13.setText(_translate("MainWindow", "to"))
-        self.label_32.setText(_translate("MainWindow", "Not Available"))
-        self.label_24.setText(_translate("MainWindow", "Saturday"))
-        self.label_26.setText(_translate("MainWindow", "to"))
-        self.label_27.setText(_translate("MainWindow", "Not Available"))
-        self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
+        # self.label_6.setText(_translate("MainWindow", "Sunday"))
+        # self.label_7.setText(_translate("MainWindow", "to"))
+        # self.label_8.setText(_translate("MainWindow", "Not Available"))
+        # self.label_9.setText(_translate("MainWindow", "Monday"))
+        # self.label_10.setText(_translate("MainWindow", "to"))
+        # self.label_11.setText(_translate("MainWindow", "Not Available"))
+        # self.label_12.setText(_translate("MainWindow", "Tuesday"))
+        # self.label_13.setText(_translate("MainWindow", "to"))
+        # self.label_14.setText(_translate("MainWindow", "Not Available"))
+        # self.label_96.setText(_translate("MainWindow", "Wednesday"))
+        # self.label_97.setText(_translate("MainWindow", "to"))
+        # self.label_98.setText(_translate("MainWindow", "Not Available"))
+        # self.label_28.setText(_translate("MainWindow", "Thursday"))
+        # self.label_22.setText(_translate("MainWindow", "to"))
+        # self.label_23.setText(_translate("MainWindow", "Not Available"))
+        # self.label_29.setText(_translate("MainWindow", "Friday"))
+        # self.label_13.setText(_translate("MainWindow", "to"))
+        # self.label_32.setText(_translate("MainWindow", "Not Available"))
+        # self.label_24.setText(_translate("MainWindow", "Saturday"))
+        # self.label_26.setText(_translate("MainWindow", "to"))
+        # self.label_27.setText(_translate("MainWindow", "Not Available"))
+        # self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
 
-        self.textBrowser_2.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_3.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_4.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_5.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
 
         # Messages
+        self.messageSend.setText(_translate("MainWindow", "Send"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
+
+    def sendMessage(self):
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
+            m = Message(str(len(g.messages) + 1), self.messageEdit.toPlainText(), self.current_user.name, self.current_group)
+            g.messages.append(m)
+            print(len(g.messages))
+            Data.add_message(m)
+            Data.update_group(g)
+            self.messageList.append('\n' + m.sender + ': ' + m.delivery + '\n')
+            self.messageEdit.clear()
+
+    def updateMessage(self):
+        self.messageList.clear()
+        self.messageEdit.clear()
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
+            messagearray = g.messages
+            for i in messagearray:
+                self.messageList.append('\n' + i.sender + ': ' + i.delivery + '\n')
 
     def gotosplash(self):
         self.current_user = None
+        self.current_group = None
         self.centralwidget.setCurrentIndex(0)
 
     def gotologin(self):
@@ -652,8 +658,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def gotoyourcircles(self, event):
         self.yourcircles = YourCircles(self)
-        self.yourcircles.adjustSize()
+        # self.yourcircles.adjustSize()
         self.yourcircles.show()
+
+    def gotoschedules(self):
+        self.schedules = Schedules(self)
+        # self.schedules.adjustSize()
+        self.schedules.show()
 
     def update_group(self, new_group):
         self.current_group = new_group.name
@@ -681,6 +692,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 partial(self.removeMember,new_group.name, member))
             self.memwidget.memberName.setText(member)
             self.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
+            self.updateMessage()
         # print(len(self.groups))
 
     def add_member_group(self, new_user, the_group):
@@ -815,6 +827,7 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
+                self.window.current_group = None
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
@@ -823,6 +836,8 @@ class LogIn(QMainWindow):
                     for i in reversed(range(layout2.count())):
                         layout2.itemAt(i).widget().setParent(None)
                     self.window.merger_group_name.setText("")
+                    self.window.messageList.clear()
+                    self.window.messageEdit.clear()
                 else:
                     self.window.update_group(Data.get_groups(user.groups[0]))
                 # TODO: Create a method to update other UI objects that use current user.
@@ -891,6 +906,9 @@ class SignUp(QMainWindow):
 
                 # Update the current_user variable stored in MainWindow
                 self.window.current_user = user
+                self.window.current_group = None
+                self.window.messageList.clear()
+                self.window.messageEdit.clear()
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
@@ -1307,6 +1325,12 @@ class YourCircles(QMainWindow):
     def updateGroup(self, i):
         self.parent.update_group(i)
         self.close()
+
+class Schedules(QMainWindow):
+    def __init__(self,parent):
+        super(Schedules, self).__init__(parent)
+        self.parent = parent
+        loadUi("schedule2.ui", self)
 
 # def watch():
 #     DIRECTORY_TO_WATCH = "../"
