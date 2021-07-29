@@ -28,9 +28,17 @@ class User:
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, name):
+        self._name = name
+
     @property
     def password(self):
         return self._password
+
+    @password.setter
+    def password(self, password):
+        self._password = password
 
     @property
     def constraints(self):
