@@ -108,7 +108,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
         #self.current_user = None
         #self.current_group = None
-        if self.current_group != None and self.current_user != None:
+        if self.current_group != None and self.current_user.name != None:
             self.update_group(Data.get_groups(self.current_group))
 
         print("Signal received by UI!")
