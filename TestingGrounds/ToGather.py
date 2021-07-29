@@ -1393,7 +1393,6 @@ class Schedules(QMainWindow):
                 index = group.users.index(tuple)
         i=0
         for day in group.users[index][1]:
-            print(len(day))
             for interval in day:
                 self.interval = loadUi("interval.ui")
                 self.interval.startTime.setText(interval[0])
