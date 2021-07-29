@@ -108,7 +108,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
         #self.current_user = None
         #self.current_group = None
-        self.update_group(Data.get_groups(self.current_group))
+        if self.current_group != None and self.current_user != None:
+            self.update_group(Data.get_groups(self.current_group))
 
         print("Signal received by UI!")
         # TODO: You should be able to access and change UI elements here
@@ -765,14 +766,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def change_theme(self, parent):
         if self.style_button.text() == "Dark Mode":
-            apply_stylesheet(parent, theme='dark_teal.xml', invert_secondary=False)
+            app = QApplication.instance()
+            apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
             pixmap = QtGui.QPixmap("Dark_Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
             self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
-            apply_stylesheet(parent, theme='light_teal.xml', invert_secondary=True)
+            app = QApplication.instance()
+            apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
             pixmap = QtGui.QPixmap("Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
