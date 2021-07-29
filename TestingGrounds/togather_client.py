@@ -96,6 +96,7 @@ class Data(threading.local):
     # Adds an object to database if it doesn't exist.
     @staticmethod
     def add_user(user):
+        user.name = user.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
@@ -111,6 +112,7 @@ class Data(threading.local):
     # Updates users by replacing it with passed class object
     @staticmethod
     def update_user(user):
+        user.name = user.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
@@ -279,6 +281,7 @@ class Data(threading.local):
     # Adds an object to database if it doesn't exist.
     @staticmethod
     def add_group(group):
+        group.name = group.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
@@ -294,6 +297,7 @@ class Data(threading.local):
     # Updates group by replacing it with passed class object.
     @staticmethod
     def update_group(group):
+        group.name = group.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()

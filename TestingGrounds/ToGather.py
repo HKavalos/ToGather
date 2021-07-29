@@ -753,8 +753,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def add_member_group(self, new_user, the_group):
         new_name = new_user  # need to find a way to get
-        print(new_user)
-        print(the_group)
+        #print(new_user)
+        #print(the_group)
 
         if new_name != "":
             self.label_16.setText(new_name)
