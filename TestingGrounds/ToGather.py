@@ -496,7 +496,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Welcome Page"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ToGather"))
 
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
@@ -732,14 +732,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def change_theme(self, parent):
         if self.style_button.text() == "Dark Mode":
-            apply_stylesheet(parent, theme='dark_teal.xml', invert_secondary=False)
+            app = QApplication.instance()
+            apply_stylesheet(app, theme='dark_teal.xml', invert_secondary=False)
             pixmap = QtGui.QPixmap("Dark_Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
             self.home_image.setScaledContents(True)
             self.style_button.setText("Light Mode")
         else:
-            apply_stylesheet(parent, theme='light_teal.xml', invert_secondary=True)
+            app = QApplication.instance()
+            apply_stylesheet(app, theme='light_teal.xml', invert_secondary=True)
             pixmap = QtGui.QPixmap("Logo.png")
             self.splashWindow.splash_image.setPixmap(pixmap)
             self.home_image.setPixmap(pixmap)
