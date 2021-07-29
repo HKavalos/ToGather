@@ -442,26 +442,30 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Messages
         self.messages_tab = QtWidgets.QWidget()
         self.messages_tab.setObjectName("messages_tab")
+
         self.scrollArea_3 = QtWidgets.QScrollArea(self.messages_tab)
-        self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 481))
+        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1079, 600))
+        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+
+        self.messageEdit = QtWidgets.QTextEdit(self.messages_tab)
+        self.messageEdit.setGeometry(QtCore.QRect(20, 600, 950, 50))
+        self.messageEdit.setObjectName("messageEdit")
+
+        self.messageSend = QtWidgets.QPushButton(self.messages_tab)
+        self.messageSend.setGeometry(QtCore.QRect(990, 610, 150, 50))
+        self.messageSend.setObjectName("messageSend")
+
+        self.messageSend.clicked.connect(self.sendMessage)
+        self.messageList = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_3)
+        self.messageList.setGeometry(QtCore.QRect(0, 0, 1081, 550))
+        self.messageList.setObjectName("messageList")
+
+        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 631))
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
-        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 1079, 479))
-        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
-        self.textBrowser_2 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_2.setGeometry(QtCore.QRect(0, 0, 1081, 121))
-        self.textBrowser_2.setObjectName("textBrowser_2")
-        self.textBrowser_3 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_3.setGeometry(QtCore.QRect(0, 360, 1081, 121))
-        self.textBrowser_3.setObjectName("textBrowser_3")
-        self.textBrowser_4 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_4.setGeometry(QtCore.QRect(0, 120, 1081, 121))
-        self.textBrowser_4.setObjectName("textBrowser_4")
-        self.textBrowser_5 = QtWidgets.QTextBrowser(self.scrollAreaWidgetContents_3)
-        self.textBrowser_5.setGeometry(QtCore.QRect(0, 240, 1081, 121))
-        self.textBrowser_5.setObjectName("textBrowser_5")
-        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        
         self.mainTab.addTab(self.messages_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -561,40 +565,34 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # self.label_27.setText(_translate("MainWindow", "Not Available"))
         # self.mainTab.setTabText(self.mainTab.indexOf(self.schedule_tab), _translate("MainWindow", "Schedule"))
 
-        self.textBrowser_2.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_3.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_4.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
-        self.textBrowser_5.setHtml(_translate("MainWindow",
-                                              "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                                              "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                                              "p, li { white-space: pre-wrap; }\n"
-                                              "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-                                              "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:18pt;\">First Last</span></p>\n"
-                                              "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt;\"><br /></p></body></html>"))
 
         # Messages
+        self.messageSend.setText(_translate("MainWindow", "Send"))
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
+
+    def sendMessage(self):
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
+            m = Message(str(len(g.messages) + 1), self.messageEdit.toPlainText(), self.current_user.name, self.current_group)
+            g.messages.append(m)
+            print(len(g.messages))
+            Data.add_message(m)
+            Data.update_group(g)
+            self.messageList.append('\n' + m.sender + ': ' + m.delivery + '\n')
+            self.messageEdit.clear()
+
+    def updateMessage(self):
+        self.messageList.clear()
+        self.messageEdit.clear()
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
+            messagearray = g.messages
+            for i in messagearray:
+                self.messageList.append('\n' + i.sender + ': ' + i.delivery + '\n')
 
     def gotosplash(self):
         self.current_user = None
+        self.current_group = None
         self.centralwidget.setCurrentIndex(0)
 
     def gotologin(self):
@@ -694,6 +692,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 partial(self.removeMember,new_group.name, member))
             self.memwidget.memberName.setText(member)
             self.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
+            self.updateMessage()
         # print(len(self.groups))
 
     def add_member_group(self, new_user, the_group):
@@ -828,6 +827,7 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
+                self.window.current_group = None
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
@@ -836,6 +836,8 @@ class LogIn(QMainWindow):
                     for i in reversed(range(layout2.count())):
                         layout2.itemAt(i).widget().setParent(None)
                     self.window.merger_group_name.setText("")
+                    self.window.messageList.clear()
+                    self.window.messageEdit.clear()
                 else:
                     self.window.update_group(Data.get_groups(user.groups[0]))
                 # TODO: Create a method to update other UI objects that use current user.
@@ -904,6 +906,9 @@ class SignUp(QMainWindow):
 
                 # Update the current_user variable stored in MainWindow
                 self.window.current_user = user
+                self.window.current_group = None
+                self.window.messageList.clear()
+                self.window.messageEdit.clear()
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
