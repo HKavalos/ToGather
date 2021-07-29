@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/ToGather.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/ToGather.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +91,14 @@
       <option name="project" value="LOCAL" />
       <updated>1627428381018</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Server sends signal to update UI when needed.">
+      <created>1627532508167</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1627532508167</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,7 +119,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Data.update_option() and Data.delete_option() should now update other clients&#10;&#10;Option and Time objects can now be compared with == and !=" />
     <MESSAGE value="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times." />
-    <option name="LAST_COMMIT_MESSAGE" value="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times." />
+    <MESSAGE value="Server sends signal to update UI when needed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Server sends signal to update UI when needed." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToGather_py$ToGather.coverage" NAME="ToGather Coverage Results" MODIFIED="1624992783634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" />

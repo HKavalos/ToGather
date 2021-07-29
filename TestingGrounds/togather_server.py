@@ -64,7 +64,6 @@ class PythonHandler(BaseRequestHandler):
     # Sends a message to all connected clients except for sender.
     @staticmethod  # Static method has access to static variable connections[]
     def broadcast(message, source):
-        print(message)
         source_exists = False
         for connection in PythonHandler._connections:
             if connection.getpeername() == source.getpeername():

@@ -99,16 +99,16 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.update_thread.started.connect(self.update_monitor.monitor_updates)
         self.update_thread.start()
 
-        self.current_user = None
-        self.current_group = None
-        self.merger_group_name = None
-
         self.MainWindow = MainWindow
         self.setupUi(self.MainWindow)
 
     # Function that is called when update signal is received.
     @QtCore.pyqtSlot()
     def update_ui(self):
+
+        self.current_user = None
+        self.current_group = None
+
         print("Signal received by UI!")
         # TODO: You should be able to access and change UI elements here
         # All UI elements would ideally reflect any changes to the database when the update signal is received.
@@ -874,7 +874,7 @@ class LogIn(QMainWindow):
                 msg.exec_()
 
                 self.window.current_user = user
-                self.window.current_group = None
+                # self.window.current_group = None
                 if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
