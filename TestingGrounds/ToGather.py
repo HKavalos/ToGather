@@ -655,7 +655,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def removeMember(self, group, name):
         groupobj = Data.get_groups(group)
-        groupobj.users.remove(name)
+        for pair in groupobj.users:
+            if pair[0] == name:
+                groupobj.users.remove(pair)
         Data.update_group(Group(groupobj.name, groupobj.calendar, groupobj.users, groupobj.events, groupobj.messages))
         user = Data.get_users(name)
         user.groups.remove(group)
@@ -741,8 +743,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for member in Data.get_groups(self.current_group).users:
             self.memwidget = loadUi("member.ui")
             self.memwidget.removeButton.clicked.connect(
-                partial(self.removeMember,new_group.name, member))
-            self.memwidget.memberName.setText(member)
+                partial(self.removeMember,new_group.name, member[0]))
+            self.memwidget.memberName.setText(member[0])
             self.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
             self.updateMessage()
         # print(len(self.groups))
@@ -1039,7 +1041,8 @@ class GroupCreate(QMainWindow):
             frames = groupwidget.Ui_Form()
             frames.setupUi(f)
             frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
-            memberarr = [self.parent.current_user.name]
+            schedulelist = [[], [], [], [], [], [], []]
+            memberarr = [(self.parent.current_user.name, schedulelist)]
             eventarr = []
             grouptuple = Group(self.group_name_entry.text(), "", memberarr, eventarr)
             self.parent.circlearr.append(grouptuple)
@@ -1214,7 +1217,7 @@ class VotingPoll(QMainWindow):
             self.mem = loadUi("voting_res_list.ui")
             self.mem.vote_res_label.setText("Average Rank: " + str(y) + " | Option: " + x + "")
             self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
-        for x in circle.users:
+        for x in circle.users[0]:
             self.mem = loadUi("voting_res_list.ui")
             self.mem.vote_res_label.setText(x)
             self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
@@ -1333,7 +1336,8 @@ class AddMember(QMainWindow):
                     grouparray = member.groups
                     grouparray.append(currentgroup.name)
                     Data.update_user(User(member.name, member.password, member.constraints, grouparray))
-                    userarray.append(self.name_entry.text())
+                    schedulelist = [[], [], [], [], [], [], []]
+                    userarray.append((self.name_entry.text(), schedulelist))
                     Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
                     self.memwidget.removeButton.clicked.connect(lambda: self.parent.removeMember(currentgroup.name, self.name_entry.text()))
                     self.memwidget.memberName.setText(self.name_entry.text())
@@ -1412,6 +1416,123 @@ class Schedules(QMainWindow):
         super(Schedules, self).__init__(parent)
         self.parent = parent
         loadUi("schedule2.ui", self)
+        self.sundayPush.clicked.connect(lambda: self.gotoavailability(0, self.sundayScroll))
+        self.mondayPush.clicked.connect(lambda: self.gotoavailability(1, self.mondayScroll))
+        self.tuesdayPush.clicked.connect(lambda: self.gotoavailability(2, self.tuesdayScroll))
+        self.wednesdayPush.clicked.connect(lambda: self.gotoavailability(3, self.wednesdayScroll))
+        self.thursdayPush.clicked.connect(lambda: self.gotoavailability(4, self.thursdayScroll))
+        self.fridayPush.clicked.connect(lambda: self.gotoavailability(5, self.fridayScroll))
+        self.saturdayPush.clicked.connect(lambda: self.gotoavailability(6, self.saturdayScroll))
+        self.update_schedule()
+    def gotoavailability(self, index, scrollarea):
+        self.index = index
+        self.scrollarea = scrollarea
+        self.availability = Availability(self)
+        self.availability.show()
+    def update_schedule(self):
+        layout = self.sundayScroll.layout()
+        layout2 = self.mondayScroll.layout()
+        layout3 = self.tuesdayScroll.layout()
+        layout4 = self.wednesdayScroll.layout()
+        layout5 = self.thursdayScroll.layout()
+        layout6 = self.fridayScroll.layout()
+        layout7 = self.saturdayScroll.layout()
+        layoutlist = [layout, layout2, layout3, layout4, layout5, layout6, layout7]
+        for i in layoutlist:
+            for j in reversed(range(i.count())):
+                i.itemAt(j).widget().setParent(None)
+        group = Data.get_groups(self.parent.current_group)
+        for tuple in group.users:
+            if tuple[0] == self.parent.current_user.name:
+                index = group.users.index(tuple)
+        i=0
+        for day in group.users[index][1]:
+            print(len(day))
+            for interval in day:
+                self.interval = loadUi("interval.ui")
+                self.interval.startTime.setText(interval[0])
+                self.interval.endTime.setText(interval[1])
+                self.interval.removePush.clicked.connect(partial(self.removeinterval, i, interval[0], interval[1]))
+                if i == 0:
+                    self.sundayScroll.layout().addWidget(self.interval)
+                elif i == 1:
+                    self.mondayScroll.layout().addWidget(self.interval)
+                elif i == 2:
+                    self.tuesdayScroll.layout().addWidget(self.interval)
+                elif i == 3:
+                    self.wednesdayScroll.layout().addWidget(self.interval)
+                elif i == 4:
+                    self.thursdayScroll.layout().addWidget(self.interval)
+                elif i == 5:
+                    self.fridayScroll.layout().addWidget(self.interval)
+                elif i == 6:
+                    self.saturdayScroll.layout().addWidget(self.interval)
+            i += 1
+    def removeinterval(self, i, start, end):
+        group = Data.get_groups(self.parent.current_group)
+        for tuple in group.users:
+            if tuple[0] == self.parent.current_user.name:
+                index = group.users.index(tuple)
+        for interval in group.users[index][1][i]:
+            if interval[0] == start and interval[1] == end:
+                group.users[index][1][i].remove(interval)
+        Data.update_group(group)
+        self.update_schedule()
+
+
+class Availability(QMainWindow):
+    def __init__(self, parent):
+        super(Availability, self).__init__(parent)
+        self.parent = parent
+        loadUi("availability.ui", self)
+        self.timeEdit.setDisplayFormat("hh:mm AP")
+        self.timeEdit_2.setDisplayFormat("hh:mm AP")
+        def newstepBy(steps):
+            if self.timeEdit.currentSection() == QtWidgets.QDateTimeEdit.MinuteSection:
+                if steps == 1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(900))
+                elif steps == -1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(-900))
+            elif self.timeEdit.currentSection() == QtWidgets.QDateTimeEdit.HourSection:
+                if steps == 1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(3600))
+                elif steps == -1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(3600))
+            else:
+                if steps == 1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(43200))
+                elif steps == -1:
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(-43200))
+        def newstepBy_2(steps):
+            if self.timeEdit_2.currentSection() == QtWidgets.QDateTimeEdit.MinuteSection:
+                if steps == 1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(900))
+                elif steps == -1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(-900))
+            elif self.timeEdit_2.currentSection() == QtWidgets.QDateTimeEdit.HourSection:
+                if steps == 1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(3600))
+                elif steps == -1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(3600))
+            else:
+                if steps == 1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(43200))
+                elif steps == -1:
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(-43200))
+        self.timeEdit.stepBy = newstepBy
+        self.timeEdit_2.stepBy = newstepBy_2
+        self.addPush.clicked.connect(self.submit)
+    def submit(self):
+        starttime = self.timeEdit.time().toString("h:mm AP")
+        endtime = self.timeEdit_2.time().toString("h:mm AP")
+        group = Data.get_groups(self.parent.parent.current_group)
+        for tuple in group.users:
+            if tuple[0] == self.parent.parent.current_user.name:
+                userelement = group.users.index(tuple)
+        group.users[userelement][1][self.parent.index].append((starttime, endtime))
+        Data.update_group(group)
+        self.parent.update_schedule()
+        self.close()
 
 # def watch():
 #     DIRECTORY_TO_WATCH = "../"
