@@ -1334,9 +1334,11 @@ class AddMember(QMainWindow):
                 valid = True
                 currentgroup = Data.get_groups(self.parent.current_group)
                 userarray = currentgroup.users
-                if self.name_entry.text() in userarray:
-                    print("User already in group!")
-                else:
+                for user in userarray:
+                    if user[0] == self.name_entry.text():
+                        print("User already in group!")
+                        valid = False
+                if valid:
                     member = Data.get_users(self.name_entry.text())
                     grouparray = member.groups
                     grouparray.append(currentgroup.name)
