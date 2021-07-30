@@ -10,26 +10,6 @@ class Event:
         self._submitted = submitted
         self._status = status
 
-    def __eq__(self, other):
-        if self.name == other.name:
-            if self.description == other.description:
-                if self.options == other.options:
-                    if self.group == other.group:
-                        if self.submitted == other.submitted:
-                            if self.status == other.status:
-                                return True
-        return False
-
-    def __ne__(self, other):
-        if self.name == other.name:
-            if self.description == other.description:
-                if self.options == other.options:
-                    if self.group == other.group:
-                        if self.submitted == other.submitted:
-                            if self.status == other.status:
-                                return False
-        return True
-
     @property
     def name(self):
         return self._name
