@@ -1386,7 +1386,7 @@ class NewEvent(QMainWindow):
                 if event.name == self.name_entry.text():
                     valid = False
             if valid:
-                new_event = Event(str(self.name_entry.text()), str(self.dateEdit.text()), [], currentgroup, {})
+                new_event = Event(str(self.name_entry.text()), str(self.dateEdit.text()), [], currentgroup.name, {})
                 Data.add_event(new_event)
                 print(Data.get_events(new_event.name, new_event.group))
 
