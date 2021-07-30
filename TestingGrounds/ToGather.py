@@ -671,7 +671,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for pair in groupobj.users:
             if pair[0] == name:
                 groupobj.users.remove(pair)
-        Data.update_group(groupobj)
+        Data.update_group(Group(name=groupobj.name, calendar=groupobj.calendar, users=groupobj.users,
+                                events=groupobj.events, messages=groupobj.messages))
         user = Data.get_users(name)
         user.groups.remove(group)
         Data.update_user(user)
@@ -689,14 +690,8 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 self.update_group(Data.get_groups(user.groups[0]))
         else:
             self.update_group(groupobj)
-        if len(Data.get_groups(group).users) == 0:
-            for event in Data.get_groups(group).events:
-                Data.delete_event(event)
-                print("count")
-            print(len(Data.get_groups(group).events))
+        if len(groupobj.users) == 0:
             Data.delete_group(Data.get_groups(group))
-
-
 
     def gotoaddevent(self):
         self.newevent = NewEvent(self)
@@ -1407,10 +1402,10 @@ class NewEvent(QMainWindow):
                 self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
                 eventarray.append(new_event)
-                group.events = eventarray
-                Data.update_group(group)
+                currentgroup = Data.get_groups(currentgroup.name)
+                currentgroup.events = eventarray
+                Data.update_group(currentgroup)
                 print("Added New Event")
-                print(Data.get_groups(group.name).events)
 
 
         else:

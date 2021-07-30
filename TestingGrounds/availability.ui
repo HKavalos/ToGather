@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
+    <width>185</width>
     <height>173</height>
    </rect>
   </property>
@@ -85,14 +85,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QCheckBox" name="checkBox">
-      <property name="text">
-       <string>Overnight?</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="3">
+    <item row="0" column="0" colspan="2">
      <widget class="QLabel" name="label">
       <property name="font">
        <font>
@@ -114,7 +107,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>267</width>
+     <width>185</width>
      <height>21</height>
     </rect>
    </property>
