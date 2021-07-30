@@ -7,7 +7,7 @@ class Option:
     votes that are a pair of users and the vote choice: 1,2,3,4 . . .
     """
 
-    def __init__(self, name, activity, location, tim=Time(), chosen=False, votes=None):
+    def __init__(self, name, activity, location, tim=Time(), chosen=False, votes={}):
         self._name = name
         self._activity = activity
         self._location = location
