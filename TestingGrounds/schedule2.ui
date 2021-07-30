@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1474</width>
-    <height>599</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,107 +15,49 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+    <item row="2" column="2" colspan="3">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
       </property>
-      <layout class="QGridLayout" name="gridLayout_27">
-       <item row="0" column="1">
-        <widget class="QPushButton" name="sundayPush">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_26">
-         <property name="text">
-          <string>Sunday</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+     </spacer>
+    </item>
+    <item row="8" column="3">
+     <widget class="QScrollArea" name="scrollArea_11">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>200</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_12"/>
+      </widget>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QFrame" name="frame_2">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+    <item row="6" column="2" colspan="3">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
       </property>
-      <layout class="QGridLayout" name="gridLayout_23">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_22">
-         <property name="text">
-          <string>Monday</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="mondayPush">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QFrame" name="frame_3">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_29">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_28">
-         <property name="text">
-          <string>Tuesday</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="tuesdayPush">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     </spacer>
     </item>
     <item row="0" column="3">
      <widget class="QFrame" name="frame_4">
@@ -135,38 +77,6 @@
        </item>
        <item row="0" column="1">
         <widget class="QPushButton" name="wednesdayPush">
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QFrame" name="frame_5">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_25">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_24">
-         <property name="text">
-          <string>Thursday</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="thursdayPush">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -213,6 +123,230 @@
       </layout>
      </widget>
     </item>
+    <item row="8" column="2">
+     <widget class="QScrollArea" name="scrollArea_10">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_13"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="sundayScroll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="5" column="1" colspan="5">
+     <widget class="QLabel" name="label">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Availabillity for [GROUP]</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QFrame" name="frame_3">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_29">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Tuesday</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="tuesdayPush">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="6">
+     <widget class="QScrollArea" name="scrollArea_3">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="saturdayScroll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_8"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="8" column="6">
+     <widget class="QScrollArea" name="scrollArea_14">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_7">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_9"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QScrollArea" name="scrollArea_4">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="thursdayScroll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_6"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QScrollArea" name="scrollArea_7">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="mondayScroll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="1" column="5">
+     <widget class="QScrollArea" name="scrollArea_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="fridayScroll">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>201</width>
+         <height>268</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_7"/>
+      </widget>
+     </widget>
+    </item>
     <item row="0" column="6">
      <widget class="QFrame" name="frame_7">
       <property name="frameShape">
@@ -245,8 +379,40 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QScrollArea" name="scrollArea">
+    <item row="0" column="1">
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_23">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Monday</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="mondayPush">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QScrollArea" name="scrollArea_5">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -259,43 +425,34 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="sundayScroll">
+      <widget class="QWidget" name="wednesdayScroll">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>201</width>
-         <height>488</height>
+         <width>200</width>
+         <height>268</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2"/>
+       <layout class="QGridLayout" name="gridLayout_5"/>
       </widget>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QScrollArea" name="scrollArea_7">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
+    <item row="8" column="1">
+     <widget class="QScrollArea" name="scrollArea_8">
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="mondayScroll">
+      <widget class="QWidget" name="scrollAreaWidgetContents">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>201</width>
-         <height>488</height>
+         <height>268</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout"/>
+       <layout class="QGridLayout" name="gridLayout_14"/>
       </widget>
      </widget>
     </item>
@@ -319,119 +476,205 @@
          <x>0</x>
          <y>0</y>
          <width>201</width>
-         <height>488</height>
+         <height>268</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_4"/>
       </widget>
      </widget>
     </item>
-    <item row="1" column="3">
-     <widget class="QScrollArea" name="scrollArea_5">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
+    <item row="8" column="5">
+     <widget class="QScrollArea" name="scrollArea_13">
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="wednesdayScroll">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>200</width>
-         <height>488</height>
-        </rect>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_5"/>
-      </widget>
-     </widget>
-    </item>
-    <item row="1" column="4">
-     <widget class="QScrollArea" name="scrollArea_4">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="thursdayScroll">
+      <widget class="QWidget" name="scrollAreaWidgetContents_6">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>201</width>
-         <height>488</height>
+         <height>268</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_6"/>
+       <layout class="QGridLayout" name="gridLayout_10"/>
       </widget>
      </widget>
     </item>
-    <item row="1" column="5">
-     <widget class="QScrollArea" name="scrollArea_2">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
+    <item row="8" column="0">
+     <widget class="QScrollArea" name="scrollArea_9">
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="fridayScroll">
+      <widget class="QWidget" name="scrollAreaWidgetContents_2">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>201</width>
-         <height>488</height>
+         <height>268</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_7"/>
+       <layout class="QGridLayout" name="gridLayout_15"/>
       </widget>
      </widget>
     </item>
-    <item row="1" column="6">
-     <widget class="QScrollArea" name="scrollArea_3">
+    <item row="0" column="0">
+     <widget class="QFrame" name="frame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
+       <enum>QFrame::Raised</enum>
       </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
+      <layout class="QGridLayout" name="gridLayout_27">
+       <item row="0" column="1">
+        <widget class="QPushButton" name="sundayPush">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_26">
+         <property name="text">
+          <string>Sunday</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QFrame" name="frame_5">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_25">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_24">
+         <property name="text">
+          <string>Thursday</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="thursdayPush">
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="8" column="4">
+     <widget class="QScrollArea" name="scrollArea_12">
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="saturdayScroll">
+      <widget class="QWidget" name="scrollAreaWidgetContents_5">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
          <width>201</width>
-         <height>488</height>
+         <height>268</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_8"/>
+       <layout class="QGridLayout" name="gridLayout_11"/>
       </widget>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Tuesday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Monday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Sunday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Wednesday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Thursday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="5">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Friday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="6">
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>Saturday</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
     </item>
    </layout>
@@ -442,7 +685,7 @@
      <x>0</x>
      <y>0</y>
      <width>1474</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
