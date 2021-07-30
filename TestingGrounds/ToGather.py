@@ -1258,10 +1258,10 @@ class VotingPoll(QMainWindow):
 
 class LoadingWorker(QObject):
     finished = pyqtSignal()
-    def __init__(self, c, e, l):
+    def __init__(self, e, c, l):
         super().__init__()
-        self.c = c
         self.e = e
+        self.c = c
         self.loading = l
 
     def run(self):
