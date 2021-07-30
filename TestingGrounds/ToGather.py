@@ -505,6 +505,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.messageList = QtWidgets.QTextEdit(self.scrollAreaWidgetContents_3)
         self.messageList.setGeometry(QtCore.QRect(0, 0, 1081, 550))
         self.messageList.setObjectName("messageList")
+        self.messageList.setReadOnly(True)
 
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.scrollArea_3.setGeometry(QtCore.QRect(20, 40, 1081, 631))
