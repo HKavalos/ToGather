@@ -1052,7 +1052,11 @@ class GroupCreate(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        if Data.get_groups((self.group_name_entry.text().lower())):
+        invalid = True
+        for group in Data.get_groups():
+            if group.name.lower() == self.group_name_entry.lower():
+                invalid = False
+        if not invalid:
             err_msg = QtWidgets.QMessageBox()
             err_msg.setIcon(QtWidgets.QMessageBox.Warning)
             err_msg.setWindowTitle("Group Not Created")
