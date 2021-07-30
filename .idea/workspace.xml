@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/group.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/group.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/option.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/option.py" afterDir="false" />
-    </list>
+    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

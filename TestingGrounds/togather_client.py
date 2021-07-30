@@ -302,7 +302,7 @@ class Data(threading.local):
 
             if Data.get_groups(group.name) is None:
                 pass
-            else:
+            elif group != Data.get_groups(group.name):
                 cursor.execute("UPDATE `groups` SET `group` = ? WHERE name = ?", (pickle.dumps(group), group.name))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(Data.get_groups(group.name)), 4)
