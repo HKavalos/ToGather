@@ -1217,7 +1217,8 @@ class OptionSettings(QMainWindow):
         self.remove_option.clicked.connect(lambda checked, a=e: self.remove(e))
 
     def submit(self, e):
-        o = Option(self.options_name.text(), self.options_activity.text(), self.options_location.text(), None, False, {})
+        self.timeEdit.time().toString("h:m:s ap")
+        o = Option(self.options_name.text(), self.options_activity.text(), self.options_location.text(), self.timeEdit.time().toString("h:m:s ap"), False, {})
         e.options.append(o)
         Data.update_event(e)
         Data.add_option(o)
