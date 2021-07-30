@@ -7,9 +7,13 @@ class Event:
         self._description = description
         if options is None:
             self._options = []
+        else:
+            self._options = options
         self._group = group
         if submitted is None:
             self._submitted = {}
+        else:
+            self._submitted = submitted
         self._status = status
 
     def __eq__(self, other):

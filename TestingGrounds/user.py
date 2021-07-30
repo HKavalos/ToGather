@@ -7,8 +7,12 @@ class User:
         self._password = password
         if groups is None:
             self._groups = []
+        else:
+            self._groups = groups
         if constraints is None:
             self._constraints = []
+        else:
+            self._constraints = constraints
 
     def __eq__(self, other):
         if self.name == other.name:
