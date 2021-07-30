@@ -70,8 +70,11 @@ def driver(users):
             # print(users[x][1][0][y][1])
             time1 = users[x][1][0][y][0]
             time2 = users[x][1][0][y][1]
-
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
@@ -90,6 +93,10 @@ def driver(users):
             time2 = users[x][1][1][y][1]
 
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
@@ -105,6 +112,10 @@ def driver(users):
             # print(users[x][1][0][y][0])
             # print(users[x][1][0][y][1])
             time1 = users[x][1][2][y][0]
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = users[x][1][2][y][1]
 
             time1 = time_maker(time1)
@@ -126,6 +137,10 @@ def driver(users):
             time2 = users[x][1][3][y][1]
 
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
@@ -144,6 +159,10 @@ def driver(users):
             time2 = users[x][1][4][y][1]
 
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
@@ -162,6 +181,10 @@ def driver(users):
             time2 = users[x][1][5][y][1]
 
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
@@ -180,6 +203,10 @@ def driver(users):
             time2 = users[x][1][6][y][1]
 
             time1 = time_maker(time1)
+
+            if(time1 == 24):
+                time1 = 0
+
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
