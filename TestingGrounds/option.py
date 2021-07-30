@@ -13,10 +13,7 @@ class Option:
         self._location = location
         self._time = tim
         self._chosen = chosen
-        if votes is None:
-            self._votes = {}
-        else:
-            self._votes = votes
+        self._votes = votes
 
     def __eq__(self, other):
         if self.name == other.name:
