@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="97680915-0827-4997-81d8-a4165655a4fb" name="Default Changelist" comment="">
+    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
+      <change beforePath="$PROJECT_DIR$/.idea/ToGather.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ToGather.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/ToGather.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/ToGather.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/group.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/group.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/message.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/message.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/option.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/option.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -13,6 +19,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="premain" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
@@ -23,37 +34,46 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
-  <component name="MacroExpansionManager">
-    <option name="directoryName" value="wo7jp4f1" />
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/ToGather.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/option.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/group.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_server.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_client.py" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectId" id="1uYFFyDVrsXen3XXABx3umjkUv9" />
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="beq8yedt" />
+  </component>
+  <component name="ProjectId" id="1vukuO3y3wE0jVIrPYhb8QUm9TA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/widget testing/votingwidget.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../perf222" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RunManager">
-    <configuration name="votingwidget" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="run" type="PythonConfigurationType" factoryName="Python">
       <module name="ToGather" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\Logan\PycharmProjects\pythonProject1\venv\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/widget testing" />
+      <option name="SDK_HOME" value="wsl://Ubuntu/usr/bin/python3" />
+      <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/widget testing/votingwidget.py" />
+      <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -66,43 +86,58 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="97680915-0827-4997-81d8-a4165655a4fb" name="Default Changelist" comment="" />
-      <created>1624834516380</created>
+      <changelist id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Data.update_option() and Data.delete_option() should now update other clients&#10;&#10;Option and Time objects can now be compared with == and !=" />
+      <created>1627419582977</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1624834516380</updated>
-      <workItem from="1624834517706" duration="299000" />
-      <workItem from="1624834829222" duration="3549000" />
-      <workItem from="1625952795633" duration="687000" />
-      <workItem from="1626122141020" duration="4117000" />
+      <updated>1627419582977</updated>
+      <workItem from="1627419584333" duration="799000" />
+      <workItem from="1627514927875" duration="1715000" />
+      <workItem from="1627621212089" duration="10698000" />
     </task>
+    <task id="LOCAL-00001" summary="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times.">
+      <created>1627428381018</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1627428381018</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Server sends signal to update UI when needed.">
+      <created>1627532508167</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1627532508167</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/widget testing/votingwidget.py</url>
-          <line>105</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/widget testing/votingwidget.py</url>
-          <line>103</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Data.update_option() and Data.delete_option() should now update other clients&#10;&#10;Option and Time objects can now be compared with == and !=" />
+    <MESSAGE value="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times." />
+    <MESSAGE value="Server sends signal to update UI when needed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Server sends signal to update UI when needed." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
     <SUITE FILE_PATH="coverage/ToGather_py$ToGather.coverage" NAME="ToGather Coverage Results" MODIFIED="1624992783634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" />
+    <SUITE FILE_PATH="coverage/ToGather_py$run.coverage" NAME="run Coverage Results" MODIFIED="1627515171986" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/framework_py$test.coverage" NAME="test Coverage Results" MODIFIED="1624894695824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
   </component>
 </project>

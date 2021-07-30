@@ -2,28 +2,34 @@ class Event:
     """A class that contains a list of options, a description and is either"""
     "complete or incomplete, completes are in the calendar, both are in the group"
 
-    def __init__(self, name, description, options=[], group="", submitted = {}, status=False):
+    def __init__(self, name, description, options=None, group="", submitted=None, status=False):
         self._name = name
         self._description = description
-        self._options = options
+        if options is None:
+            self._options = []
         self._group = group
-        self._submitted = submitted
+        if submitted is None:
+            self._submitted = {}
         self._status = status
 
     def __eq__(self, other):
         if self.name == other.name:
             if self.description == other.description:
                 if self.options == other.options:
-                    if self.status == other.status:
-                        return True
+                    if self.group == other.group:
+                        if self.submitted == other.submitted:
+                            if self.status == other.status:
+                                return True
         return False
 
     def __ne__(self, other):
         if self.name == other.name:
             if self.description == other.description:
                 if self.options == other.options:
-                    if self.status == other.status:
-                        return False
+                    if self.group == other.group:
+                        if self.submitted == other.submitted:
+                            if self.status == other.status:
+                                return False
         return True
 
     @property
