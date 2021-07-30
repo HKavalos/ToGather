@@ -69,9 +69,8 @@ class Data(threading.local):
     # Requests a copy of database from server.  Fulfilled by other clients.
     @staticmethod
     def db_request():
-        sender = Client.Send(bytes(), 2)  # Second parameter specifies fifth byte in message header
+        sender = Client.Send("request_db()", 2)  # Second parameter specifies fifth byte in message header
         sender.start()
-        print("Request for db sent from new client")
 
     # Replaces local database using file received from server.
     @staticmethod
@@ -86,7 +85,6 @@ class Data(threading.local):
     # Sends db file to server when Receiver thread gets request.
     @staticmethod
     def db_send():
-        print("Sending db to server.")
         try:
             with open(Data.DB_FILENAME, "rb") as file:
                 db_file = file.read()
@@ -566,15 +564,14 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-            
             if Data.get_messages(message.name) is None:
-                pass
-            elif message != Data.get_messages(message.name):
-                cursor.execute("UPDATE `messages` SET `message` = ? WHERE name = ?", (pickle.dumps(message), message.name))
+                print("Does not exist")
+            # Only perform update if new object is different from current object.
+            elif message != Data.get_messages(message.name, message.group):
+                cursor.execute("UPDATE `messages` SET message = ? WHERE `name` = ? AND `group` = ?", (pickle.dumps(message), message.name, message.group))
                 db_connection.commit()
-                sender = Client.Send(pickle.dumps(Data.get_messages(message.name)), 4)
-                sender.start()
-                
+                #sender = Client.Send(pickle.dumps(Data.get_messages(message.name)), 5)
+                #sender.start()
             db_connection.close()
         except:
             pass  # Can't have duplicate name.
@@ -585,15 +582,12 @@ class Data(threading.local):
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
-
-            if Data.get_messages(message.name) is None:
-                pass
-            else:
-                cursor.execute("DELETE FROM `messages` WHERE name = ?", (message.name,))
+            if Data.get_messages(message.name, message.group) is not None:
+                cursor.execute("DELETE FROM `messages` WHERE `name` = ? AND `group` = ?", (message.name, message.group))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(message), 5)
                 sender.start()
-
+            db_connection.close()
         except Exception as e:  # Fails when object doesn't exist because it won't have name attribute for comparison.
             pass
 
@@ -633,8 +627,7 @@ class Data(threading.local):
                     # We are only selecting for one attribute (the pickled object), so we access with user[0]
                     unpickled_messages.append(pickle.loads(message[0]))
                 return unpickled_messages
-            elif name is not None and group is None:
-                pass
+
             else:
                 db_connection = sqlite3.connect(Data().DB_FILENAME)
                 cursor = db_connection.cursor()
@@ -673,20 +666,12 @@ class Receive(threading.Thread):
                     Data.update_UI = True
                     msg = None
 
-                if msg_type == 2:
-                    print("Request for database received")
-                    Data.db_send()
-
-                if msg_type == 1:
-                    print("Fresh db received")
-                    Data.db_reload(msg)
-
                 if msg:
                     try:  # Parse for string commands received from server.
                         cmd = msg.decode()
-                        #if cmd == "request_db()":  # Send db if requested
-                        #    print("Request for database file received. Sending.")
-                        #    Data.db_send()
+                        if cmd == "request_db()":  # Send db if requested
+                            print("Request for database file received. Sending.")
+                            Data.db_send()
                     except UnicodeDecodeError:
                         try:  # Try to unpickle if you can't decode
                             unpickled_message = pickle.loads(msg)
@@ -726,16 +711,16 @@ class Receive(threading.Thread):
                                     Data.delete_option(unpickled_message)
                                 else:
                                     Data.add_option(unpickled_message)
-                            elif type(unpickled_message) is Message:
-                                if msg_type == 4:
-                                    Data.update_message(unpickled_message)
-                                elif msg_type == 5:
-                                    Data.delete_message(unpickled_message)
-                                else:
-                                    Data.add_message(unpickled_message)
-
                         except pickle.PickleError as e:
-                            pass
+                            # Must be a database file we need to load.
+                            # TODO: Check if received file is actually db.db
+                            # TODO: I don't know if we really need to do this.
+                            try:
+                                print("Database file received.  Reloading.")
+                                Data.db_reload(msg)
+                            except Exception as e:
+                                # print(e.with_traceback())
+                                pass
 
             except OSError as e:  # Catch exception when loop trys to connect after program closes socket.
                 print(e)
@@ -933,32 +918,25 @@ class Client(threading.Thread):
             super().__init__()
             self.obj = obj
             self.msg_type = msg_type
-            print("msg_type: ", msg_type)
 
         def run(self):
-            if self.msg_type == 2:
-                Client.sock.sendall(bytes([0, 0, 0, 0, 2]))
-            else:
-                try:
-                    if type(self.obj) is str:
-                        self.obj = self.obj.encode()
+            try:
+                if type(self.obj) is str:
+                    self.obj = self.obj.encode()
 
-                    self.attach_header()
-                    Client.sock.sendall(self.obj)
-                except Exception as e:
-                    print(e)
+                self.attach_header()
+                Client.sock.sendall(self.obj)
+            except Exception as e:
+                print(e)
 
         # Appends length of object being sent to beginning of it's byte string
         # Also adds a byte to specify if this is a database file.
         def attach_header(self):
             prefix = sys.getsizeof(self.obj)  # Get length of message so we can create header.
             prefix = prefix.to_bytes(4, "big")  # Convert length to bytes
-
             self.msg_type = bytes([self.msg_type])
             # Create bytearray to add header then convert back to bytes.
             self.obj = bytes(bytearray(prefix + self.msg_type + self.obj))
-
-
 
 
 if __name__ == '__main__':

@@ -81,11 +81,13 @@ def main():
 
 class windowPopup(QDialog):
     def __init__(self, name, parent=None):
-        super().__init__()
+        super().__init__(parent)
         self.name = name
 
 
 class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
+
+    circlearr = []
 
     def __init__(self, MainWindow):
         super().__init__()
@@ -97,28 +99,17 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.update_thread.started.connect(self.update_monitor.monitor_updates)
         self.update_thread.start()
 
-        self.current_group = None
-        self.current_user = None
-        self.circlearr = []
-        self.messageList = None
-
         self.MainWindow = MainWindow
-        self.setupUi()
+        self.setupUi(self.MainWindow)
 
     # Function that is called when update signal is received.
     @QtCore.pyqtSlot()
     def update_ui(self):
-        print(self.current_group)
-        print(self.current_user)
 
         #self.current_user = None
-#and type(self.current_group) == Group and type(self.current_user) == User:
-        if self.current_group is not None:
-            if self.current_user is not None:
-                if Data.get_groups(self.current_group.name) is not None and Data.get_users(self.current_user.name) is not None:
-                    self.update_group(Data.get_groups(self.current_group.name))
-                else:
-                    print("what up")
+        #self.current_group = None
+        if self.current_group != None and self.current_user.name != None:
+            self.update_group(Data.get_groups(self.current_group))
 
         print("Signal received by UI!")
         # TODO: You should be able to access and change UI elements here
@@ -126,31 +117,30 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # We may have to declare elements in __init__ to access them here? Or as class variables like circlearr above?
 
         # Example of how UI could be updated.
-        # title_string = ""
-        # for user in Data.get_users():
-        #     title_string += user.name
-        #     title_string += " "
-        # self.MainWindow.setWindowTitle(title_string)
+        title_string = ""
+        for user in Data.get_users():
+            title_string += user.name
+            title_string += " "
+        #self.MainWindow.setWindowTitle(title_string)
 
         # Reset Data.update_UI after UI is updated
-
         Data.update_UI = False
 
-    def setupUi(self):
+    def setupUi(self, MainWindow):
 
         # Main
-        self.MainWindow.setWindowTitle("ToGather")
-        self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(1280, 720)
-        self.MainWindow.show()
-        self.centralwidget = QtWidgets.QStackedWidget(self.MainWindow)
+        MainWindow.setWindowTitle("ToGather")
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1280, 720)
+        MainWindow.show()
+        self.centralwidget = QtWidgets.QStackedWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.mainTab = QtWidgets.QTabWidget(self.centralwidget)
         self.mainTab.setGeometry(QtCore.QRect(0, 0, 1280, 720))
         self.mainTab.setAutoFillBackground(True)
         self.mainTab.setObjectName("mainTab")
 
-        self.splashWindow = SplashScreen(self.MainWindow, self)
+        self.splashWindow = SplashScreen(MainWindow, self)
         self.centralwidget.addWidget(self.splashWindow)
         self.centralwidget.addWidget(self.mainTab)
 
@@ -201,7 +191,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.style_button = QtWidgets.QPushButton(self.home_tab)
         self.style_button.setGeometry(QtCore.QRect(30, 550, 118, 34))
         self.style_button.setObjectName("style_button")
-        self.style_button.clicked.connect(lambda checked, a=self.MainWindow: self.change_theme(a))
+        self.style_button.clicked.connect(lambda checked, a=MainWindow: self.change_theme(a))
         self.home_image = QtWidgets.QLabel(self.home_tab)
         self.home_image.setGeometry(QtCore.QRect(460, 0, 301, 161))
         self.home_image.setObjectName("home_image")
@@ -329,14 +319,14 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         font.setPointSize(10)
         self.merger_member_header.setFont(font)
         self.merger_member_header.setObjectName("merger_member_header")
-        self.MainWindow.setCentralWidget(self.centralwidget)
-        self.merger_menubar = QtWidgets.QMenuBar(self.MainWindow)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.merger_menubar = QtWidgets.QMenuBar(MainWindow)
         self.merger_menubar.setGeometry(QtCore.QRect(0, 0, 1280, 26))
         self.merger_menubar.setObjectName("merger_menubar")
-        self.MainWindow.setMenuBar(self.merger_menubar)
-        self.merger_statusbar = QtWidgets.QStatusBar(self.MainWindow)
+        MainWindow.setMenuBar(self.merger_menubar)
+        self.merger_statusbar = QtWidgets.QStatusBar(MainWindow)
         self.merger_statusbar.setObjectName("merger_statusbar")
-        self.MainWindow.setStatusBar(self.merger_statusbar)
+        MainWindow.setStatusBar(self.merger_statusbar)
 
         # Schedule
         # self.schedule_tab = QtWidgets.QWidget()
@@ -523,26 +513,26 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.scrollArea_3.setObjectName("scrollArea_3")
 
         self.mainTab.addTab(self.messages_tab, "")
-        self.MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1280, 21))
         self.menubar.setObjectName("menubar")
-        self.MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        self.MainWindow.setStatusBar(self.statusbar)
+        MainWindow.setStatusBar(self.statusbar)
 
         # Establishing Initial Settings
-        self.retranslateUi()
+        self.retranslateUi(MainWindow)
         self.mainTab.setCurrentIndex(0)
         self.home_votes_widget.setCurrentIndex(1)
         # self.stackedWidget_3.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(self.MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.centralwidget.setCurrentIndex(0)
 
-    def retranslateUi(self):
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        self.MainWindow.setWindowTitle(_translate("MainWindow", "ToGather"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ToGather"))
 
         # Home
         self.commandLinkButton_3.setText(_translate("MainWindow", "Vote 1"))
@@ -627,9 +617,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.mainTab.setTabText(self.mainTab.indexOf(self.messages_tab), _translate("MainWindow", "Messages"))
 
     def sendMessage(self):
-        if self.current_group is not None:
-            g = self.current_group
-            m = Message(str(len(g.messages) + 1), self.messageEdit.toPlainText(), self.current_user.name, self.current_group.name)
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
+            m = Message(str(len(g.messages) + 1), self.messageEdit.toPlainText(), self.current_user.name, self.current_group)
             g.messages.append(m)
             print(len(g.messages))
             Data.add_message(m)
@@ -637,11 +627,11 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             self.messageList.append('\n' + m.sender + ': ' + m.delivery + '\n')
             self.messageEdit.clear()
 
-    def updateMessageList(self):
+    def updateMessage(self):
         self.messageList.clear()
         self.messageEdit.clear()
-        if self.current_group is not None:
-            g = Data.get_groups(self.current_group.name)
+        if(self.current_group != None):
+            g = Data.get_groups(self.current_group)
             messagearray = g.messages
             for i in messagearray:
                 self.messageList.append('\n' + i.sender + ': ' + i.delivery + '\n')
@@ -671,8 +661,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         for pair in groupobj.users:
             if pair[0] == name:
                 groupobj.users.remove(pair)
-        Data.update_group(Group(name=groupobj.name, calendar=groupobj.calendar, users=groupobj.users,
-                                events=groupobj.events, messages=groupobj.messages))
+        Data.update_group(Group(groupobj.name, groupobj.calendar, groupobj.users, groupobj.events, groupobj.messages))
         user = Data.get_users(name)
         user.groups.remove(group)
         Data.update_user(user)
@@ -735,7 +724,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.schedules.show()
 
     def update_group(self, new_group):
-        self.current_group = new_group
+        self.current_group = new_group.name
         layout = self.merger_scrollAreaWidgetContents.layout()
         layout2 = self.merger_scrollAreaWidgetContents_2.layout()
         for i in reversed(range(layout.count())):
@@ -754,13 +743,13 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
                 lambda checked, a=event, b=new_group.name: self.gotovoting(a, b))
             frames.op_go_button.clicked.connect(lambda checked, a=event: self.gotooptions(a))
             layout.addWidget(app)
-        for member in Data.get_groups(self.current_group.name).users:
+        for member in Data.get_groups(self.current_group).users:
             self.memwidget = loadUi("member.ui")
             self.memwidget.removeButton.clicked.connect(
                 partial(self.removeMember,new_group.name, member[0]))
             self.memwidget.memberName.setText(member[0])
             self.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
-        self.updateMessageList()
+            self.updateMessage()
         # print(len(self.groups))
 
     def add_member_group(self, new_user, the_group):
@@ -807,9 +796,12 @@ class UpdateMonitor(QtCore.QObject):
                 Data.update_UI = False  # Reset Data.update_UI
 
 
+
+
+
 class SplashScreen(QMainWindow):
     def __init__(self, parent, window):
-        super().__init__()
+        super(SplashScreen, self).__init__(parent)
         self.parent = parent
         self.window = window
         self.setWindowTitle("ToGather")
@@ -849,7 +841,7 @@ class SplashScreen(QMainWindow):
 
 class VoteRes(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(VoteRes, self).__init__(parent)
         self.parent = parent
         loadUi("voting_res.ui", self)
         self.return_button.clicked.connect(self.return_voting)
@@ -884,7 +876,7 @@ class VoteRes(QMainWindow):
         
 class LogIn(QMainWindow):
     def __init__(self, parent, window):
-        super().__init__()
+        super(LogIn, self).__init__(parent)
         self.parent = parent
         self.window = window
         #with importlib_resources.path(bin, "login.ui") as p:
@@ -910,7 +902,7 @@ class LogIn(QMainWindow):
 
                 self.window.current_user = user
 
-                # self.window.current_group = None
+                self.window.current_group = None
                 
                 _translate = QtCore.QCoreApplication.translate
                 self.window.h_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
@@ -965,7 +957,7 @@ class LogIn(QMainWindow):
 
 class SignUp(QMainWindow):
     def __init__(self, parent, window):
-        super().__init__()
+        super(SignUp, self).__init__(parent)
         self.parent = parent
         self.window = window
         #with importlib_resources.path(bin, "signup.ui") as p:
@@ -991,7 +983,7 @@ class SignUp(QMainWindow):
             # Make sure username doesn't already exist.
             if not Data.get_users(self.signup_username_entry.text()):
                 # Add new user to database.
-                user = User(name=self.signup_username_entry.text(), password=self.signup_password_entry.text())
+                user = User(self.signup_username_entry.text(), self.signup_password_entry.text())
                 Data.add_user(user)
 
                 # Update the current_user variable stored in MainWindow
@@ -1003,7 +995,7 @@ class SignUp(QMainWindow):
                 self.window.h_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
                 self.window.m_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
                 self.window.c_usr_label.setText((_translate("MainWindow", "User: " + self.window.current_user.name + "")))
-                if Data.get_users(user.name) is not None:
+                if len(Data.get_users(user.name).groups) == 0:
                     layout = self.window.merger_scrollAreaWidgetContents.layout()
                     layout2 = self.window.merger_scrollAreaWidgetContents_2.layout()
                     for i in reversed(range(layout.count())):
@@ -1036,10 +1028,10 @@ class SignUp(QMainWindow):
             err_msg.setText("Passwords do not match. Please retype the passwords.")
             err_msg.exec_()
 
-# Called by Add Group button
+
 class GroupCreate(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(GroupCreate, self).__init__(parent)
         self.parent = parent
         #with importlib_resources.path(bin, "popup.ui") as p:
         #    path = p
@@ -1057,7 +1049,8 @@ class GroupCreate(QMainWindow):
             frames.group_name_label.setText("Circle Name: " + self.group_name_entry.text())
             schedulelist = [[], [], [], [], [], [], []]
             memberarr = [(self.parent.current_user.name, schedulelist)]
-            grouptuple = Group(name=self.group_name_entry.text(), users=memberarr)
+            eventarr = []
+            grouptuple = Group(self.group_name_entry.text(), "", memberarr, eventarr)
             self.parent.circlearr.append(grouptuple)
             Data.add_group(grouptuple)
             user = Data.get_users(self.parent.current_user.name)
@@ -1074,7 +1067,7 @@ class GroupCreate(QMainWindow):
 
 class VotingPoll(QMainWindow):
     def __init__(self, parent, e, c):
-        super().__init__()
+        super(VotingPoll, self).__init__(parent)
         self.parent = parent
         self.cbs = []
         self.user = self.parent.current_user.name
@@ -1240,7 +1233,7 @@ class VotingPoll(QMainWindow):
 class LoadingWorker(QObject):
     finished = pyqtSignal()
     def __init__(self, c, e, l):
-        super().__init__()
+        super(LoadingWorker, self).__init__()
         self.c = c
         self.e = e
         self.loading = l
@@ -1255,7 +1248,7 @@ class LoadingWorker(QObject):
 
 class LoadingScreen(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(LoadingScreen, self).__init__(parent)
         self.parent = parent
         self.setFixedSize(200, 200)
         self.anim_label = QtWidgets.QLabel(self)
@@ -1273,7 +1266,7 @@ class LoadingScreen(QMainWindow):
 
 class OptionSettings(QMainWindow):
     def __init__(self, parent, e):
-        super().__init__()
+        super(OptionSettings, self).__init__(parent)
         self.parent = parent
         loadUi("options.ui", self)
         self.submit_option.clicked.connect(lambda checked, a=e: self.submit(e))
@@ -1322,7 +1315,7 @@ class OptionSettings(QMainWindow):
 
 class AddMember(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(AddMember, self).__init__(parent)
         self.parent = parent
         #with importlib_resources.path(bin, "newmember.ui") as p:
         #    path = p
@@ -1341,7 +1334,7 @@ class AddMember(QMainWindow):
                 #groupindex = [x[0] for x in self.parent.circlearr].index(self.group_name_entry.text())
                 self.memwidget = loadUi("member.ui")
                 valid = True
-                currentgroup = Data.get_groups(self.parent.current_group.name)
+                currentgroup = Data.get_groups(self.parent.current_group)
                 userarray = currentgroup.users
                 for user in userarray:
                     if user[0] == self.name_entry.text():
@@ -1349,18 +1342,18 @@ class AddMember(QMainWindow):
                         valid = False
                 if valid:
                     member = Data.get_users(self.name_entry.text())
-                    member.groups.append(currentgroup.name)
-
-                    Data.update_user(member)
-
+                    grouparray = member.groups
+                    grouparray.append(currentgroup.name)
+                    Data.update_user(User(member.name, member.password, member.constraints, grouparray))
                     schedulelist = [[], [], [], [], [], [], []]
                     userarray.append((self.name_entry.text(), schedulelist))
-                    currentgroup.users = userarray
-                    Data.update_group(currentgroup)
+                    Data.update_group(Group(currentgroup.name, currentgroup.calendar, userarray, currentgroup.events, currentgroup.messages))
                     self.memwidget.removeButton.clicked.connect(lambda: self.parent.removeMember(currentgroup.name, self.name_entry.text()))
                     self.memwidget.memberName.setText(self.name_entry.text())
                     self.parent.merger_scrollAreaWidgetContents_2.layout().addWidget(self.memwidget)
                     print("Added New Member")
+
+
             else:
                 print("No current circles!")
         self.close()
@@ -1368,7 +1361,7 @@ class AddMember(QMainWindow):
 
 class NewEvent(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(NewEvent, self).__init__(parent)
         self.parent = parent
         #with importlib_resources.path(bin, "newevent.ui") as p:
         #   path = p
@@ -1381,7 +1374,7 @@ class NewEvent(QMainWindow):
             self.memwidget = loadUi("member.ui")
             valid = True
             currentgroup = self.parent.current_group
-            group = Data.get_groups(currentgroup.name)
+            group = Data.get_groups(currentgroup)
             eventarray = group.events
             for event in eventarray:
                 if event.name == self.name_entry.text():
@@ -1402,9 +1395,8 @@ class NewEvent(QMainWindow):
                 self.parent.merger_scrollAreaWidgetContents.layout().addWidget(app)  # adds to merged events and not events pg
 
                 eventarray.append(new_event)
-                currentgroup = Data.get_groups(currentgroup.name)
-                currentgroup.events = eventarray
-                Data.update_group(currentgroup)
+                currentgroup = Data.get_groups(currentgroup)
+                Data.update_group(Group(currentgroup.name, currentgroup.calendar, currentgroup.users, eventarray, currentgroup.messages))
                 print("Added New Event")
 
 
@@ -1415,28 +1407,25 @@ class NewEvent(QMainWindow):
 
 class YourCircles(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(YourCircles, self).__init__(parent)
         self.parent = parent
         loadUi("yourcircles.ui", self)
-        if self.parent.current_user is not None:
-            if Data.get_users(self.parent.current_user.name) is not None:
-                if Data.get_users(self.parent.current_user.name).groups is not None:
-                    for groups in Data.get_users(self.parent.current_user.name).groups:
-                        self.groupbutton = QtWidgets.QPushButton()
-                        self.groupbutton.setText(groups)
-                        font = QtGui.QFont()
-                        font.setPointSize(18)
-                        self.groupbutton.setFont(font)
-                        self.groupbutton.clicked.connect(partial(self.updateGroup, Data.get_groups(groups)))
-                        self.circlesDisplay.layout().addWidget(self.groupbutton)
+        for groups in Data.get_users(self.parent.current_user.name).groups:
+            self.groupbutton = QtWidgets.QPushButton()
+            self.groupbutton.setText(groups)
+            font = QtGui.QFont()
+            font.setPointSize(18)
+            self.groupbutton.setFont(font)
+            self.groupbutton.clicked.connect(partial(self.updateGroup, Data.get_groups(groups)))
+            self.circlesDisplay.layout().addWidget(self.groupbutton)
 
     def updateGroup(self, i):
         self.parent.update_group(i)
         self.close()
 
 class Schedules(QMainWindow):
-    def __init__(self, parent):
-        super().__init__()
+    def __init__(self,parent):
+        super(Schedules, self).__init__(parent)
         self.parent = parent
         loadUi("schedule2.ui", self)
         self.sundayPush.clicked.connect(lambda: self.gotoavailability(0, self.sundayScroll))
@@ -1464,7 +1453,7 @@ class Schedules(QMainWindow):
         for i in layoutlist:
             for j in reversed(range(i.count())):
                 i.itemAt(j).widget().setParent(None)
-        group = Data.get_groups(self.parent.current_group.name)
+        group = Data.get_groups(self.parent.current_group)
         for tuple in group.users:
             if tuple[0] == self.parent.current_user.name:
                 index = group.users.index(tuple)
@@ -1491,7 +1480,7 @@ class Schedules(QMainWindow):
                     self.saturdayScroll.layout().addWidget(self.interval)
             i += 1
     def removeinterval(self, i, start, end):
-        group = Data.get_groups(self.parent.current_group.name)
+        group = Data.get_groups(self.parent.current_group)
         for tuple in group.users:
             if tuple[0] == self.parent.current_user.name:
                 index = group.users.index(tuple)
@@ -1504,7 +1493,7 @@ class Schedules(QMainWindow):
 
 class Availability(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(Availability, self).__init__(parent)
         self.parent = parent
         loadUi("availability.ui", self)
         self.timeEdit.setDisplayFormat("hh:mm AP")
@@ -1547,7 +1536,7 @@ class Availability(QMainWindow):
     def submit(self):
         starttime = self.timeEdit.time().toString("h:mm AP")
         endtime = self.timeEdit_2.time().toString("h:mm AP")
-        group = Data.get_groups(self.parent.parent.current_group.name)
+        group = Data.get_groups(self.parent.parent.current_group)
         for tuple in group.users:
             if tuple[0] == self.parent.parent.current_user.name:
                 userelement = group.users.index(tuple)
