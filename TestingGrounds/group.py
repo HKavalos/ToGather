@@ -4,7 +4,6 @@ class Group:
         self._name = name
         self._calendar = calendar
 
-
     def __eq__(self, other):
         if self.name == other.name:
             if self.calendar == other.calendar:

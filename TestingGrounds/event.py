@@ -5,7 +5,6 @@ class Event:
     def __init__(self, name, description, options=None, group="", submitted=None, status=False):
         self._name = name
         self._description = description
-        self._status = status
 
     def __eq__(self, other):
         if self.name == other.name:
