@@ -1053,11 +1053,7 @@ class GroupCreate(QMainWindow):
 
     def submit(self):
         if Data.get_groups((self.group_name_entry.text().lower())):
-            err_msg = QtWidgets.QMessageBox()
-            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-            err_msg.setWindowTitle("Group Not Created")
-            err_msg.setText("Group already exists. Please choose a different name.")
-            err_msg.exec_()
+            print("Group already exists!")
         else:
             print("Submitted")
             f = QtWidgets.QFrame()
@@ -1083,7 +1079,7 @@ class GroupCreate(QMainWindow):
 
 class VotingPoll(QMainWindow):
     def __init__(self, parent, e, c):
-        super().__init__(parent)
+        super().__init__()
         self.parent = parent
         self.cbs = []
         self.user = self.parent.current_user.name
@@ -1282,7 +1278,7 @@ class LoadingScreen(QMainWindow):
 
 class OptionSettings(QMainWindow):
     def __init__(self, parent, e):
-        super().__init__(parent)
+        super().__init__()
         self.parent = parent
         loadUi("options.ui", self)
         self.submit_option.clicked.connect(lambda checked, a=e: self.submit(e))
@@ -1310,26 +1306,23 @@ class OptionSettings(QMainWindow):
 
     def remove(self, e):
         count = 0
-        found = False
+        #found = False
         for i in e.options:
             if i.name == self.options_del_name.text():
                 e.options.remove(i)
                 Data.update_event(e)
                 Data.delete_option(i)
-                found = True
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setWindowTitle("Optioned Removed")
-                msg.setText("Option successfully removed.")
-                msg.exec_()
+                #found = True
+                print("Removed!")
                 break
             count += 1
-        if found == True:
-            err_msg = QtWidgets.QMessageBox()
-            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-            err_msg.setWindowTitle("Option Removal Failed")
-            err_msg.setText("Option does not exist for the event. Please retype the option.")
-            err_msg.exec_()
+        #if found == True:
+            #self.voting_window.cbs.remove(self.voting_window.cbs[count])
+            #for j in self.voting_window.cbs:
+                #j.removeItem(len(self.voting_window.cbs))
+            #temp = self.voting_window.vote_scroll_contents.findChild(QtWidgets.QFrame, "option_frame_"+self.options_del_name.text())
+            #self.voting_window.vote_scroll_contents.layout().removeWidget(temp)
+            #self.close()
         self.close()
 
 class AddMember(QMainWindow):
@@ -1344,11 +1337,7 @@ class AddMember(QMainWindow):
 
     def submit(self):
         if not Data.get_users(self.name_entry.text()):
-            err_msg = QtWidgets.QMessageBox()
-            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-            err_msg.setWindowTitle("Member Not Added")
-            err_msg.setText("Username does not exist. Please retype the username.")
-            err_msg.exec_()
+            print("User does not exist!")
         else:
 
             # ui.add_member_group(new_user, str(self.group_name_entry.text()))
@@ -1361,11 +1350,7 @@ class AddMember(QMainWindow):
                 userarray = currentgroup.users
                 for user in userarray:
                     if user[0] == self.name_entry.text():
-                        err_msg = QtWidgets.QMessageBox()
-                        err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-                        err_msg.setWindowTitle("Member Not Added")
-                        err_msg.setText("User is already in your circle.")
-                        err_msg.exec_()
+                        print("User already in group!")
                         valid = False
                 if valid:
                     member = Data.get_users(self.name_entry.text())
@@ -1383,11 +1368,6 @@ class AddMember(QMainWindow):
                     print("Added New Member")
             else:
                 print("No current circles!")
-                err_msg = QtWidgets.QMessageBox()
-                err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-                err_msg.setWindowTitle("Member Not Added")
-                err_msg.setText("You do not have any current circles. Please create or join a circle.")
-                err_msg.exec_()
         self.close()
 
 
@@ -1410,11 +1390,6 @@ class NewEvent(QMainWindow):
             eventarray = group.events
             for event in eventarray:
                 if event.name == self.name_entry.text():
-                    err_msg = QtWidgets.QMessageBox()
-                    err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-                    err_msg.setWindowTitle("Event Not Added")
-                    err_msg.setText("Event already exists in your group. Please type a new event name")
-                    err_msg.exec_()
                     valid = False
             if valid:
                 new_event = Event(str(self.name_entry.text()), str(self.dateEdit.text()), [], currentgroup.name, {})
@@ -1440,11 +1415,6 @@ class NewEvent(QMainWindow):
 
         else:
             print("No current circles!")
-            err_msg = QtWidgets.QMessageBox()
-            err_msg.setIcon(QtWidgets.QMessageBox.Warning)
-            err_msg.setWindowTitle("Event Not Added")
-            err_msg.setText("You do not have any current circles. Please create or join a circle.")
-            err_msg.exec_()
         
         self.close()
 

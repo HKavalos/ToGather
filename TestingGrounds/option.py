@@ -7,13 +7,14 @@ class Option:
     votes that are a pair of users and the vote choice: 1,2,3,4 . . .
     """
 
-    def __init__(self, name, activity, location, tim=Time(), chosen=False, votes={}):
+    def __init__(self, name, activity, location, tim=Time(), chosen=False, votes=None):
         self._name = name
         self._activity = activity
         self._location = location
         self._time = tim
         self._chosen = chosen
-        self._votes = votes
+        if votes is None:
+            self._votes = {}
 
     def __eq__(self, other):
         if self.name == other.name:
