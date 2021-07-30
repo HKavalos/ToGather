@@ -640,7 +640,6 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
 
     def updateMessageList(self):
         self.messageList.clear()
-        self.messageEdit.clear()
         if self.current_group is not None:
             g = Data.get_groups(self.current_group.name)
             messagearray = g.messages
