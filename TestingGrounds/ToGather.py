@@ -729,9 +729,9 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
             vote_msg.exec_()
 
 
-    def gotoyourcircles(self, event):
+    def gotoyourcircles(self):
         self.yourcircles = YourCircles(self)
-        # self.yourcircles.adjustSize()
+        self.yourcircles.adjustSize()
         self.yourcircles.show()
 
     def gotoschedules(self):
