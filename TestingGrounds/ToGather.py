@@ -1500,7 +1500,6 @@ class Schedules(QMainWindow):
             for j in reversed(range(i.count())):
                 i.itemAt(j).widget().setParent(None)
         group = Data.get_groups(self.parent.current_group.name)
-        self.label.setText("Availability for " + group.name)
         for tuple in group.users:
             if tuple[0] == self.parent.current_user.name:
                 index = group.users.index(tuple)
