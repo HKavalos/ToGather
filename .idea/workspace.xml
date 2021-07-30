@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/group.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/group.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/option.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/option.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,11 +28,11 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_client.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/ToGather.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/option.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/group.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_server.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_client.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="beq8yedt" />
@@ -128,8 +129,8 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ToGather_py$ToGather.coverage" NAME="ToGather Coverage Results" MODIFIED="1624992783634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" />
-    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
     <SUITE FILE_PATH="coverage/ToGather_py$run.coverage" NAME="run Coverage Results" MODIFIED="1627515171986" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/framework_py$test.coverage" NAME="test Coverage Results" MODIFIED="1624894695824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
   </component>
 </project>
