@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="">
+    <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
+      <change beforePath="$PROJECT_DIR$/.idea/ToGather.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ToGather.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/ToGather.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/ToGather.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/group.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/group.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/message.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/message.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/option.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/option.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TestingGrounds/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,7 +21,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="ryan" />
+        <entry key="$PROJECT_DIR$" value="premain" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -26,11 +35,11 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_client.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/ToGather.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/option.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/group.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_server.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/TestingGrounds/togather_client.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="beq8yedt" />
@@ -42,11 +51,13 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../perf222" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RunManager">
     <configuration name="run" type="PythonConfigurationType" factoryName="Python">
@@ -82,6 +93,7 @@
       <updated>1627419582977</updated>
       <workItem from="1627419584333" duration="799000" />
       <workItem from="1627514927875" duration="1715000" />
+      <workItem from="1627621212089" duration="10698000" />
     </task>
     <task id="LOCAL-00001" summary="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times.">
       <created>1627428381018</created>
@@ -116,15 +128,16 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Data.update_option() and Data.delete_option() should now update other clients&#10;&#10;Option and Time objects can now be compared with == and !=" />
     <MESSAGE value="Getting data ready for scheduling.  See menu option '000' in togather_client.py for testing (line 877)&#10;&#10;Changed the parameters of the User and Group classes to be immutable.  Changed the time class to store start and end times." />
     <MESSAGE value="Server sends signal to update UI when needed." />
     <option name="LAST_COMMIT_MESSAGE" value="Server sends signal to update UI when needed." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
     <SUITE FILE_PATH="coverage/ToGather_py$ToGather.coverage" NAME="ToGather Coverage Results" MODIFIED="1624992783634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" />
     <SUITE FILE_PATH="coverage/ToGather_py$run.coverage" NAME="run Coverage Results" MODIFIED="1627515171986" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/framework_py$test.coverage" NAME="test Coverage Results" MODIFIED="1624894695824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ToGather$framework.coverage" NAME="votingwidget Coverage Results" MODIFIED="1624842276896" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/widget testing" />
   </component>
 </project>

@@ -1,26 +1,31 @@
 class Group:
     "the group class contains a list of users, a list of events and a calendar"
-    def __init__(self, name, calendar="", users=[], events=[], messages=[]):
+    def __init__(self, name="", calendar="", users=None, events=None, messages=None):
         self._name = name
         self._calendar = calendar
         self._users = users
-        self._events = events
-        self._messages = messages
+        if users is None:
+            self._users = []
+        if events is None:
+            self._events = []
+        if messages is None:
+            self._messages = []
 
     def __eq__(self, other):
         if self.name == other.name:
             if self.calendar == other.calendar:
                 if self.users == other.users:
                     if self.events == other.events:
-                        return True
+                        if self.messages == other.messages:
+                            return True
         return False
 
     def __ne__(self, other):
         if self.name == other.name:
             if self.calendar == other.calendar:
                 if self.users == other.users:
-                    if self.events == other.events:
-                        return False
+                    if self.messages == other.messages:
+                            return False
         return True
 
     @property

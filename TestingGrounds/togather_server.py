@@ -7,14 +7,16 @@ import socket
 # Overrides socketserver.BaseRequestHandler class.
 # Class methods setup, handle, and finish are called automatically by superclass constructor.
 class PythonHandler(BaseRequestHandler):
-    _connections = []  # Static variable to keep track of active connections
+    _connections = {}  # Static dictionary to keep track of active connections
     _db_requester = socket.socket()
 
     data = ""
 
     def setup(self):
         print("setting up new connection")
-        PythonHandler._connections.append(self.request)  # self.request is the socket object being handled.
+        # self.request is the socket object being handled.
+        PythonHandler._connections[len(PythonHandler._connections)] = self.request
+        self.my_connection = len(PythonHandler._connections)  # Keeps track of current connection number
 
     def handle(self):
 
@@ -26,6 +28,7 @@ class PythonHandler(BaseRequestHandler):
             length = int.from_bytes(self.request.recv(4), "big")  # Get length of message from first 4 bytes.
 
             msg_type = int.from_bytes(self.request.recv(1), "big")
+            print("msg_type: ", msg_type)
 
             PythonHandler.data = self.request.recv(length)
             prefix = length.to_bytes(4, "big")  # Convert length to bytes.
@@ -38,14 +41,15 @@ class PythonHandler(BaseRequestHandler):
                 PythonHandler.broadcast(PythonHandler.data, self.request)
             if int.from_bytes(msg_type, "big") == 1:  # Broadcast db to requester only.
                 PythonHandler.send(PythonHandler.data, PythonHandler._db_requester)
+                PythonHandler._db_requester = None
             # Send db
-            if int.from_bytes(msg_type, "big") == 2:
-                # TODO: Handle if second newest connection was caller
-                # TODO: Handle if no other users request database from
+            if int.from_bytes(msg_type, "big") == 2:  # Send db from server to new client
+                print("db req sent to host client")
                 PythonHandler._db_requester = self.request
-                target = PythonHandler._connections.pop(0)
+                target = PythonHandler._connections[0]
                 PythonHandler.send(PythonHandler.data, target)
-                PythonHandler._connections.insert(0, target)
+
+
             if int.from_bytes(msg_type, "big") == 3:  # Exit command.  Close connection.
                 PythonHandler.data = "exit()"
                 break
@@ -58,23 +62,26 @@ class PythonHandler(BaseRequestHandler):
 
     def finish(self):
         print("Connection to %s:%d closed" % self.client_address)
-        PythonHandler._connections.remove(self.request)
+        try:
+            del PythonHandler._connections[self.my_connection]
+        except:
+            pass
         self.request.close()
 
     # Sends a message to all connected clients except for sender.
     @staticmethod  # Static method has access to static variable connections[]
     def broadcast(message, source):
         source_exists = False
-        for connection in PythonHandler._connections:
-            if connection.getpeername() == source.getpeername():
+        for connection, request in PythonHandler._connections.items():
+            if request.getpeername() == source.getpeername():
                 source_exists = True
 
         if source_exists is True:
             # Iterate through connections and send data if remote address is not same as source's
             print("Broadcasting from: %s:%d" % source.getpeername())
-            for connection in PythonHandler._connections:
-                if connection.getpeername() != source.getpeername():  # getpeername() returns remote address.
-                    connection.sendall(message)
+            for connection, request in PythonHandler._connections.items():
+                if request.getpeername() != source.getpeername():  # getpeername() returns remote address.
+                    request.sendall(message)
 
         # Send signal to clients to update UI
         PythonHandler.update_ui()
@@ -89,8 +96,8 @@ class PythonHandler(BaseRequestHandler):
         msg = bytes([0, 0, 0, 0, 6])
 
         # Send header to all connected clients.
-        for connection in PythonHandler._connections:
-            connection.sendall(msg)
+        for connection, request in PythonHandler._connections.items():
+            request.sendall(msg)
 
     # Sends a message to one client.
     @staticmethod  # Static method has access to static variable connections[]

@@ -5,6 +5,22 @@ class Message:
         self._sender = sender
         self._group = group
 
+    def __eq__(self, other):
+        if self.name == other.name:
+            if self.delivery == other.delivery:
+                if self.sender == other.sender:
+                    if self.group == other.group:
+                        return True
+        return False
+
+    def __ne__(self, other):
+        if self.name == other.name:
+            if self.delivery == other.delivery:
+                if self.sender == other.sender:
+                    if self.group == other.group:
+                        return False
+        return True
+
     @property
     def name(self):
         return self._name
