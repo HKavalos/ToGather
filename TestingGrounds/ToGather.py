@@ -1185,6 +1185,7 @@ class VotingPoll(QMainWindow):
 
             self.loading = LoadingScreen(self.parent)
             self.loading.startAnim()
+            self.close()
             self.thread = QThread()
             self.worker = LoadingWorker(c, e, self.loading)
             self.worker.moveToThread(self.thread)
@@ -1218,10 +1219,11 @@ class VotingPoll(QMainWindow):
             set0.append(averages[x])
 
         o = Data.get_options(winner)
-        o.chosen = True
-        e.status = True
-        Data.update_option(o)
-        Data.update_event(e)
+        if(e.status == False):
+            o.chosen = True
+            e.status = True
+            Data.update_option(o)
+            Data.update_event(e)
 
         res = QBarSeries()
         res.append(set0)
