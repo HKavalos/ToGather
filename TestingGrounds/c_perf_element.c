@@ -48,56 +48,54 @@ extern void schedule_match(IntervalArrayStruct *schedule) {
     if(k == 0){
         schedule->array[0][0] = -1;
         schedule->array[0][1] = -1;
-        exit(0);
-    }
+    } else {
+        qsort(test->arr, k, sizeof(test->arr[0]), cmpfunc);
+        qsort(test2->arr, k, sizeof(test2->arr[0]), cmpfunc);
 
+        // referenced GeeksForGeeks implementation
+        // had to make tweaks to look at the two arrays
+        int max = 1;
+        int current = 1;
+        int common = test->arr[0];
 
-    qsort(test->arr, k, sizeof(test->arr[0]), cmpfunc);
-    qsort(test2->arr, k, sizeof(test2->arr[0]), cmpfunc);
-
-    // referenced GeeksForGeeks implementation
-    // had to make tweaks to look at the two arrays
-    int max = 1;
-    int current = 1;
-    int common = test->arr[0];
-
-    for(i = 1; i < k; i++){
-        if(test->arr[i - 1] == test->arr[i]){
-            current++;
-        } else {
-            if(max < current){
-                common = test->arr[i - 1];
-                max = current;
+        for(i = 1; i < k; i++){
+            if(test->arr[i - 1] == test->arr[i]){
+                current++;
+            } else {
+                if(max < current){
+                    common = test->arr[i - 1];
+                    max = current;
+                }
+                current = 1;
             }
-            current = 1;
         }
-    }
 
-    if(max < current){
-        common = test->arr[i - 1];
-    }
+        if(max < current){
+            common = test->arr[i - 1];
+        }
 
-    max = 1;
-    current = 1;
-    int common2 = test2->arr[0];
+        max = 1;
+        current = 1;
+        int common2 = test2->arr[0];
 
-    for(i = 1; i < k; i++){
-        if(test2->arr[i - 1] == test2->arr[i]){
-            current++;
-        } else {
-            if(max < current){
-                common2 = test2->arr[i - 1];
-                max = current;
+        for(i = 1; i < k; i++){
+            if(test2->arr[i - 1] == test2->arr[i]){
+                current++;
+            } else {
+                if(max < current){
+                    common2 = test2->arr[i - 1];
+                    max = current;
+                }
+                current = 1;
             }
-            current = 1;
         }
-    }
 
-    if(max < current){
-        common2 = test2->arr[i - 1];
-    }
+        if(max < current){
+            common2 = test2->arr[i - 1];
+        }
 
-    schedule->array[0][0] = common;
-    schedule->array[0][1] = common2;
+        schedule->array[0][0] = common;
+        schedule->array[0][1] = common2;
+    }
 
 }
