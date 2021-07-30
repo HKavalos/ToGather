@@ -243,36 +243,36 @@ def driver(users):
     if(len(sun) != 0):
         optimal_times = schedule_match(tuple(sun), len(sun), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(mon) != 0):
         optimal_times = schedule_match(tuple(mon), len(mon), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(tues) != 0):
         optimal_times = schedule_match(tuple(tues), len(tues), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(weds) != 0):
         optimal_times = schedule_match(tuple(weds), len(weds), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(thurs) != 0):
         optimal_times = schedule_match(tuple(thurs), len(thurs), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(fri) != 0):
         optimal_times = schedule_match(tuple(fri), len(fri), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     if(len(sat) != 0):
         optimal_times = schedule_match(tuple(sat), len(sat), optimal_times)
     else:
-        optimal_times.append((0,24))
+        optimal_times.append(("12:00 AM","12:00 AM"))
 
     return optimal_times
