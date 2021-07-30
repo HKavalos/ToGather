@@ -1230,9 +1230,9 @@ class VotingPoll(QMainWindow):
             self.mem = loadUi("voting_res_list.ui")
             self.mem.vote_res_label.setText("Average Rank: " + str(y) + " | Option: " + x + "")
             self.winner_msg.vote_scroll_contents_2.layout().addWidget(self.mem)
-        for x in circle.users[0]:
+        for x in circle.users:
             self.mem = loadUi("voting_res_list.ui")
-            self.mem.vote_res_label.setText(x)
+            self.mem.vote_res_label.setText(x[0])
             self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
         self.winner_msg.show()
 
