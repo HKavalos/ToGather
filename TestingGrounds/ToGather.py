@@ -735,7 +735,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.yourcircles.show()
 
     def gotoschedules(self):
-        self.schedules = Schedules(self)
+        self.schedules = Schedules(parent=self)
         # self.schedules.adjustSize()
         self.schedules.show()
 
@@ -1479,7 +1479,7 @@ class YourCircles(QMainWindow):
 
 class Schedules(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super(Schedules, self).__init__(parent)
         self.parent = parent
         loadUi("schedule2.ui", self)
         self.sundayPush.clicked.connect(lambda: self.gotoavailability(0, self.sundayScroll))
