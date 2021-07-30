@@ -31,6 +31,7 @@ import importlib.resources as importlib_resources
 from qt_material import apply_stylesheet
 from message import Message
 import time
+import perf_element as gensched
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from threading import Thread
@@ -1503,7 +1504,14 @@ class Schedules(QMainWindow):
         layout5 = self.thursdayScroll.layout()
         layout6 = self.fridayScroll.layout()
         layout7 = self.saturdayScroll.layout()
-        layoutlist = [layout, layout2, layout3, layout4, layout5, layout6, layout7]
+        layout8 = self.sundayScroll.layout()
+        layout9 =self.mondayScroll.layout()
+        layout10 =self.tuesdayScroll.layout()
+        layout11 =self.wednesdayScroll.layout()
+        layout12 =self.thursdayScroll.layout()
+        layout13 =self.fridayScroll.layout()
+        layout14 =self.saturdayScroll.layout()
+        layoutlist = [layout, layout2, layout3, layout4, layout5, layout6, layout7, layout8, layout9, layout10, layout11, layout12, layout13, layout14]
         for i in layoutlist:
             for j in reversed(range(i.count())):
                 i.itemAt(j).widget().setParent(None)
@@ -1534,6 +1542,26 @@ class Schedules(QMainWindow):
                 elif i == 6:
                     self.saturdayScroll.layout().addWidget(self.interval)
             i += 1
+        jointschedule = gensched.driver(group.users)
+        if len(jointschedule) != 0:
+            for i in range(7):
+                self.intervalj = loadUi("intervalj.ui")
+                self.intervalj.startTimej = jointschedule[i][0]
+                self.intervalj.endTimej = jointschedule[i][1]
+                if i == 0:
+                    self.sundayJoint.layout().addWidget(self.intervalj)
+                elif i == 1:
+                    self.mondayJoint.layout().addWidget(self.intervalj)
+                elif i == 2:
+                    self.tuesdayJoint.layout().addWidget(self.intervalj)
+                elif i == 3:
+                    self.wednesdayJoint.layout().addWidget(self.intervalj)
+                elif i == 4:
+                    self.thursdayJoint.layout().addWidget(self.intervalj)
+                elif i == 5:
+                    self.fridayJoint.layout().addWidget(self.intervalj)
+                elif i == 6:
+                    self.saturdayJoint.layout().addWidget(self.intervalj)
     def removeinterval(self, i, start, end):
         group = Data.get_groups(self.parent.current_group.name)
         for tuple in group.users:
