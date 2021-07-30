@@ -1332,7 +1332,7 @@ class OptionSettings(QMainWindow):
                 msg.exec_()
                 break
             count += 1
-        if found == True:
+        if found == False:
             err_msg = QtWidgets.QMessageBox()
             err_msg.setIcon(QtWidgets.QMessageBox.Warning)
             err_msg.setWindowTitle("Option Removal Failed")
@@ -1458,7 +1458,7 @@ class NewEvent(QMainWindow):
 
 class YourCircles(QMainWindow):
     def __init__(self, parent):
-        super().__init__()
+        super().__init__(parent)
         self.parent = parent
         loadUi("yourcircles.ui", self)
         if self.parent.current_user is not None:
