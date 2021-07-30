@@ -7,9 +7,7 @@ class User:
         self._password = password
         if groups is None:
             self._groups = []
-        if constraints is None:
-            self._constraints = []
-
+            
     def __eq__(self, other):
         if self.name == other.name:
             if self.password == other.password:

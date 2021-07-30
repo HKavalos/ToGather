@@ -16,6 +16,7 @@ class Option:
         if votes is None:
             self._votes = {}
 
+
     def __eq__(self, other):
         if self.name == other.name:
             if self.activity == other.activity:

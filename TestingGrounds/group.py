@@ -3,13 +3,7 @@ class Group:
     def __init__(self, name="", calendar="", users=None, events=None, messages=None):
         self._name = name
         self._calendar = calendar
-        self._users = users
-        if users is None:
-            self._users = []
-        if events is None:
-            self._events = []
-        if messages is None:
-            self._messages = []
+
 
     def __eq__(self, other):
         if self.name == other.name:
