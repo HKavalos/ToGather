@@ -994,7 +994,11 @@ class SignUp(QMainWindow):
             #self.parent.usersarr.append(userpair)
 
             # Make sure username doesn't already exist.
-            if not Data.get_users(self.signup_username_entry.text()):
+            valid = True
+            for user in Data.get_users():
+                if user.name.lower() == self.signup_username_entry.text().lower():
+                    valid = False
+            if valid:
                 # Add new user to database.
                 user = User(name=self.signup_username_entry.text(), password=self.signup_password_entry.text())
                 Data.add_user(user)
