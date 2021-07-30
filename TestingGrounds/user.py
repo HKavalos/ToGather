@@ -2,11 +2,17 @@ class User:
     """A class to store data about each user, a user name, a list of groups they are a part of"""
     "and list of constraint times. constraints are a pair of time variables to signify ranges"
 
-    def __init__(self, name="", password="", constraints=[], groups=[]):
+    def __init__(self, name="", password="", constraints=None, groups=None):
         self._name = name
         self._password = password
-        self._groups = groups
-        self._constraints = constraints
+        if groups is None:
+            self._groups = []
+        else:
+            self._groups = groups
+        if constraints is None:
+            self._constrains = []
+        else:
+            self._constraints = constraints
 
     def __eq__(self, other):
         if self.name == other.name:
