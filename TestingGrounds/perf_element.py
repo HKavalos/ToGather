@@ -49,22 +49,6 @@ def schedule_match(new_array, size, optimal_times):
 
     # print("\n" + "Optimal Time: ")
 
-    # if constraints.array[0][0] >= 12:
-    #     if(constraints.array[0][0] == 12):
-    #         print(constraints.array[0][0], "pm to")
-    #     else:
-    #         print(constraints.array[0][0] - 12, "pm to")
-    # else:
-    #     print(constraints.array[0][0], "am to")
-
-    # if constraints.array[0][1] > 12:
-    #     if(constraints.array[0][1] == 24):
-    #         print(constraints.optimal_end, "am")
-    #     else:
-    #         print(constraints.array[0][1] - 12, "pm")
-    # else:
-    #     print(constraints.array[0][1], "am")
-
     optimal_times.append((constraints.array[0][0], constraints.array[0][1]))
 
     return optimal_times
@@ -205,12 +189,39 @@ def driver(users):
     # print("Saturday")
     # print(sat)
 
-    optimal_times = schedule_match(tuple(sun), len(sun), optimal_times)
-    optimal_times = schedule_match(tuple(mon), len(mon), optimal_times)
-    optimal_times = schedule_match(tuple(tues), len(tues), optimal_times)
-    optimal_times = schedule_match(tuple(weds), len(weds), optimal_times)
-    optimal_times = schedule_match(tuple(thurs), len(thurs), optimal_times)
-    optimal_times = schedule_match(tuple(fri), len(fri), optimal_times)
-    optimal_times = schedule_match(tuple(sat), len(sat), optimal_times)
+    if(len(sun) != 0):
+        optimal_times = schedule_match(tuple(sun), len(sun), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(mon) != 0):
+        optimal_times = schedule_match(tuple(mon), len(mon), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(tues) != 0):
+        optimal_times = schedule_match(tuple(tues), len(tues), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(weds) != 0):
+        optimal_times = schedule_match(tuple(weds), len(weds), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(thurs) != 0):
+        optimal_times = schedule_match(tuple(thurs), len(thurs), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(fri) != 0):
+        optimal_times = schedule_match(tuple(fri), len(fri), optimal_times)
+    else:
+        optimal_times.append((0,24))
+
+    if(len(sat) != 0):
+        optimal_times = schedule_match(tuple(sat), len(sat), optimal_times)
+    else:
+        optimal_times.append((0,24))
 
     return optimal_times
