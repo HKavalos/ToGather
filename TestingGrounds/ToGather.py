@@ -1039,7 +1039,7 @@ class GroupCreate(QMainWindow):
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
-        if Data.get_groups((self.group_name_entry.text())):
+        if Data.get_groups((self.group_name_entry.text().lower())):
             print("Group already exists!")
         else:
             print("Submitted")
