@@ -1379,7 +1379,7 @@ class NewEvent(QMainWindow):
                 if event.name == self.name_entry.text():
                     valid = False
             if valid:
-                new_event = Event(str(self.name_entry.text()), str(self.date_entry.text()), [], currentgroup, {})
+                new_event = Event(str(self.name_entry.text()), str(self.dateEdit.text()), [], currentgroup, {})
                 Data.add_event(new_event)
                 print(Data.get_events(new_event.name, new_event.group))
 
@@ -1387,7 +1387,7 @@ class NewEvent(QMainWindow):
                 frames = eventwidget.Ui_Form()
                 frames.setupUi(app)
                 frames.name_label.setText("Name: " + self.name_entry.text())
-                frames.date_label.setText("Date: " + self.date_entry.text())
+                frames.date_label.setText("Date: " + self.dateEdit.text())
                 frames.vote_go_button.clicked.connect(lambda checked, a=new_event, b=currentgroup: self.parent.gotovoting(a,b))
                 frames.op_go_button.clicked.connect(lambda checked, a=new_event: self.parent.gotooptions(a))
                 # self.parent.scrollAreaWidgetContents.layout().addWidget(app)
