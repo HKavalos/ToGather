@@ -20,6 +20,34 @@ def time_maker(temp):
 
     return test_int
 
+def time_revert(temp):
+    test = temp
+    test_int = ""
+
+    if(test == 0):
+        test = 24
+
+    if(test > 12):
+        test_int = str(test - 12)
+        if(int(test_int) < 10):
+            test_int = "0" + test_int + ":00"
+        else:
+            test_int = test_int + ":00"
+    else:
+        test_int = str(test)
+
+        if(test < 10):
+            test_int = "0" + test_int + ":00"
+        else:
+            test_int = test_int + ":00"
+
+    if(test >= 12 and test != 24):
+        test_int = test_int + " PM"
+    else:
+        test_int = test_int + " AM"
+
+    return test_int
+
 def schedule_match(new_array, size, optimal_times):
     new_array = sorted(new_array)
 
@@ -49,7 +77,7 @@ def schedule_match(new_array, size, optimal_times):
 
     # print("\n" + "Optimal Time: ")
 
-    optimal_times.append((constraints.array[0][0], constraints.array[0][1]))
+    optimal_times.append((time_revert(constraints.array[0][0]), time_revert(constraints.array[0][1])))
 
     return optimal_times
 
@@ -70,7 +98,8 @@ def driver(users):
             time1 = users[x][1][0][y][0]
             time2 = users[x][1][0][y][1]
             time1 = time_maker(time1)
-            if int(time1) == 24:
+
+            if(int(time1) == 24):
                 time1 = 0
 
             time2 = time_maker(time2)
@@ -107,19 +136,19 @@ def driver(users):
             # print(users[x][1][0][y][0])
             # print(users[x][1][0][y][1])
             time1 = users[x][1][2][y][0]
-            time1 = time_maker(time1)
-            if(int(time1) == 24):
-                time1 = 0
-
             time2 = users[x][1][2][y][1]
 
+            time1 = time_maker(time1)
+
+            if(int(time1) == 24):
+                time1 = 0
 
             time2 = time_maker(time2)
 
             # print(time1 + " " + time2)
 
             tues.append((int(time1), int(time2)))
-    
+
     # print("Tuesday")
     # print(tues)
 
@@ -141,7 +170,7 @@ def driver(users):
             # print(time1 + " " + time2)
 
             weds.append((int(time1), int(time2)))
-    
+
     # print("Wednesday")
     # print(weds)
 
@@ -163,7 +192,7 @@ def driver(users):
             # print(time1 + " " + time2)
 
             thurs.append((int(time1), int(time2)))
-    
+
     # print("Thursday")
     # print(thurs)
 
@@ -185,8 +214,8 @@ def driver(users):
             # print(time1 + " " + time2)
 
             fri.append((int(time1), int(time2)))
-    
-    # print("Friday")    
+
+    # print("Friday")
     # print(fri)
 
     for x in range(0, len(users)):
@@ -207,7 +236,7 @@ def driver(users):
             # print(time1 + " " + time2)
 
             sat.append((int(time1), int(time2)))
-    
+
     # print("Saturday")
     # print(sat)
 
