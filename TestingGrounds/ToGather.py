@@ -1054,7 +1054,7 @@ class GroupCreate(QMainWindow):
     def submit(self):
         invalid = True
         for group in Data.get_groups():
-            if group.name.lower() == self.group_name_entry.lower():
+            if group.name.lower() == self.group_name_entry.text().lower():
                 invalid = False
         if not invalid:
             err_msg = QtWidgets.QMessageBox()
