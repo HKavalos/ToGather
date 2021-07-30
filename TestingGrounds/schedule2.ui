@@ -33,7 +33,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_4">
+      <widget class="QWidget" name="wednesdayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -128,7 +128,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_3">
+      <widget class="QWidget" name="tuesdayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -253,7 +253,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_7">
+      <widget class="QWidget" name="saturdayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -443,7 +443,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
+      <widget class="QWidget" name="mondayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -488,7 +488,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_6">
+      <widget class="QWidget" name="fridayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -506,7 +506,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <widget class="QWidget" name="sundayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -594,7 +594,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_5">
+      <widget class="QWidget" name="thursdayJoint">
        <property name="geometry">
         <rect>
          <x>0</x>

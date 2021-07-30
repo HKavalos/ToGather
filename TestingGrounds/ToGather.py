@@ -1543,11 +1543,12 @@ class Schedules(QMainWindow):
                     self.saturdayScroll.layout().addWidget(self.interval)
             i += 1
         jointschedule = gensched.driver(group.users)
-        if len(jointschedule) != 0:
+        print((jointschedule[0][0]))
+        if len(group.users) != 1:
             for i in range(7):
                 self.intervalj = loadUi("intervalj.ui")
-                self.intervalj.startTimej = jointschedule[i][0]
-                self.intervalj.endTimej = jointschedule[i][1]
+                self.intervalj.startTimeJ.setText(str(jointschedule[i][0]))
+                self.intervalj.endTimeJ.setText(str(jointschedule[i][1]))
                 if i == 0:
                     self.sundayJoint.layout().addWidget(self.intervalj)
                 elif i == 1:
@@ -1591,7 +1592,7 @@ class Availability(QMainWindow):
                 if steps == 1:
                     self.timeEdit.setTime(self.timeEdit.time().addSecs(3600))
                 elif steps == -1:
-                    self.timeEdit.setTime(self.timeEdit.time().addSecs(3600))
+                    self.timeEdit.setTime(self.timeEdit.time().addSecs(-3600))
             else:
                 if steps == 1:
                     self.timeEdit.setTime(self.timeEdit.time().addSecs(43200))
@@ -1607,7 +1608,7 @@ class Availability(QMainWindow):
                 if steps == 1:
                     self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(3600))
                 elif steps == -1:
-                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(3600))
+                    self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(-3600))
             else:
                 if steps == 1:
                     self.timeEdit_2.setTime(self.timeEdit_2.time().addSecs(43200))
