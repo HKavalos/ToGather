@@ -1373,6 +1373,7 @@ class NewEvent(QMainWindow):
         #with importlib_resources.path(bin, "newevent.ui") as p:
         #   path = p
         loadUi("newevent.ui", self)
+        self.dateEdit.setDate(QtCore.QDate.currentDate())
         self.submission_button.clicked.connect(self.submit)
 
     def submit(self):
