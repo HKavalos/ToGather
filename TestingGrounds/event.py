@@ -5,9 +5,11 @@ class Event:
     def __init__(self, name, description, options=None, group="", submitted=None, status=False):
         self._name = name
         self._description = description
+        self._options = options
         if options is None:
             self._options = []
         self._group = group
+        self._submitted = submitted
         if submitted is None:
             self._submitted = {}
         self._status = status
@@ -50,7 +52,7 @@ class Event:
 
     @property
     def options(self):
-        return self._options
+        return self.options
 
     @options.setter
     def options(self, options):
