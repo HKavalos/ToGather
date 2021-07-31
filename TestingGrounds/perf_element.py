@@ -1,8 +1,10 @@
 import os
 from ctypes import *
 
+# 2D array sample_array[][2]
 INTERVAL_LENGTH = 2
 
+# takes a string in the format ex. 05:00 am and changes it to 5 (depends on am/pm as well)
 def time_maker(temp):
     test = temp
     test_int = ""
@@ -20,9 +22,13 @@ def time_maker(temp):
 
     return test_int
 
+# takes an int (ex. 5) and formats it back into a string in the format ex. 05:00 am
 def time_revert(temp):
     test = temp
     test_int = ""
+
+    if(test == -1):
+        return "-1"
 
     if(test == 0):
         test = 24
@@ -48,6 +54,7 @@ def time_revert(temp):
 
     return test_int
 
+# runs the schedule match function from the c library c_perf_element.so
 def schedule_match(new_array, size, optimal_times):
     new_array = sorted(new_array)
 
@@ -56,8 +63,6 @@ def schedule_match(new_array, size, optimal_times):
                     ("array", (c_int * INTERVAL_LENGTH) * size),
                     ]
 
-    # lib = CDLL("%s/test.so" % os.getcwd())
-    # lib = CDLL("%s/emergency_test.so" % os.getcwd())
     lib = CDLL("%s/c_perf_element.so" % os.getcwd())
     lib.schedule_match.argtypes = [POINTER(IntervalArrayStruct)]
     lib.schedule_match.restype = None
@@ -75,12 +80,12 @@ def schedule_match(new_array, size, optimal_times):
     # Call schedule_match function from C lib.
     lib.schedule_match(byref(constraints))
 
-    # print("\n" + "Optimal Time: ")
-
     optimal_times.append((time_revert(constraints.array[0][0]), time_revert(constraints.array[0][1])))
 
     return optimal_times
 
+# driver function that takes 5D array of schedules and translates it into 7 arrays
+# each of the 7 arrays will have the time intervals of all users on a specific day
 def driver(users):
     optimal_times = []
     sun = []
@@ -90,13 +95,21 @@ def driver(users):
     thurs = []
     fri = []
     sat = []
+
+    # Sunday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][0]) == 0:
+            time1 = 0
+            time2 = 24
+
+            sun.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][0])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][0][y][0]
             time2 = users[x][1][0][y][1]
+
             time1 = time_maker(time1)
 
             if(int(time1) == 24):
@@ -104,37 +117,42 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             sun.append((int(time1), int(time2)))
-
-    # print("Sunday")
-    # print(sun)
-
+    
+    # Monday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][1]) == 0:
+            time1 = 0
+            time2 = 24
+
+            mon.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][1])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][1][y][0]
             time2 = users[x][1][1][y][1]
 
             time1 = time_maker(time1)
-            if(int(time1) == 24):
+
+            if(time1 == 24):
                 time1 = 0
+
             time2 = time_maker(time2)
-            # print(time1 + " " + time2)
 
             mon.append((int(time1), int(time2)))
 
-    # print("Monday")
-    # print(mon)
-
+    # Tuesday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][2]) == 0:
+            time1 = 0
+            time2 = 24
+
+            tues.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][2])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][2][y][0]
             time2 = users[x][1][2][y][1]
 
@@ -145,18 +163,19 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             tues.append((int(time1), int(time2)))
-
-    # print("Tuesday")
-    # print(tues)
-
+    
+    # Wednesday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][3]) == 0:
+            time1 = 0
+            time2 = 24
+
+            weds.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][3])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][3][y][0]
             time2 = users[x][1][3][y][1]
 
@@ -167,18 +186,19 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             weds.append((int(time1), int(time2)))
-
-    # print("Wednesday")
-    # print(weds)
-
+    
+    # Thursday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][4]) == 0:
+            time1 = 0
+            time2 = 24
+
+            thurs.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][4])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][4][y][0]
             time2 = users[x][1][4][y][1]
 
@@ -189,18 +209,19 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             thurs.append((int(time1), int(time2)))
-
-    # print("Thursday")
-    # print(thurs)
-
+    
+    # Friday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][5]) == 0:
+            time1 = 0
+            time2 = 24
+
+            fri.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][5])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][5][y][0]
             time2 = users[x][1][5][y][1]
 
@@ -211,18 +232,19 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             fri.append((int(time1), int(time2)))
-
-    # print("Friday")
-    # print(fri)
-
+    
+    # Saturday
     for x in range(0, len(users)):
-        # print(users[x][0])
+        if len(users[x][1][6]) == 0:
+            time1 = 0
+            time2 = 24
+
+            sat.append((int(time1), int(time2)))
+
+            continue
+
         for y in range(0, len(users[x][1][6])):
-            # print(users[x][1][0][y][0])
-            # print(users[x][1][0][y][1])
             time1 = users[x][1][6][y][0]
             time2 = users[x][1][6][y][1]
 
@@ -233,46 +255,41 @@ def driver(users):
 
             time2 = time_maker(time2)
 
-            # print(time1 + " " + time2)
-
             sat.append((int(time1), int(time2)))
-
-    # print("Saturday")
-    # print(sat)
-
+    
     if(len(sun) != 0):
         optimal_times = schedule_match(tuple(sun), len(sun), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(mon) != 0):
         optimal_times = schedule_match(tuple(mon), len(mon), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(tues) != 0):
         optimal_times = schedule_match(tuple(tues), len(tues), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(weds) != 0):
         optimal_times = schedule_match(tuple(weds), len(weds), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(thurs) != 0):
         optimal_times = schedule_match(tuple(thurs), len(thurs), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(fri) != 0):
         optimal_times = schedule_match(tuple(fri), len(fri), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     if(len(sat) != 0):
         optimal_times = schedule_match(tuple(sat), len(sat), optimal_times)
     else:
-        optimal_times.append(("12:00 AM","12:00 AM"))
+        optimal_times.append((0,24))
 
     return optimal_times
