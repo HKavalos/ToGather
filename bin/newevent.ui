@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>214</width>
-    <height>219</height>
+    <width>577</width>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,34 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="name_entry">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="date_label">
-      <property name="text">
-       <string>Date:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QPushButton" name="submission_button">
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="date_label_2">
-      <property name="text">
-       <string>Place:</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QLabel" name="name_label">
       <property name="text">
@@ -50,15 +22,8 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="date_entry">
-      <property name="text">
-       <string>mm/dd/yyyy</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="place_entry">
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="name_entry">
       <property name="text">
        <string/>
       </property>
@@ -73,6 +38,16 @@
       </property>
       <property name="text">
        <string>Add Event</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="date_label">
+      <property name="text">
+       <string>Date:</string>
       </property>
      </widget>
     </item>
@@ -89,6 +64,16 @@
       </property>
      </spacer>
     </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="submission_button">
+      <property name="text">
+       <string>Submit</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QDateEdit" name="dateEdit"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -96,8 +81,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>214</width>
-     <height>21</height>
+     <width>577</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>

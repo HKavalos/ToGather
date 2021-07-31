@@ -28,9 +28,12 @@ class Ui_Form(object):
         self.date_label = QtWidgets.QLabel(Form)
         self.date_label.setObjectName("date_label")
         self.verticalLayout.addWidget(self.date_label)
-        self.place_label = QtWidgets.QLabel(Form)
-        self.place_label.setObjectName("place_label")
-        self.verticalLayout.addWidget(self.place_label)
+        self.vote_go_button = QtWidgets.QPushButton(Form)
+        self.vote_go_button.setObjectName("vote_go_button")
+        self.verticalLayout.addWidget(self.vote_go_button)
+        self.op_go_button = QtWidgets.QPushButton(Form)
+        self.op_go_button.setObjectName("op_go_button")
+        self.verticalLayout.addWidget(self.op_go_button)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -40,8 +43,8 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.name_label.setText(_translate("Form", "Name:"))
         self.date_label.setText(_translate("Form", "Date:"))
-        self.place_label.setText(_translate("Form", "Place:"))
-
+        self.vote_go_button.setText(_translate("Form", "Vote"))
+        self.op_go_button.setText(_translate("Form", "Options"))
 
 if __name__ == "__main__":
     import sys

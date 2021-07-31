@@ -5,12 +5,12 @@ import pickle
 import sqlite3
 import os
 
-from user import User
-from event import Event
-from group import Group
-from _calendar import GroupCalendar
-from option import Option
-from message import Message
+from bin.user import User
+from bin.event import Event
+from bin.group import Group
+from bin._calendar import GroupCalendar
+from bin.option import Option
+from bin.message import Message
 
 
 # TODO: Use CamelCase for class names
