@@ -1,11 +1,17 @@
 class Group:
     "the group class contains a list of users, a list of events and a calendar"
-    def __init__(self, name="", calendar="", users=[], events=[], messages=[]):
+    def __init__(self, name="", calendar="", users=None, events=None, messages=None):
         self._name = name
         self._calendar = calendar
         self._users = users
+        if self._users is None:
+            self._users = []
         self._events = events
+        if self._events is None:
+            self._events = []
         self._messages = messages
+        if self._messages is None:
+            self._messages = []
 
     def __eq__(self, other):
         if self.name == other.name:
