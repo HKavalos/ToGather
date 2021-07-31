@@ -142,7 +142,7 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         # Main
         self.MainWindow.setWindowTitle("ToGather")
         self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(1280, 720)
+        self.MainWindow.setFixedSize(1280, 720)
         self.MainWindow.show()
         self.centralwidget = QtWidgets.QStackedWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -703,6 +703,7 @@ class LogIn(QMainWindow):
         #    path = p
         loadUi("login.ui", self)
         self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.login_username_entry.setFocus()
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
 
