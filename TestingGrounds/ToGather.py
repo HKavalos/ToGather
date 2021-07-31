@@ -896,6 +896,7 @@ class LogIn(QMainWindow):
         #    path = p
         loadUi("login.ui", self)
         self.login_password_entry.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.login_username_entry.setFocus()
         self.login_acc_button.clicked.connect(self.login_acc)
         self.signup_button.clicked.connect(self.nav)
 
