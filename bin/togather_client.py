@@ -4,6 +4,7 @@ import threading
 import pickle
 import sqlite3
 import os
+import importlib.resources as importlib_resources
 
 from bin.user import User
 from bin.event import Event
@@ -35,8 +36,10 @@ class Data(threading.local):
     For testing, each client instance has to opened from its own directory so that they are each using their own
     database file.
     """
-
-    DB_FILENAME = "db.db"  # Constant for database filename.
+    with importlib_resources.path("bin", "circles.ui") as p:
+        path = p
+    path = os.path.dirname(path)
+    DB_FILENAME = str(path) + "/db.db"  # Constant for database filename.
     update_UI = False
 
     # Method to create tables if they don't already exist in file.
@@ -221,7 +224,7 @@ class Data(threading.local):
             elif event != Data.get_events(event.name, event.group):
                 cursor.execute("UPDATE `events` SET event = ? WHERE `name` = ? and `group` = ?", (pickle.dumps(event), event.name, event.group))
                 db_connection.commit()
-                sender = Client.Send(pickle.dumps(Data.get_events(event.name)), 4)
+                sender = Client.Send(pickle.dumps(Data.get_events(event.name, event.group)), 4)
                 sender.start()
             db_connection.close()
         except Exception as e:

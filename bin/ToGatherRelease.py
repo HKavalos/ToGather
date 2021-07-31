@@ -58,7 +58,10 @@ def main():
     print("Client started.")
 
     # Initialize database if it doesn't exist.
-    if not os.path.isfile("db.db"):
+    with importlib_resources.path("bin", "circles.ui") as p:
+        path = p
+    path = os.path.dirname(path)
+    if not os.path.isfile(path + "/db.db"):
         Data.create_tables()
 
     # Load database from the client that is running the server.
@@ -377,7 +380,22 @@ class Ui_MainWindow(QMainWindow):  # changed to QMainWindow from object
         self.style_button.setText(_translate("MainWindow", "Dark Mode"))
         # self.checkBox_6.setText(_translate("MainWindow", "CheckBox"))
         # self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
-
+        self.teal_button.setStyleSheet("background-color : teal")
+        self.teal_button.setFlat(True)
+        # self.pink_button.setText(_translate("MainWindow", "Pink"))
+        self.pink_button.setStyleSheet("background-color : pink")
+        self.pink_button.setFlat(True)
+        # self.purple_button.setText(_translate("MainWindow", "Purple"))
+        self.purple_button.setStyleSheet("background-color : purple")
+        self.purple_button.setFlat(True)
+        # self.checkBox_6.setText(_translate("MainWindow", "CheckBox"))
+        # self.mainTab.setTabText(self.mainTab.indexOf(self.user_settings_tab), _translate("MainWindow", "User Settings"))
+        self.red_button.setStyleSheet("background-color : red")
+        self.red_button.setFlat(True)
+        self.blue_button.setStyleSheet("background-color : blue")
+        self.blue_button.setFlat(True)
+        self.yellow_button.setStyleSheet("background-color : yellow")
+        self.yellow_button.setFlat(True)
         # Events + Circles Merger
         self.mainTab.setTabText(self.mainTab.indexOf(self.merger_tab), _translate("MainWindow", "Circles"))
         self.merger_group_name.setText(_translate("MainWindow", "Group Name"))
@@ -750,13 +768,13 @@ class LogIn(QMainWindow):
 # else:
 #    print("Invalid login!")
 
-def nav(self):
-    print("To Signup!")
-    self.signup_window = SignUp(self, self.window)
-    self.setWindowTitle("Sign Up")
-    self.signup_window.adjustSize()
-    self.signup_window.show()
-    self.close()
+    def nav(self):
+        print("To Signup!")
+        self.signup_window = SignUp(self, self.window)
+        self.setWindowTitle("Sign Up")
+        self.signup_window.adjustSize()
+        self.signup_window.show()
+        self.close()
 
 
 class SignUp(QMainWindow):
@@ -1064,7 +1082,7 @@ class VotingPoll(QMainWindow):
 class LoadingWorker(QObject):
     finished = pyqtSignal()
 
-    def __init__(self, e, c, l):
+    def __init__(self, c, e, l):
         super().__init__()
         self.e = e
         self.c = c
@@ -1428,7 +1446,7 @@ class Availability(QMainWindow):
         self.parent = parent
         with importlib_resources.path(bin, "availability.ui") as p:
             path = p
-        loadUi("str(path)", self)
+        loadUi(str(path), self)
         self.timeEdit.setDisplayFormat("hh:mm AP")
         self.timeEdit_2.setDisplayFormat("hh:mm AP")
 

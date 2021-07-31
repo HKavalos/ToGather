@@ -59,7 +59,7 @@ def schedule_match(new_array, size, optimal_times):
 
     # lib = CDLL("%s/test.so" % os.getcwd())
     # lib = CDLL("%s/emergency_test.so" % os.getcwd())
-    with importlib_resources.path(bin, "c_perf_element.so") as p:
+    with importlib_resources.path("bin", "c_perf_element.so") as p:
         path = p
     lib = CDLL(str(path))
     lib.schedule_match.argtypes = [POINTER(IntervalArrayStruct)]
