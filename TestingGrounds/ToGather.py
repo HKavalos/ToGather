@@ -1005,6 +1005,7 @@ class VotingPoll(QMainWindow):
 
     def results (self, e, c):
         circle = Data.get_groups(c)
+        ev = Data.get_events(e.name, circle.name)
 
         top = float('inf')
         averages = {}
@@ -1012,10 +1013,12 @@ class VotingPoll(QMainWindow):
         winner = ""
         set0 = QBarSet('Averages')
 
-        for x in e.options:
+        for x in ev.options:
             avg = 0
             for y in x.votes.values():
                 avg += y
+                print(y)
+                print(x.votes.values)
             avg = avg / len(circle.users)
             averages[x.name] = avg
             choices.append(x.name)
@@ -1026,11 +1029,11 @@ class VotingPoll(QMainWindow):
             set0.append(averages[x])
 
         o = Data.get_options(winner)
-        if(e.status == False):
+        if(ev.status == False):
             o.chosen = True
-            e.status = True
+            ev.status = True
             Data.update_option(o)
-            Data.update_event(e)
+            Data.update_event(ev)
 
         res = QBarSeries()
         res.append(set0)
@@ -1062,7 +1065,7 @@ class VotingPoll(QMainWindow):
             self.mem.vote_res_label.setText(x[0])
             self.winner_msg.vote_scroll_contents.layout().addWidget(self.mem)
         self.winner_msg.show()
-
+        
 
 class LoadingWorker(QObject):
     finished = pyqtSignal()
