@@ -5,11 +5,13 @@ class Event:
     def __init__(self, name, description, options=None, group="", submitted=None, status=False):
         self._name = name
         self._description = description
-        if options is None:
+        self._options = options
+        if self._options is None:
             self._options = []
         self._group = group
-        if submitted is None:
-            self._submitted = {}
+        self._submitted = submitted
+        if self._submitted is None:
+            self._submitted = []
         self._status = status
 
     def __eq__(self, other):

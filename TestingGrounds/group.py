@@ -4,11 +4,13 @@ class Group:
         self._name = name
         self._calendar = calendar
         self._users = users
-        if users is None:
+        if self._users is None:
             self._users = []
-        if events is None:
+        self._events = events
+        if self._events is None:
             self._events = []
-        if messages is None:
+        self._messages = messages
+        if self._messages is None:
             self._messages = []
 
     def __eq__(self, other):
@@ -24,7 +26,8 @@ class Group:
         if self.name == other.name:
             if self.calendar == other.calendar:
                 if self.users == other.users:
-                    if self.messages == other.messages:
+                    if self.events == other.events:
+                        if self.messages == other.messages:
                             return False
         return True
 

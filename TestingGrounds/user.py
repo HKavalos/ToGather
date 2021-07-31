@@ -5,9 +5,11 @@ class User:
     def __init__(self, name="", password="", constraints=None, groups=None):
         self._name = name
         self._password = password
-        if groups is None:
+        self._groups = groups
+        if self._groups is None:
             self._groups = []
-        if constraints is None:
+        self._constraints = constraints
+        if self._constraints is None:
             self._constraints = []
 
     def __eq__(self, other):

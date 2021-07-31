@@ -202,7 +202,7 @@ class Data(threading.local):
             if Data.get_events(event.name, event.group) is None:
                 pass
             else:
-                cursor.execute("DELETE FROM `events` WHERE `name` = ?", (event.name, event.group))
+                cursor.execute("DELETE FROM `events` WHERE `name` = ? and `group` = ?", (event.name, event.group))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(event), 5)
                 sender.start()
@@ -221,7 +221,7 @@ class Data(threading.local):
             elif event != Data.get_events(event.name, event.group):
                 cursor.execute("UPDATE `events` SET event = ? WHERE `name` = ? and `group` = ?", (pickle.dumps(event), event.name, event.group))
                 db_connection.commit()
-                sender = Client.Send(pickle.dumps(Data.get_events(event.name)), 4)
+                sender = Client.Send(pickle.dumps(Data.get_events(event.name, event.group)), 4)
                 sender.start()
             db_connection.close()
         except Exception as e:
@@ -281,7 +281,6 @@ class Data(threading.local):
     # Adds an object to database if it doesn't exist.
     @staticmethod
     def add_group(group):
-        group.name = group.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
@@ -297,7 +296,6 @@ class Data(threading.local):
     # Updates group by replacing it with passed class object.
     @staticmethod
     def update_group(group):
-        group.name = group.name.lower()
         try:
             db_connection = sqlite3.connect(Data().DB_FILENAME)
             cursor = db_connection.cursor()
@@ -323,7 +321,7 @@ class Data(threading.local):
 
             if Data.get_groups(group.name) is None:
                 pass
-            else:
+            elif group != Data.get_groups(group.name):
                 cursor.execute("DELETE FROM `groups` WHERE name = ?", (group.name,))
                 db_connection.commit()
                 sender = Client.Send(pickle.dumps(group), 5)

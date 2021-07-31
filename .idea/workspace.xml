@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ef898722-fef9-4f76-ae21-6fc4e8d9b0e6" name="Default Changelist" comment="Server sends signal to update UI when needed.">
-      <change beforePath="$PROJECT_DIR$/.idea/ToGather.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ToGather.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/ToGather.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/ToGather.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/event.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/group.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/group.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/message.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/message.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/option.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/option.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/togather_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/togather_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestingGrounds/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestingGrounds/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

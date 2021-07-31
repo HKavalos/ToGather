@@ -1,4 +1,6 @@
 __pycache__
 db.db
 source code
-./idea/
+.idea
+ToGather-0.0.9
+.idea/workspace.xml
