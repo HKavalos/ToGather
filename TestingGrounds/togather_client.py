@@ -5,12 +5,12 @@ import pickle
 import sqlite3
 import os
 
-from bin.user import User
-from bin.event import Event
-from bin.group import Group
-from bin._calendar import GroupCalendar
-from bin.option import Option
-from bin.message import Message
+from user import User
+from event import Event
+from group import Group
+from _calendar import GroupCalendar
+from option import Option
+from message import Message
 
 
 # TODO: Use CamelCase for class names
@@ -221,7 +221,7 @@ class Data(threading.local):
             elif event != Data.get_events(event.name, event.group):
                 cursor.execute("UPDATE `events` SET event = ? WHERE `name` = ? and `group` = ?", (pickle.dumps(event), event.name, event.group))
                 db_connection.commit()
-                sender = Client.Send(pickle.dumps(Data.get_events(event.name)), 4)
+                sender = Client.Send(pickle.dumps(Data.get_events(event.name, event.group)), 4)
                 sender.start()
             db_connection.close()
         except Exception as e:
